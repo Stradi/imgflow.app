@@ -1,21 +1,27 @@
 import crypto from 'crypto';
 import express from 'express';
 import multer from 'multer';
+import multerS3 from 'multer-s3';
+
+import { s3 } from '../lib/s3';
 import { ApiError } from '../utils/apiError';
 
 const router = express.Router();
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'uploads/');
-  },
-  filename: (req, file, cb) => {
-    const ext = file.originalname.split('.').pop();
-    cb(null, Date.now() + '-' + crypto.randomUUID() + '.' + ext);
+const s3Storage = multerS3({
+  s3: s3(),
+  bucket: 'imgflow',
+  key: (req, file, cb) => {
+    const uuid = crypto.randomUUID();
+    // TODO: Change this userId.
+    const userId = 'development';
+    cb(null, `${userId}/${uuid}/original/${file.originalname}`);
   },
 });
 
-const upload = multer({ storage: storage });
+const upload = multer({
+  storage: s3Storage,
+});
 
 function handleErrors(req: express.Request, res: express.Response) {
   if (!req.body) {
@@ -87,11 +93,7 @@ router.post('/', upload.array('images', 10), (req, res) => {
   res.json({
     data: {
       message: 'Files uploaded successfully',
-      files: files.map((file) => ({
-        originalName: file.originalname,
-        storedName: file.filename,
-        url: `http://localhost:3000/uploads/${file.filename}`,
-      })),
+      files,
     },
   });
 });
