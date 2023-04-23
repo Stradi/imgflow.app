@@ -3,4 +3,5 @@
 **/.next/
 **/.env
 **/.env.local
-**/prisma
+**/*.db
+**/*.db-journal
