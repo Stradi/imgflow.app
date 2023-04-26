@@ -7,25 +7,28 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id        Int        @id
+model Account {
+  id        Int        @id @default(autoincrement())
+  name      String
+  email     String     @unique
+  password  String
   files     File[]
   pipelines Pipeline[]
 }
 
 model File {
-  id          Int    @id
+  id          Int    @id @default(autoincrement())
   storageUuid String
 
-  user   User @relation(fields: [userId], references: [id])
+  user   Account @relation(fields: [userId], references: [id])
   userId Int
 }
 
 model Pipeline {
-  id       Int    @id
+  id       Int    @id @default(autoincrement())
   name     String
   dataJson String
 
-  user   User @relation(fields: [userId], references: [id])
+  user   Account @relation(fields: [userId], references: [id])
   userId Int
 }
