@@ -44,7 +44,7 @@ router.post('/create-account', async (req, res) => {
   });
 });
 
-router.post('login', async (req, res) => {
+router.post('/login', async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
     return res.json({
@@ -71,8 +71,8 @@ router.post('login', async (req, res) => {
     });
   }
 
-  const accessToken = jwt.sign({ id: user.id }, process.env.JWT_ACCESS_SECRET, { expiresIn: '15m' });
-  const refreshToken = jwt.sign({ id: user.id }, process.env.JWT_REFRESH_SECRET, { expiresIn: '1d' });
+  const accessToken = jwt.sign({ id: user.id }, process.env.JWT_ACCESS_SECRET as string, { expiresIn: '15m' });
+  const refreshToken = jwt.sign({ id: user.id }, process.env.JWT_REFRESH_SECRET as string, { expiresIn: '1d' });
 
   return res.json({
     message: 'Login successful',
@@ -98,15 +98,17 @@ router.post('/refresh', async (req, res) => {
 
   let decoded = null;
   try {
-    decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+    decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET as string);
   } catch (e) {
     return res.json({
       error: 'Invalid token',
     });
   }
 
-  const accessToken = jwt.sign({ id: (decoded as JwtPayload).id }, process.env.JWT_ACCESS_SECRET, { expiresIn: '15m' });
-  const newRefreshToken = jwt.sign({ id: (decoded as JwtPayload).id }, process.env.JWT_REFRESH_SECRET, {
+  const accessToken = jwt.sign({ id: (decoded as JwtPayload).id }, process.env.JWT_ACCESS_SECRET as string, {
+    expiresIn: '15m',
+  });
+  const newRefreshToken = jwt.sign({ id: (decoded as JwtPayload).id }, process.env.JWT_REFRESH_SECRET as string, {
     expiresIn: '1d',
   });
 

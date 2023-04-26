@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
-import express, { Application } from 'express';
+import express, { Application, NextFunction, Request, Response } from 'express';
 import router from './routes';
 
 const app: Application = express();
@@ -18,6 +18,12 @@ app.use(router);
 app.get('/', (req, res) => {
   res.json({
     message: 'Hello World!',
+  });
+});
+
+app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
+  res.status(500).json({
+    error: error.message,
   });
 });
 
