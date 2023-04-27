@@ -64,9 +64,8 @@ export function uploadImage(s3: S3Client, data: Buffer, key: string, mime: strin
 }
 
 /* 
-PipelineID: 24124-fras3-1241s
 Runner will save outputs to:
-imgflow/:userId/pipelines/24124-fras3-1241s/:uuid.jpg
+imgflow/:userId/:pipelineId/:imageUuid/:outputName.:extension
 
 We can only store jpg version and convert them on the fly to requested format.
 
@@ -80,13 +79,14 @@ imgflow
     |- :uuid-4.jpg
   |-pipelines
     |- :pipelineUuid-1
-      |- :uuid-1.jpg
-      |- :uuid-2.jpg
-      |- :uuid-3.jpg
-      |- :uuid-4.jpg
+      |- :uuid-1/:output-name.jpg     - We are adding output name. This is because user can have multiple outputs in a pipeline.
+      |- :uuid-2/:output-name.jpg       For example user may want to create a srcset for 4 different sizes. In this case the pipeline
+      |- :uuid-3/:output-name.jpg       will have 4 outputs for each image. To store outputs, we can either use :uuid-1:output-name.:ext
+      |- :uuid-4/:output-name.jpg       or we can use :uuid-1/output-name.:ext. I think the second one is better because we can easily
+                                        list all the outputs for a given image.
     |- :pipelineUuid-2 - User only wanted:uuid-3 and :uuid-4 images in :pipelineUuid-2
-      |- :uuid-3.jpg
-      |- :uuid-4.jpg
+      |- :uuid-3/:output-name.jpg
+      |- :uuid-4/:output-name.jpg
     .
     .
     .
