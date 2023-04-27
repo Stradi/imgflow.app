@@ -5,7 +5,7 @@
   "author": "Batın Evirgen <hello@batin.sh> (https://www.batin.sh)",
   "private": true,
   "scripts": {
-    "dev": "nodemon src/index.ts",
+    "dev": "nodemon -x ts-node --files src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js"
   },

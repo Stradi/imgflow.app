@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import jwt from 'jsonwebtoken';
+import jwt, { JwtPayload } from 'jsonwebtoken';
 
 export default function authMiddleware(req: Request, res: Response, next: NextFunction) {
   const authHeader = req.headers.authorization;
@@ -13,7 +13,11 @@ export default function authMiddleware(req: Request, res: Response, next: NextFu
   }
 
   try {
-    jwt.verify(token, process.env.JWT_ACCESS_SECRET as string);
+    const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET as string);
+
+    req.user = {
+      id: (decoded as JwtPayload).id,
+    };
     next();
   } catch (e) {
     return next(new Error('Not authenticated'));
