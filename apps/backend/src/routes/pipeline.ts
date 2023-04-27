@@ -1,6 +1,11 @@
 import express from 'express';
+import multer from 'multer';
+import sharp from 'sharp';
 import { db } from '../lib/db';
+import { TPipeline, runPipeline } from '../lib/runner';
+import { s3, uploadImageOriginal } from '../lib/s3';
 import authMiddleware from '../middlewares/auth';
+import { ApiError } from '../utils/apiError';
 
 const router = express.Router();
 
@@ -111,6 +116,119 @@ router.delete('/:id', authMiddleware, async (req, res) => {
   res.json({
     message: 'Deleted',
     data: pipeline,
+  });
+});
+
+const memoryStorage = multer.memoryStorage();
+const upload = multer({
+  storage: memoryStorage,
+});
+
+function handleErrors(req: express.Request, res: express.Response) {
+  if (!req.body) {
+    return res.json(
+      ApiError.badRequest(
+        'No body was provided',
+        'Client did not provide a body in the request.',
+        'Re-send the request with a body in the request. The body should be in the form of an object with the key "images" and the value being the file.'
+      )
+    );
+  }
+
+  if (!req.files || req.files.length === 0) {
+    return res.json(
+      ApiError.badRequest(
+        'No files were provided',
+        'Client did not provide any files in the request body.',
+        'Re-send the request with files in the request body. The files should be in the form of an array of objects with the key "images" and the value being the file.'
+      )
+    );
+  }
+
+  const files = req.files as Express.Multer.File[];
+
+  if (files.length > 10) {
+    return res.json(
+      ApiError.badRequest(
+        'Too many files',
+        'Client provided more than 10 files in the request body.',
+        'Re-send the request with less than 10 files in the request body.'
+      )
+    );
+  }
+
+  if (files.filter((file) => !file.mimetype.includes('image/')).length > 0) {
+    return res.json(
+      ApiError.badRequest(
+        'Invalid file type',
+        'Client provided files that were not images.',
+        'Re-send the request. While sending the request, make sure that the all files are images.'
+      )
+    );
+  }
+
+  if (files.filter((file) => file.size > 100000000).length > 0) {
+    return res.json(
+      ApiError.badRequest(
+        'File too large',
+        'Client provided files that were larger than 100MB.',
+        'Re-send the request. While sending the request, make sure that the files are not larger than 100MB.'
+      )
+    );
+  }
+
+  return false;
+}
+
+router.post('/:id/run', authMiddleware, upload.array('images', 10), async (req, res) => {
+  const errors = handleErrors(req, res);
+  if (errors) return errors;
+
+  const pipeline = await db().pipeline.findUnique({
+    where: {
+      id: Number(req.params.id),
+    },
+  });
+
+  if (!pipeline) {
+    return res.json(
+      ApiError.notFound(
+        'Pipeline not found',
+        'The pipeline with the given id was not found.',
+        'Make sure that the id is correct and try again.'
+      )
+    );
+  }
+
+  const files = req.files as Express.Multer.File[];
+  const userId = req.user.id;
+
+  const processedIds = [];
+  for (const file of files) {
+    const { uuid, key } = await uploadImageOriginal(s3(), file.buffer, userId);
+
+    const sharpFile = sharp(file.buffer);
+    const uploadedFileKey = await runPipeline(
+      sharpFile,
+      JSON.parse(pipeline.dataJson) as TPipeline,
+      `${userId}/${pipeline.id}/${uuid}`
+    );
+
+    if (uploadedFileKey === '') {
+      return res.json({
+        message: 'No output step specified :/',
+      });
+    }
+
+    processedIds.push({
+      uuid,
+      uploadedFileKey,
+    });
+  }
+
+  res.json({
+    message: 'Success',
+    data: processedIds,
   });
 });
 
