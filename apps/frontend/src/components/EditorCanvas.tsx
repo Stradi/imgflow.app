@@ -1,19 +1,24 @@
-import { useCallback, useRef, useState } from 'react';
-import { Background, Edge, Node, ReactFlow, ReactFlowInstance, addEdge, useEdgesState, useNodesState } from 'reactflow';
+import useCanvasStore from '@/stores/CanvasStore';
+import { getLayoutedElements } from '@/utils/layout';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import {
+  Background,
+  Edge,
+  Node,
+  ReactFlow,
+  ReactFlowProvider,
+  addEdge,
+  getConnectedEdges,
+  getIncomers,
+  getOutgoers,
+  useEdgesState,
+  useNodesState,
+} from 'reactflow';
+import { shallow } from 'zustand/shallow';
+import ReactiveEdge from './ReactiveEdge';
 import InputImageNode from './nodes/InputImageNode';
 import OutputNode from './nodes/OutputNode';
 import ResizeNode from './nodes/ResizeNode';
-
-let nodeIdCounter = 0;
-let edgeIdCounter = 0;
-
-function getNewNodeID() {
-  return `node_${nodeIdCounter++}`;
-}
-
-function getNewEdgeID() {
-  return `edge_${edgeIdCounter++}`;
-}
 
 const customNodes = {
   InputImage: InputImageNode,
@@ -21,90 +26,112 @@ const customNodes = {
   Resize: ResizeNode,
 };
 
-const initialNodes: Node[] = [
-  {
-    id: getNewNodeID(),
-    position: { x: 0, y: 0 },
-    type: 'InputImage',
-    data: {},
-  },
-  {
-    id: getNewNodeID(),
-    position: { x: 0, y: 150 },
-    type: 'Output',
-    data: {},
-  },
-];
-
-const initialEdges: Edge[] = [
-  {
-    id: getNewEdgeID(),
-    source: initialNodes[0].id,
-    target: initialNodes[1].id,
-  },
-];
+const customEdges = {
+  Reactive: ReactiveEdge,
+};
 
 export default function EditorCanvas() {
-  const wrapper = useRef<HTMLDivElement>(null);
-  const [instance, setInstance] = useState<ReactFlowInstance | null>(null);
+  const { getNewNodeID, getNewEdgeID } = useCanvasStore(
+    (state) => ({
+      getNewNodeID: state.getNewNodeID,
+      getNewEdgeID: state.getNewEdgeID,
+    }),
+    shallow
+  );
 
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+  const initialNodes: Node[] = [
+    {
+      id: getNewNodeID(),
+      position: { x: 0, y: 0 },
+      type: 'InputImage',
+      deletable: false,
+      data: {},
+    },
+    {
+      id: getNewNodeID(),
+      position: { x: 0, y: 150 },
+      type: 'Output',
+      deletable: false,
+      data: {},
+    },
+  ];
+
+  const initialEdges: Edge[] = [
+    {
+      id: getNewEdgeID(),
+      source: initialNodes[0].id,
+      target: initialNodes[1].id,
+      type: 'Reactive',
+    },
+  ];
+
+  const wrapper = useRef<HTMLDivElement>(null);
+
+  const [nodes, , onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
+  const [layoutedElements, setLayoutedElements] = useState<any[]>([]);
+
+  useEffect(() => {
+    // @ts-ignore
+    setLayoutedElements(getLayoutedElements([...nodes, ...edges]));
+  }, [nodes, edges]);
+
+  const layoutedNodes = layoutedElements.filter((x) => x.position);
+  const layoutedEdges = layoutedElements.filter((x) => !x.position);
+
   const onConnect = useCallback((params: any) => setEdges((eds) => addEdge(params, eds)), [setEdges]);
+
   const onDragOver = useCallback((event: any) => {
     event.preventDefault();
     event.dataTransfer.dropEffect = 'move';
   }, []);
-  const onDrop = useCallback(
-    (event: any) => {
-      event.preventDefault();
-      if (!wrapper || !wrapper.current || !instance) {
-        return;
-      }
 
-      const type = event.dataTransfer.getData('application/reactflow');
-      if (typeof type === 'undefined' || !type) {
-        return;
-      }
+  function onNodesDelete(deletedNodes: Node[]) {
+    setEdges(
+      deletedNodes.reduce((acc, node) => {
+        const incomers = getIncomers(node, nodes, edges);
+        const outgoers = getOutgoers(node, nodes, edges);
+        const connectedEdges = getConnectedEdges([node], edges);
 
-      const bounds = wrapper.current.getBoundingClientRect();
-      const position = instance.project({
-        x: event.clientX - bounds.left,
-        y: event.clientY - bounds.top,
-      });
+        const remainingEdges = acc.filter((edge) => !connectedEdges.includes(edge));
 
-      setNodes((nds) =>
-        nds.concat({
-          id: getNewNodeID(),
-          type,
-          position,
-          data: {},
-        })
-      );
-    },
-    [instance, setNodes]
-  );
+        const createdEdges = incomers.flatMap(({ id: source }) =>
+          outgoers.map(({ id: target }) => ({ id: getNewEdgeID(), source, target, type: 'Reactive' }))
+        );
+
+        return [...remainingEdges, ...createdEdges];
+      }, edges)
+    );
+  }
 
   return (
     <div ref={wrapper} className="w-full h-full">
-      <ReactFlow
-        fitView
-        nodeTypes={customNodes}
-        nodes={nodes}
-        edges={edges}
-        onDrop={onDrop}
-        onInit={setInstance}
-        onConnect={onConnect}
-        onDragOver={onDragOver}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        proOptions={{
-          hideAttribution: true,
-        }}
-      >
-        <Background className="bg-gray-100" />
-      </ReactFlow>
+      <ReactFlowProvider>
+        <ReactFlow
+          fitView
+          nodeTypes={customNodes}
+          // @ts-ignore
+          edgeTypes={customEdges}
+          nodes={layoutedNodes}
+          edges={layoutedEdges}
+          onConnect={onConnect}
+          onDragOver={onDragOver}
+          onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
+          onNodesDelete={onNodesDelete}
+          multiSelectionKeyCode={null}
+          selectionKeyCode={null}
+          proOptions={{
+            hideAttribution: true,
+          }}
+          defaultEdgeOptions={{
+            deletable: false,
+          }}
+        >
+          <Background className="bg-gray-100" />
+        </ReactFlow>
+      </ReactFlowProvider>
     </div>
   );
 }

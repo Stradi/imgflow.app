@@ -1,3 +1,5 @@
+import useCanvasStore from '@/stores/CanvasStore';
+
 type TSingleNodePreview = {
   title: string;
   description: string;
@@ -5,6 +7,7 @@ type TSingleNodePreview = {
 };
 
 function SingleNodePreview({ title, description, type }: TSingleNodePreview) {
+  const setIsDraggingNewNode = useCanvasStore((state) => state.setIsDraggingNewNode);
   return (
     <div
       className="select-none p-2 rounded-lg hover:cursor-pointer ring-1 ring-gray-200 hover:ring-green-400 transition duration-100"
@@ -12,6 +15,10 @@ function SingleNodePreview({ title, description, type }: TSingleNodePreview) {
       onDragStart={(e) => {
         e.dataTransfer.setData('application/reactflow', type);
         e.dataTransfer.effectAllowed = 'move';
+        setIsDraggingNewNode(true);
+      }}
+      onDragEnd={() => {
+        setIsDraggingNewNode(false);
       }}
     >
       <div className="flex flex-col">
@@ -27,11 +34,7 @@ export default function NodeToolbox() {
     <div className="w-full h-full bg-white/50 backdrop-blur-sm border-2 rounded-xl p-4 border-gray-300">
       <p className="text-xl font-medium">Nodes</p>
       <div className="mt-4">
-        <SingleNodePreview
-          type="Resize"
-          title="Resize Node"
-          description="Resizes your image to specified dimensions and method."
-        />
+        <SingleNodePreview type="Resize" title="Resize" description="Resizes your image to specified dimensions." />
       </div>
     </div>
   );
