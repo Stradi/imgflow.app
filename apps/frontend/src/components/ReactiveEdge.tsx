@@ -34,7 +34,7 @@ export default function ReactiveEdge({
     targetPosition,
   });
 
-  const onDrop = (e: React.DragEvent<SVGForeignObjectElement>) => {
+  const onDrop = (e: React.DragEvent<SVGPathElement>) => {
     e.preventDefault();
     e.stopPropagation();
 
@@ -79,9 +79,10 @@ export default function ReactiveEdge({
     <>
       <path id={id} style={style} className="react-flow__edge-path" d={edgePath} />
       {isDraggingNewNode && (
-        <foreignObject width={80} height={80} x={labelX - 20} y={labelY - 20} onDrop={onDrop}>
-          <div className="w-1/2 h-1/2 rounded-full bg-green-400/75"></div>
-        </foreignObject>
+        <>
+          <path className="react-flow__edge-path !stroke-red-500 !stroke-[8]" d={edgePath} />
+          <path onDrop={onDrop} className="opacity-0 !stroke-[64]" d={edgePath} />{' '}
+        </>
       )}
     </>
   );

@@ -3,6 +3,7 @@ import { getLayoutedElements } from '@/utils/layout';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Background,
+  Connection,
   Edge,
   Node,
   ReactFlow,
@@ -16,6 +17,7 @@ import {
 } from 'reactflow';
 import { shallow } from 'zustand/shallow';
 import ReactiveEdge from './ReactiveEdge';
+import CropNode from './nodes/CropNode';
 import InputImageNode from './nodes/InputImageNode';
 import OutputNode from './nodes/OutputNode';
 import ResizeNode from './nodes/ResizeNode';
@@ -24,6 +26,7 @@ const customNodes = {
   InputImage: InputImageNode,
   Output: OutputNode,
   Resize: ResizeNode,
+  Crop: CropNode,
 };
 
 const customEdges = {
@@ -67,7 +70,7 @@ export default function EditorCanvas() {
 
   const wrapper = useRef<HTMLDivElement>(null);
 
-  const [nodes, , onNodesChange] = useNodesState(initialNodes);
+  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
   const [layoutedElements, setLayoutedElements] = useState<any[]>([]);
@@ -80,7 +83,7 @@ export default function EditorCanvas() {
   const layoutedNodes = layoutedElements.filter((x) => x.position);
   const layoutedEdges = layoutedElements.filter((x) => !x.position);
 
-  const onConnect = useCallback((params: any) => setEdges((eds) => addEdge(params, eds)), [setEdges]);
+  const onConnect = useCallback((params: Connection) => setEdges((eds) => addEdge(params, eds)), [setEdges]);
 
   const onDragOver = useCallback((event: any) => {
     event.preventDefault();
@@ -113,8 +116,8 @@ export default function EditorCanvas() {
           nodeTypes={customNodes}
           // @ts-ignore
           edgeTypes={customEdges}
-          nodes={layoutedNodes}
-          edges={layoutedEdges}
+          nodes={nodes}
+          edges={edges}
           onConnect={onConnect}
           onDragOver={onDragOver}
           onNodesChange={onNodesChange}
