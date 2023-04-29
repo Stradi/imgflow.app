@@ -1,5 +1,7 @@
 'use client';
 
+import 'reactflow/dist/style.css';
+
 import EditorCanvas from '@/components/EditorCanvas';
 import NodeToolbox from '@/components/NodeToolbox';
 import { cn } from '@/utils/tw';
