@@ -1,11 +1,14 @@
 import dotenv from 'dotenv';
 dotenv.config();
 
+import cors from 'cors';
 import express, { Application, NextFunction, Request, Response } from 'express';
 import router from './routes';
 
 const app: Application = express();
 const port = 3001;
+
+app.use(cors());
 
 app.use((req, res, next) => {
   res.setHeader('X-Powered-By', 'Mostly coffee, but blood and tears too :)');
