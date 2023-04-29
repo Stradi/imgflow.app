@@ -116,8 +116,8 @@ export default function EditorCanvas() {
           nodeTypes={customNodes}
           // @ts-ignore
           edgeTypes={customEdges}
-          nodes={nodes}
-          edges={edges}
+          nodes={layoutedNodes}
+          edges={layoutedEdges}
           onConnect={onConnect}
           onDragOver={onDragOver}
           onNodesChange={onNodesChange}
