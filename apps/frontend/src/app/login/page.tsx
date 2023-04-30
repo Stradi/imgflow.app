@@ -55,9 +55,13 @@ const Page = () => {
   }
 
   return (
-    <div className="w-screen h-screen bg-gray-50 grid grid-cols-2 items-center justify-center">
-      <div className="w-full relative h-full">
-        <img src="https://picsum.photos/1024/1024" className="absolute inset-0 w-full h-full" alt="Some image" />
+    <div className="w-screen h-screen bg-gray-50 grid md:grid-cols-2 items-center justify-center">
+      <div className="w-full relative h-full hidden md:block">
+        <img
+          src="https://picsum.photos/1024/1024"
+          className="absolute inset-0 w-full h-full object-cover"
+          alt="Some image"
+        />
       </div>
       <motion.div
         className="w-full max-w-sm mx-auto"
@@ -65,7 +69,7 @@ const Page = () => {
         animate={{ opacity: 1, y: '0px' }}
         exit={{ opacity: 0, y: '-100px' }}
       >
-        <h1 className="text-xl font-medium  my-4">Login to your account</h1>
+        <h1 className="text-xl font-medium my-4">Login to your account</h1>
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
           <div>
             <Label htmlFor="email">Email</Label>
