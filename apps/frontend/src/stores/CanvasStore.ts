@@ -3,14 +3,14 @@ import { create } from 'zustand';
 let nodeIDCounter = 0;
 let edgeIDCounter = 0;
 
-type CanvasStore = {
+type TCanvasStore = {
   isDraggingNewNode: boolean;
   setIsDraggingNewNode: (isDraggingNewNode: boolean) => void;
   getNewNodeID: () => string;
   getNewEdgeID: () => string;
 };
 
-const useCanvasStore = create<CanvasStore>((set, get) => ({
+const useCanvasStore = create<TCanvasStore>((set, get) => ({
   isDraggingNewNode: false,
   setIsDraggingNewNode: (isDraggingNewNode: boolean) => set({ isDraggingNewNode }),
   getNewNodeID: () => {

@@ -1,3 +1,5 @@
+import useAccountStore from '@/stores/AccountStore';
+
 type TLoginArgs = {
   email: string;
   password: string;
@@ -51,6 +53,14 @@ export async function login({ email, password }: TLoginArgs): Promise<{
   localStorage.setItem('refreshToken', data['data']['refreshToken']);
   localStorage.setItem('user', JSON.stringify(data['data']['user']));
 
+  useAccountStore.setState({
+    isAuthenticated: true,
+    user: {
+      id: data['data']['user']['id'],
+      email: data['data']['user']['email'],
+    },
+  });
+
   return {
     error: null,
     data: data['data'],
@@ -93,6 +103,14 @@ export async function createAccount({ email, password }: TCreateAccountArgs) {
   localStorage.setItem('refreshToken', data['data']['refreshToken']);
   localStorage.setItem('user', JSON.stringify(data['data']['user']));
 
+  useAccountStore.setState({
+    isAuthenticated: true,
+    user: {
+      id: data['data']['user']['id'],
+      email: data['data']['user']['email'],
+    },
+  });
+
   return data;
 }
 
@@ -120,4 +138,15 @@ export async function refreshToken({ refreshToken }: TRefreshTokenArgs) {
   localStorage.setItem('refreshToken', data['data']['refreshToken']);
 
   return data;
+}
+
+export async function logout() {
+  useAccountStore.setState({
+    isAuthenticated: false,
+    user: null,
+  });
+
+  localStorage.removeItem('accessToken');
+  localStorage.removeItem('refreshToken');
+  localStorage.removeItem('user');
 }

@@ -3,6 +3,7 @@
 import { Button, buttonVariants } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Label } from '@/components/ui/Label';
+import useAuthGuard from '@/hooks/useAuthGuard';
 import { LoginErrors, login } from '@/services/auth';
 import { TErrorTypes, getErrorMessage } from '@/utils/errorMessages';
 import { motion } from 'framer-motion';
@@ -15,6 +16,8 @@ import { useForm } from 'react-hook-form';
 // TODO: Add a switch to toggle between sarcastic and normal errors messages.
 
 const Page = () => {
+  useAuthGuard(true, '/dashboard');
+
   const [isLoading, setIsLoading] = useState(false);
 
   const router = useRouter();
