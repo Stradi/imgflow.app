@@ -3,7 +3,7 @@
 import { Button, buttonVariants } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Label } from '@/components/ui/Label';
-import { LoginErrors, login } from '@/services/auth';
+import { CreateAccountErrors, createAccount } from '@/services/auth';
 import { TErrorTypes, getErrorMessage } from '@/utils/errorMessages';
 import { motion } from 'framer-motion';
 import { Loader2Icon } from 'lucide-react';
@@ -11,8 +11,6 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-
-// TODO: Add a switch to toggle between sarcastic and normal errors messages.
 
 const Page = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -30,15 +28,15 @@ const Page = () => {
     setIsLoading(true);
 
     try {
-      const resp = await login({ email: data.email, password: data.password });
+      const resp = await createAccount({
+        email: data.email,
+        password: data.password,
+      });
+
       if (resp.error) {
-        if (resp.error === LoginErrors.EMAIL_NOT_FOUND) {
+        if (resp.error === CreateAccountErrors.EMAIL_ALREADY_EXIST) {
           setError('email', {
-            type: 'notFound',
-          });
-        } else if (resp.error === LoginErrors.INVALID_PASSWORD) {
-          setError('password', {
-            type: 'invalid',
+            type: 'alreadyExists',
           });
         } else {
           throw resp.error;
@@ -65,7 +63,7 @@ const Page = () => {
         animate={{ opacity: 1, y: '0px' }}
         exit={{ opacity: 0, y: '-100px' }}
       >
-        <h1 className="text-xl font-medium  my-4">Login to your account</h1>
+        <h1 className="text-xl font-medium  my-4">Create a new account</h1>
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
           <div>
             <Label htmlFor="email">Email</Label>
@@ -95,13 +93,10 @@ const Page = () => {
           )}
           <Button type="submit" disabled={isLoading}>
             {isLoading && <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />}
-            Login
+            Sign Up
           </Button>
-          <Link className={buttonVariants({ variant: 'link', size: 'sm' })} href="/forgot-password">
-            Forgot password?
-          </Link>
-          <Link className={buttonVariants({ variant: 'link', size: 'sm' })} href="/register">
-            Don&apos;t have an account? Create one now.
+          <Link className={buttonVariants({ variant: 'link', size: 'sm' })} href="/login">
+            Already have an account?
           </Link>
         </form>
       </motion.div>

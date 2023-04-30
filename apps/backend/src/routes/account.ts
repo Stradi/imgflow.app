@@ -6,8 +6,8 @@ import { db } from '../lib/db';
 const router = express.Router();
 
 router.post('/create-account', async (req, res) => {
-  const { name, email, password } = req.body;
-  if (!name || !email || !password) {
+  const { email, password } = req.body;
+  if (!email || !password) {
     return res.json({
       error: 'Invalid body',
     });
@@ -28,18 +28,23 @@ router.post('/create-account', async (req, res) => {
   const hashedPassword = await bcrypt.hash(password, 10);
   const createdUser = await db().account.create({
     data: {
-      name: name,
       email: email,
       password: hashedPassword,
     },
   });
 
+  const accessToken = jwt.sign({ id: createdUser.id }, process.env.JWT_ACCESS_SECRET as string, { expiresIn: '15m' });
+  const refreshToken = jwt.sign({ id: createdUser.id }, process.env.JWT_REFRESH_SECRET as string, { expiresIn: '1d' });
+
   return res.json({
     message: 'Account created successfully',
     data: {
-      id: createdUser.id,
-      name: createdUser.name,
-      email: createdUser.email,
+      user: {
+        id: createdUser.id,
+        email: createdUser.email,
+      },
+      accessToken,
+      refreshToken,
     },
   });
 });
@@ -79,7 +84,6 @@ router.post('/login', async (req, res) => {
     data: {
       user: {
         id: user.id,
-        name: user.name,
         email: user.email,
       },
       accessToken,

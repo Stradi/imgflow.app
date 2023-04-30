@@ -57,22 +57,41 @@ export async function login({ email, password }: TLoginArgs): Promise<{
   };
 }
 
-type TRegisterArgs = {
+type TCreateAccountArgs = {
   email: string;
   password: string;
 };
 
-export async function register({ email, password }: TRegisterArgs) {
+export const CreateAccountErrors = {
+  EMAIL_ALREADY_EXIST: 'EMAIL_ALREADY_EXIST',
+};
+
+export async function createAccount({ email, password }: TCreateAccountArgs) {
   const response = await fetch('http://localhost:3001/api/v1/account/create-account', {
     method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
     body: JSON.stringify({ email, password }),
   });
 
   const data = await response.json();
 
   if (data['error']) {
-    throw new Error(data['error']);
+    if (data['error'] === 'Email already exists') {
+      return {
+        error: CreateAccountErrors.EMAIL_ALREADY_EXIST,
+        data: null,
+      };
+    } else {
+      throw new Error(data['error']);
+    }
   }
+
+  localStorage.setItem('accessToken', data['data']['accessToken']);
+  localStorage.setItem('refreshToken', data['data']['refreshToken']);
+  localStorage.setItem('user', JSON.stringify(data['data']['user']));
 
   return data;
 }
@@ -84,6 +103,10 @@ type TRefreshTokenArgs = {
 export async function refreshToken({ refreshToken }: TRefreshTokenArgs) {
   const response = await fetch('http://localhost:3001/api/v1/account/create-account', {
     method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
     body: JSON.stringify({ refreshToken }),
   });
 
