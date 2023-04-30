@@ -9,7 +9,7 @@ import { Loader2Icon } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { FieldError, useForm } from 'react-hook-form';
 
 // TODO: Add a switch to toggle between sarcastic and normal errors messages.
 // TODO: Fix error message show stuff
@@ -88,6 +88,30 @@ const unknownErrorMessages = [
   "Looks like our backend is playing hooky today. Maybe it's at the movies or taking a nap. We'll give it a stern talking to when it gets back.",
 ];
 
+function getErrorMessageForEmailField(error: FieldError) {
+  switch (error.type) {
+    case 'required':
+      return emptyEmailMessages[Math.floor(Math.random() * emptyEmailMessages.length)];
+    case 'notFound':
+      return emailInvalidMessages[Math.floor(Math.random() * emailInvalidMessages.length)];
+    default:
+      return unknownErrorMessages[Math.floor(Math.random() * unknownErrorMessages.length)];
+  }
+}
+
+function getErrorMessageForPasswordField(error: FieldError) {
+  switch (error.type) {
+    case 'required':
+      return emptyPasswordMessages[Math.floor(Math.random() * emptyPasswordMessages.length)];
+    case 'minLength':
+      return passwordMinLengthMessages[Math.floor(Math.random() * passwordMinLengthMessages.length)];
+    case 'invalid':
+      return passwordInvalidMessages[Math.floor(Math.random() * passwordInvalidMessages.length)];
+    default:
+      return unknownErrorMessages[Math.floor(Math.random() * unknownErrorMessages.length)];
+  }
+}
+
 const Page = () => {
   const [isLoading, setIsLoading] = useState(false);
 
@@ -107,10 +131,12 @@ const Page = () => {
       const resp = await login({ email: data.email, password: data.password });
       if (resp.error) {
         if (resp.error === LoginErrors.EMAIL_NOT_FOUND) {
-          setError('email', { message: emailInvalidMessages[Math.floor(Math.random() * emailInvalidMessages.length)] });
+          setError('email', {
+            type: 'notFound',
+          });
         } else if (resp.error === LoginErrors.INVALID_PASSWORD) {
           setError('password', {
-            message: passwordInvalidMessages[Math.floor(Math.random() * passwordInvalidMessages.length)],
+            type: 'invalid',
           });
         } else {
           throw new Error(resp.error);
@@ -122,6 +148,7 @@ const Page = () => {
       console.error(err);
       setError('custom', {
         message: unknownErrorMessages[Math.floor(Math.random() * unknownErrorMessages.length)],
+        type: 'unknown',
       });
     } finally {
       setIsLoading(false);
@@ -145,7 +172,7 @@ const Page = () => {
             <Input id="email" type="email" disabled={isLoading} {...register('email', { required: true })} />
             {errors.email && (
               <span className="text-red-500 text-xs font-medium">
-                {emptyEmailMessages[Math.floor(Math.random() * emptyEmailMessages.length)]}
+                {getErrorMessageForEmailField(errors.email as FieldError)}
               </span>
             )}
           </div>
@@ -159,7 +186,7 @@ const Page = () => {
             />
             {errors.password && (
               <span className="text-red-500 text-xs font-medium">
-                {emptyPasswordMessages[Math.floor(Math.random() * emptyPasswordMessages.length)]}
+                {getErrorMessageForPasswordField(errors.password as FieldError)}
               </span>
             )}
           </div>
