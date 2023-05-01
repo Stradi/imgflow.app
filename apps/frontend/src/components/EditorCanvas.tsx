@@ -1,20 +1,7 @@
 import useCanvasStore from '@/stores/CanvasStore';
 import { getLayoutedElements } from '@/utils/layout';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import {
-  Background,
-  Connection,
-  Edge,
-  Node,
-  ReactFlow,
-  ReactFlowProvider,
-  addEdge,
-  getConnectedEdges,
-  getIncomers,
-  getOutgoers,
-  useEdgesState,
-  useNodesState,
-} from 'reactflow';
+import { useEffect, useRef, useState } from 'react';
+import { Background, ReactFlow, ReactFlowProvider } from 'reactflow';
 import { shallow } from 'zustand/shallow';
 import ReactiveEdge from './ReactiveEdge';
 import CropNode from './nodes/CropNode';
@@ -34,46 +21,20 @@ const customEdges = {
 };
 
 export default function EditorCanvas() {
-  const { getNewNodeID, getNewEdgeID } = useCanvasStore(
+  const wrapper = useRef<HTMLDivElement>(null);
+  const [layoutedElements, setLayoutedElements] = useState<any[]>([]);
+
+  const { nodes, edges, onConnect, onNodesChange, onEdgesChange, onNodesDelete } = useCanvasStore(
     (state) => ({
-      getNewNodeID: state.getNewNodeID,
-      getNewEdgeID: state.getNewEdgeID,
+      nodes: state.nodes,
+      edges: state.edges,
+      onConnect: state.onConnect,
+      onNodesChange: state.onNodesChange,
+      onEdgesChange: state.onEdgesChange,
+      onNodesDelete: state.onNodesDelete,
     }),
     shallow
   );
-
-  const initialNodes: Node[] = [
-    {
-      id: getNewNodeID(),
-      position: { x: 0, y: 0 },
-      type: 'InputImage',
-      deletable: false,
-      data: {},
-    },
-    {
-      id: getNewNodeID(),
-      position: { x: 0, y: 150 },
-      type: 'Output',
-      deletable: false,
-      data: {},
-    },
-  ];
-
-  const initialEdges: Edge[] = [
-    {
-      id: getNewEdgeID(),
-      source: initialNodes[0].id,
-      target: initialNodes[1].id,
-      type: 'Reactive',
-    },
-  ];
-
-  const wrapper = useRef<HTMLDivElement>(null);
-
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
-
-  const [layoutedElements, setLayoutedElements] = useState<any[]>([]);
 
   useEffect(() => {
     // @ts-ignore
@@ -82,31 +43,6 @@ export default function EditorCanvas() {
 
   const layoutedNodes = layoutedElements.filter((x) => x.position);
   const layoutedEdges = layoutedElements.filter((x) => !x.position);
-
-  const onConnect = useCallback((params: Connection) => setEdges((eds) => addEdge(params, eds)), [setEdges]);
-
-  const onDragOver = useCallback((event: any) => {
-    event.preventDefault();
-    event.dataTransfer.dropEffect = 'move';
-  }, []);
-
-  function onNodesDelete(deletedNodes: Node[]) {
-    setEdges(
-      deletedNodes.reduce((acc, node) => {
-        const incomers = getIncomers(node, nodes, edges);
-        const outgoers = getOutgoers(node, nodes, edges);
-        const connectedEdges = getConnectedEdges([node], edges);
-
-        const remainingEdges = acc.filter((edge) => !connectedEdges.includes(edge));
-
-        const createdEdges = incomers.flatMap(({ id: source }) =>
-          outgoers.map(({ id: target }) => ({ id: getNewEdgeID(), source, target, type: 'Reactive' }))
-        );
-
-        return [...remainingEdges, ...createdEdges];
-      }, edges)
-    );
-  }
 
   return (
     <div ref={wrapper} className="w-full h-full">
@@ -119,10 +55,13 @@ export default function EditorCanvas() {
           nodes={layoutedNodes}
           edges={layoutedEdges}
           onConnect={onConnect}
-          onDragOver={onDragOver}
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           onNodesDelete={onNodesDelete}
+          onDragOver={(event) => {
+            event.preventDefault();
+            event.dataTransfer.dropEffect = 'move';
+          }}
           multiSelectionKeyCode={null}
           selectionKeyCode={null}
           proOptions={{

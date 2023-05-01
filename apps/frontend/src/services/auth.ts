@@ -119,7 +119,7 @@ type TRefreshTokenArgs = {
 };
 
 export async function refreshToken({ refreshToken }: TRefreshTokenArgs) {
-  const response = await fetch('http://localhost:3001/api/v1/account/create-account', {
+  const response = await fetch('http://localhost:3001/api/v1/account/refresh', {
     method: 'POST',
     headers: {
       Accept: 'application/json',
@@ -149,4 +149,37 @@ export async function logout() {
   localStorage.removeItem('accessToken');
   localStorage.removeItem('refreshToken');
   localStorage.removeItem('user');
+}
+
+export async function doAuthenticatedRequest(url: string, options: RequestInit): Promise<any> {
+  const lsAccessToken = localStorage.getItem('accessToken');
+  const lsRefreshToken = localStorage.getItem('refreshToken');
+
+  if (!lsAccessToken || !lsRefreshToken) {
+    throw new Error('No access token or refresh token');
+  }
+
+  const response = await fetch(url, {
+    ...options,
+    headers: {
+      ...options.headers,
+      Authorization: `Bearer ${lsAccessToken}`,
+    },
+  });
+
+  const data = await response.json();
+
+  if (data['error']) {
+    if (data['error'] === 'Not authenticated') {
+      const refreshTokenResponse = await refreshToken({ refreshToken: lsRefreshToken });
+
+      if (refreshTokenResponse['error']) {
+        throw new Error(refreshTokenResponse['error']);
+      }
+
+      return await doAuthenticatedRequest(url, options);
+    }
+  }
+
+  return data;
 }
