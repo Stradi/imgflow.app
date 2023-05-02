@@ -4,7 +4,7 @@ import CreatePipelineModalContent from '@/components/pipeline/CreatePipelineModa
 import PipelineCard, { EmptyPipelineCard } from '@/components/pipeline/PipelineCard';
 import { Button } from '@/components/ui/Button';
 import { Dialog, DialogTrigger } from '@/components/ui/Dialog';
-import { createNewPipeline, getAllPipelines } from '@/services/pipeline';
+import { createNewPipeline, deletePipeline, getAllPipelines } from '@/services/pipeline';
 import TEMPLATE_TO_PIPELINE from '@/utils/templateToPipeline';
 import { useEffect, useState } from 'react';
 
@@ -50,13 +50,18 @@ const Page = () => {
           {pipelines.map((pipeline: any) => (
             <PipelineCard
               key={pipeline.id}
-              // TODO: We can create slug in backend and pass it here instead of id.
               href={`/dashboard/pipeline/${pipeline.id}`}
               title={pipeline.name}
               lastRun={new Date(Date.now())}
               runCount={200}
               processedImageCount={1000}
               image="https://picsum.photos/1024/256"
+              onDelete={async () => {
+                await deletePipeline(pipeline.id).catch((err) => {
+                  console.error(err);
+                });
+                forceUpdate((x) => x + 1);
+              }}
             />
           ))}
         </div>

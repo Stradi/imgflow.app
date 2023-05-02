@@ -53,3 +53,15 @@ export async function savePipeline(id: string, name: string, dataJson: string) {
 
   return response;
 }
+
+export async function deletePipeline(id: string) {
+  const response = await doAuthenticatedRequest(`http://localhost:3001/api/v1/pipeline/${id}`, {
+    method: 'DELETE',
+  });
+
+  if (response['error']) {
+    throw new Error(response['error']);
+  }
+
+  return response;
+}

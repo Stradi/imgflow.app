@@ -1,6 +1,7 @@
-import { ListIcon, PlusIcon } from 'lucide-react';
+import { PlusIcon } from 'lucide-react';
 import Link from 'next/link';
-import { Button, buttonVariants } from '../ui/Button';
+import { buttonVariants } from '../ui/Button';
+import ConfirmDeleteButton from '../ui/ConfirmDeleteButton';
 
 export type TPipelineCardProps = {
   title: string;
@@ -9,6 +10,7 @@ export type TPipelineCardProps = {
   runCount: number;
   lastRun: Date;
   processedImageCount: number;
+  onDelete?: () => void;
 };
 
 export default function PipelineCard({
@@ -18,6 +20,7 @@ export default function PipelineCard({
   runCount,
   lastRun,
   processedImageCount,
+  onDelete,
 }: TPipelineCardProps) {
   return (
     <div className="border border-gray-200 rounded-xl group hover:border-green-500 overflow-hidden transition-all duration-200 hover:shadow-md hover:shadow-green-100">
@@ -55,9 +58,7 @@ export default function PipelineCard({
           >
             Edit
           </Link>
-          <Button className="rounded-full" variant="outline">
-            <ListIcon className="h-5 w-5" />
-          </Button>
+          <ConfirmDeleteButton onDelete={onDelete} />
         </div>
       </div>
     </div>
