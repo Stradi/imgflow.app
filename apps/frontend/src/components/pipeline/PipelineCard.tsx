@@ -4,7 +4,7 @@ import { Button, buttonVariants } from '../ui/Button';
 
 export type TPipelineCardProps = {
   title: string;
-  slug?: string;
+  href?: string;
   image?: string;
   runCount: number;
   lastRun: Date;
@@ -13,7 +13,7 @@ export type TPipelineCardProps = {
 
 export default function PipelineCard({
   title,
-  slug,
+  href,
   image,
   runCount,
   lastRun,
@@ -42,7 +42,7 @@ export default function PipelineCard({
               variant: 'default',
               className: 'basis-1/2',
             })}
-            href={`/dashboard/pipeline/${slug}/run`}
+            href={`${href}/run`}
           >
             Run
           </Link>
@@ -51,7 +51,7 @@ export default function PipelineCard({
               variant: 'secondary',
               className: 'basis-1/2',
             })}
-            href={`/dashboard/pipeline/${slug}/edit`}
+            href={`${href}/edit`}
           >
             Edit
           </Link>

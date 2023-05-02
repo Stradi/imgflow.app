@@ -24,3 +24,32 @@ export async function createNewPipeline(name: string, dataJson: string) {
 
   return response;
 }
+
+export async function getPipelineById(id: string) {
+  const response = await doAuthenticatedRequest(`http://localhost:3001/api/v1/pipeline/${id}`, {
+    method: 'GET',
+  });
+
+  if (response['error']) {
+    throw new Error(response['error']);
+  }
+
+  return response;
+}
+
+export async function savePipeline(id: string, name: string, dataJson: string) {
+  const response = await doAuthenticatedRequest(`http://localhost:3001/api/v1/pipeline/${id}`, {
+    method: 'PUT',
+    body: JSON.stringify({ name, dataJson }),
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+  });
+
+  if (response['error']) {
+    throw new Error(response['error']);
+  }
+
+  return response;
+}

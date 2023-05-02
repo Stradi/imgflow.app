@@ -17,12 +17,13 @@ import {
 } from 'reactflow';
 import { create } from 'zustand';
 
-let nodeIDCounter = 0;
-let edgeIDCounter = 0;
+let nodeIdCounter = 0;
+let edgeIdCounter = 0;
 
 type TCanvasStore = {
   isDraggingNewNode: boolean;
   setIsDraggingNewNode: (isDraggingNewNode: boolean) => void;
+  setCounters: (nodeIdValue: number, edgeIdValue: number) => void;
   getNewNodeID: () => string;
   getNewEdgeID: () => string;
 
@@ -42,11 +43,15 @@ type TCanvasStore = {
 const useCanvasStore = create<TCanvasStore>((set, get) => ({
   isDraggingNewNode: false,
   setIsDraggingNewNode: (isDraggingNewNode: boolean) => set({ isDraggingNewNode }),
+  setCounters: (nodeIdValue: number, edgeIdValue: number) => {
+    nodeIdCounter = nodeIdValue;
+    edgeIdCounter = edgeIdValue;
+  },
   getNewNodeID: () => {
-    return `node-${nodeIDCounter++}`;
+    return `node-${nodeIdCounter++}`;
   },
   getNewEdgeID: () => {
-    return `edge-${edgeIDCounter++}`;
+    return `edge-${edgeIdCounter++}`;
   },
   pipelineName: 'New Pipeline',
   setPipelineName: (pipelineName: string) => set({ pipelineName }),

@@ -16,7 +16,7 @@ const Page = () => {
   useEffect(() => {
     async function fetchPipelines() {
       const response = await getAllPipelines();
-      setPipelines(response.data);
+      setPipelines(response.data.sort((a: any, b: any) => b.id - a.id));
     }
 
     fetchPipelines();
@@ -50,6 +50,8 @@ const Page = () => {
           {pipelines.map((pipeline: any) => (
             <PipelineCard
               key={pipeline.id}
+              // TODO: We can create slug in backend and pass it here instead of id.
+              href={`/dashboard/pipeline/${pipeline.id}`}
               title={pipeline.name}
               lastRun={new Date(Date.now())}
               runCount={200}

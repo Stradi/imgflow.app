@@ -4,7 +4,7 @@ export default function OutputNode(props: any) {
   return (
     <BaseNode
       node={props}
-      topHandle={{
+      leftHandle={{
         type: 'target',
       }}
     >

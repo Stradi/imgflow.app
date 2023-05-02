@@ -22,15 +22,15 @@ function BaseNodeHandle({ type, position }: TBaseNodeHandleProps) {
 }
 
 type TBaseNodeProps = PropsWithChildren & {
-  topHandle?: {
+  leftHandle?: {
     type: 'source' | 'target';
   };
-  bottomHandle?: {
+  rightHandle?: {
     type: 'source' | 'target';
   };
   node: Node;
 };
-function BaseNode({ children, topHandle, bottomHandle, node }: TBaseNodeProps) {
+function BaseNode({ children, leftHandle, rightHandle, node }: TBaseNodeProps) {
   const header = findByType(children, BaseNodeHeader);
   const content = findByType(children, BaseNodeContent);
 
@@ -41,10 +41,10 @@ function BaseNode({ children, topHandle, bottomHandle, node }: TBaseNodeProps) {
         node.selected && 'ring-2 ring-green-200'
       )}
     >
-      {topHandle && <BaseNodeHandle type={topHandle.type} position={Position.Top} />}
+      {leftHandle && <BaseNodeHandle type={leftHandle.type} position={Position.Left} />}
       {header}
       {content}
-      {bottomHandle && <BaseNodeHandle type={bottomHandle.type} position={Position.Bottom} />}
+      {rightHandle && <BaseNodeHandle type={rightHandle.type} position={Position.Right} />}
     </div>
   );
 }

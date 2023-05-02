@@ -4,7 +4,7 @@ export default function InputImageNode(props: any) {
   return (
     <BaseNode
       node={props}
-      bottomHandle={{
+      rightHandle={{
         type: 'source',
       }}
     >

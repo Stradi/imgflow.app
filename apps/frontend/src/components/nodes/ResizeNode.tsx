@@ -4,10 +4,10 @@ export default function ResizeNode(props: any) {
   return (
     <BaseNode
       node={props}
-      topHandle={{
+      leftHandle={{
         type: 'target',
       }}
-      bottomHandle={{
+      rightHandle={{
         type: 'source',
       }}
     >
