@@ -5,6 +5,7 @@ import PipelineCard, { EmptyPipelineCard } from '@/components/pipeline/PipelineC
 import { Button } from '@/components/ui/Button';
 import { Dialog, DialogTrigger } from '@/components/ui/Dialog';
 import { createNewPipeline, getAllPipelines } from '@/services/pipeline';
+import TEMPLATE_TO_PIPELINE from '@/utils/templateToPipeline';
 import { useEffect, useState } from 'react';
 
 const Page = () => {
@@ -35,9 +36,8 @@ const Page = () => {
             </DialogTrigger>
             <CreatePipelineModalContent
               onCreate={async (pipelineName, template) => {
-                // TODO: We should add TEMPLATE_TO_DATA constant in src/services/pipeline.ts file
-                // and convert template to data here and send to createNewPipeline function.
-                await createNewPipeline(pipelineName, template).catch((err) => {
+                const dataJson = JSON.stringify(TEMPLATE_TO_PIPELINE[template as keyof typeof TEMPLATE_TO_PIPELINE]);
+                await createNewPipeline(pipelineName, dataJson).catch((err) => {
                   console.error(err);
                   setIsModalOpen(false);
                 });
@@ -72,9 +72,8 @@ const Page = () => {
             </DialogTrigger>
             <CreatePipelineModalContent
               onCreate={async (pipelineName, template) => {
-                // TODO: We should add TEMPLATE_TO_DATA constant in src/services/pipeline.ts file
-                // and convert template to data here and send to createNewPipeline function.
-                await createNewPipeline(pipelineName, template).catch((err) => {
+                const dataJson = JSON.stringify(TEMPLATE_TO_PIPELINE[template as keyof typeof TEMPLATE_TO_PIPELINE]);
+                await createNewPipeline(pipelineName, dataJson).catch((err) => {
                   console.error(err);
                   setIsModalOpen(false);
                 });
