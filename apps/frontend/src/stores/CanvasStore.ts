@@ -1,3 +1,4 @@
+import { RefObject } from 'react';
 import {
   Connection,
   Edge,
@@ -21,6 +22,9 @@ let nodeIdCounter = 0;
 let edgeIdCounter = 0;
 
 type TCanvasStore = {
+  canvasWrapperRef: RefObject<HTMLDivElement> | null;
+  setCanvasWrapperRef: (canvasWrapperRef: RefObject<HTMLDivElement>) => void;
+
   isDraggingNewNode: boolean;
   setIsDraggingNewNode: (isDraggingNewNode: boolean) => void;
   setCounters: (nodeIdValue: number, edgeIdValue: number) => void;
@@ -41,6 +45,9 @@ type TCanvasStore = {
 };
 
 const useCanvasStore = create<TCanvasStore>((set, get) => ({
+  canvasWrapperRef: null,
+  setCanvasWrapperRef: (canvasWrapperRef: RefObject<HTMLDivElement>) => set({ canvasWrapperRef }),
+
   isDraggingNewNode: false,
   setIsDraggingNewNode: (isDraggingNewNode: boolean) => set({ isDraggingNewNode }),
   setCounters: (nodeIdValue: number, edgeIdValue: number) => {

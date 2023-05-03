@@ -18,7 +18,17 @@ type TBaseNodeHandleProps = {
   position: Position;
 };
 function BaseNodeHandle({ type, position }: TBaseNodeHandleProps) {
-  return <Handle type={type} position={position} />;
+  return (
+    <Handle
+      type={type}
+      position={position}
+      style={{
+        width: '16px',
+        height: '16px',
+        opacity: '0.5',
+      }}
+    />
+  );
 }
 
 type TBaseNodeProps = PropsWithChildren & {

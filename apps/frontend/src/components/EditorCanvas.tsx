@@ -26,20 +26,34 @@ export default function EditorCanvas() {
 
   const [layoutedElements, setLayoutedElements] = useState<any[]>([]);
 
-  const { nodes, setNodes, edges, onConnect, onNodesChange, onEdgesChange, onNodesDelete, getNewNodeID } =
-    useCanvasStore(
-      (state) => ({
-        nodes: state.nodes,
-        setNodes: state.setNodes,
-        edges: state.edges,
-        onConnect: state.onConnect,
-        onNodesChange: state.onNodesChange,
-        onEdgesChange: state.onEdgesChange,
-        onNodesDelete: state.onNodesDelete,
-        getNewNodeID: state.getNewNodeID,
-      }),
-      shallow
-    );
+  const {
+    setCanvasWrapperRef,
+    nodes,
+    setNodes,
+    edges,
+    onConnect,
+    onNodesChange,
+    onEdgesChange,
+    onNodesDelete,
+    getNewNodeID,
+  } = useCanvasStore(
+    (state) => ({
+      setCanvasWrapperRef: state.setCanvasWrapperRef,
+      nodes: state.nodes,
+      setNodes: state.setNodes,
+      edges: state.edges,
+      onConnect: state.onConnect,
+      onNodesChange: state.onNodesChange,
+      onEdgesChange: state.onEdgesChange,
+      onNodesDelete: state.onNodesDelete,
+      getNewNodeID: state.getNewNodeID,
+    }),
+    shallow
+  );
+
+  useEffect(() => {
+    setCanvasWrapperRef(wrapper);
+  }, [wrapper, setCanvasWrapperRef]);
 
   useEffect(() => {
     // @ts-ignore
@@ -72,12 +86,14 @@ export default function EditorCanvas() {
               return;
             }
 
+            const offset = wrapper && wrapper.current ? wrapper.current.getBoundingClientRect() : { left: 0, top: 0 };
+
             const newNode = {
               id: getNewNodeID(),
               type,
               position: rfInstance.project({
-                x: event.clientX - event.currentTarget.getBoundingClientRect().left,
-                y: event.pageY - event.currentTarget.getBoundingClientRect().top,
+                x: event.clientX - offset.left,
+                y: event.pageY - offset.top,
               }),
               data: {},
             } as Node;
@@ -92,6 +108,9 @@ export default function EditorCanvas() {
           selectionKeyCode={null}
           proOptions={{
             hideAttribution: true,
+          }}
+          defaultEdgeOptions={{
+            type: 'Reactive',
           }}
         >
           <Background className="bg-gray-100" />

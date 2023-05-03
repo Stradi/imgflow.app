@@ -14,8 +14,9 @@ export default function ReactiveEdge({
   targetY,
   targetPosition,
 }: WrapEdgeProps) {
-  const { isDraggingNewNode, getNewNodeID, getNewEdgeID } = useCanvasStore(
+  const { canvasWrapperRef, isDraggingNewNode, getNewNodeID, getNewEdgeID } = useCanvasStore(
     (state) => ({
+      canvasWrapperRef: state.canvasWrapperRef,
       isDraggingNewNode: state.isDraggingNewNode,
       getNewNodeID: state.getNewNodeID,
       getNewEdgeID: state.getNewEdgeID,
@@ -43,12 +44,17 @@ export default function ReactiveEdge({
       return;
     }
 
+    const offset =
+      canvasWrapperRef && canvasWrapperRef.current
+        ? canvasWrapperRef.current.getBoundingClientRect()
+        : { left: 0, top: 0 };
+
     const newNode = {
       id: getNewNodeID(),
       type,
       position: rfInstance.project({
-        x: e.clientX,
-        y: e.clientY,
+        x: e.clientX - offset.left,
+        y: e.clientY - offset.top,
       }),
       data: {},
     } as Node;
@@ -77,7 +83,8 @@ export default function ReactiveEdge({
 
   return (
     <>
-      <path id={id} style={style} className="react-flow__edge-path" d={edgePath} />
+      <path style={style} className="react-flow__edge-path-selector" d={edgePath} fillRule="evenodd" />
+      <path style={style} className="react-flow__edge-path" d={edgePath} fillRule="evenodd" />
       {isDraggingNewNode && (
         <>
           <path className="react-flow__edge-path !stroke-red-500 !stroke-[8]" d={edgePath} />
