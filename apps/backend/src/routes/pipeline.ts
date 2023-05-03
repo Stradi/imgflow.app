@@ -11,7 +11,6 @@ const router = express.Router();
 
 router.post('/', authMiddleware, async (req, res) => {
   const { name, dataJson } = req.body;
-  console.log(req.body);
 
   if (!name || !dataJson) {
     return res.json({

@@ -2,6 +2,7 @@ import useCanvasStore from '@/stores/CanvasStore';
 import BaseNode from './BaseNode';
 import NumberInput from './inputs/NumberInput';
 import SelectInput from './inputs/SelectInput';
+import TextInput from './inputs/TextInput';
 
 export default function OutputNode(props: any) {
   const { getNodeData, setNodeData } = useCanvasStore((state) => ({
@@ -18,6 +19,17 @@ export default function OutputNode(props: any) {
     >
       <BaseNode.Header>Output</BaseNode.Header>
       <BaseNode.Content>
+        <TextInput
+          label="Filename"
+          placeholder="Enter filename"
+          value={getNodeData(props.id).filename}
+          onValueChange={(e) =>
+            setNodeData(props.id, {
+              ...getNodeData(props.id),
+              filename: e,
+            })
+          }
+        />
         <SelectInput
           label="Format"
           placeholder="Select output format"

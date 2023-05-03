@@ -59,9 +59,9 @@ async function runFlow(flow: TNode[], image: sharp.Sharp, key: string) {
     }
 
     if (step.type === 'Output') {
-      console.log(step);
-      await uploadImage(s3(), await image.toBuffer(), `${key}.${step.data.format}`, `image/${step.data.format}`);
-      return `${key}.${step.data.format}`;
+      const finalKey = `${key}/${step.data.filename}.${step.data.format}`;
+      await uploadImage(s3(), await image.toBuffer(), finalKey, `image/${step.data.format}`);
+      return finalKey;
     }
 
     functions[STEPNAME_TO_FN[step.type]](image, step.data as any);
@@ -128,7 +128,6 @@ function depthFirstTraverse(
   }
 
   if (children.length === 1) {
-    console.log(`Path found: ${currentPath}`);
     allPaths.push([...currentPath]);
   }
 
