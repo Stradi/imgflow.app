@@ -3,7 +3,7 @@
 import ImageDropzone from '@/components/pipeline/ImageDropzone';
 import UploadedImagesPreview from '@/components/pipeline/UploadedImagesPreview/UploadedImagesPreview';
 import { Button } from '@/components/ui/Button';
-import { getPipelineById } from '@/services/pipeline';
+import { getJobStatus, getPipelineById, runPipeline } from '@/services/pipeline';
 import usePipelineRun from '@/stores/PipelineRunStore';
 import { useEffect } from 'react';
 
@@ -14,11 +14,13 @@ const Page = ({
     id: string;
   };
 }) => {
-  const { images, setImages, pipeline, setPipeline } = usePipelineRun((state) => ({
+  const { images, setImages, pipeline, setPipeline, isFinished, setIsFinished } = usePipelineRun((state) => ({
     images: state.images,
     setImages: state.setImages,
     pipeline: state.pipeline,
     setPipeline: state.setPipeline,
+    isFinished: state.isFinished,
+    setIsFinished: state.setIsFinished,
   }));
 
   useEffect(() => {
@@ -32,12 +34,30 @@ const Page = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  async function apiRunPipeline() {
+    setIsFinished(false);
+
+    const {
+      data: { id: jobId },
+    } = await runPipeline(pipeline.id, images);
+    // TODO: Fix this. Find a way to do this elegantly while showing progress to user.
+    const intervalId = setInterval(async () => {
+      const status = await getJobStatus(jobId);
+      console.log(status);
+
+      if (status.data.state === 'completed') {
+        setIsFinished(true);
+        clearInterval(intervalId);
+      }
+    }, 1000);
+  }
+
   return (
     <div className="p-4">
       <div className="mb-4">
         <h1 className="text-2xl font-medium">Run &apos;{(pipeline && pipeline.name && pipeline.name) || ''}&apos;</h1>
       </div>
-      <div className="grid grid-cols-2 gap-2">
+      <div className="grid lg:grid-cols-2 gap-2">
         <div className="flex flex-col gap-2">
           <ImageDropzone
             onDrop={(files) => {
@@ -51,7 +71,7 @@ const Page = ({
           />
           {images.length > 0 && (
             <div className="bg-gray-50 p-4 h-full flex flex-col gap-2 items-center justify-center rounded-lg">
-              <Button size="lg" className="w-1/3 h-full text-xl">
+              <Button size="lg" onClick={() => apiRunPipeline()}>
                 Run Pipeline
               </Button>
               <p className="text-gray-500">

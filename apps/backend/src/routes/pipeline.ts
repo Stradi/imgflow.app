@@ -1,7 +1,7 @@
 import express from 'express';
 import multer from 'multer';
+import { addJobToQueue } from '../lib/bullmq';
 import { db } from '../lib/db';
-import { runPipeline } from '../lib/pipeline/runner';
 import authMiddleware from '../middlewares/auth';
 import { ApiError } from '../utils/apiError';
 
@@ -200,12 +200,19 @@ router.post('/:id/run', authMiddleware, upload.array('images', 10), async (req, 
 
   const files = req.files as Express.Multer.File[];
   const userId = req.user.id;
-
-  const processedFileKeys = await runPipeline(files, JSON.parse(pipeline.dataJson), pipeline.id, userId);
+  // const processedFileKeys = await runPipeline(files, JSON.parse(pipeline.dataJson), pipeline.id, userId);
+  const job = await addJobToQueue({
+    files,
+    pipeline: JSON.parse(pipeline.dataJson),
+    pipelineId: pipeline.id,
+    userId,
+  });
 
   res.json({
-    message: 'Success',
-    data: processedFileKeys,
+    message: 'Job created',
+    data: {
+      id: job.id,
+    },
   });
 });
 
