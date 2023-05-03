@@ -6,12 +6,20 @@ const TEMPLATE_TO_PIPELINE = {
         type: 'InputImage',
         deletable: false,
         data: {},
+        position: {
+          x: 0,
+          y: 0,
+        },
       },
       {
         id: 'node-1',
         type: 'Output',
         deletable: false,
         data: {},
+        position: {
+          x: 250,
+          y: 0,
+        },
       },
     ],
     edges: [
@@ -30,17 +38,29 @@ const TEMPLATE_TO_PIPELINE = {
         type: 'InputImage',
         deletable: false,
         data: {},
+        position: {
+          x: 0,
+          y: 0,
+        },
       },
       {
         id: 'node-1',
         type: 'Output',
         deletable: false,
         data: {},
+        position: {
+          x: 500,
+          y: 0,
+        },
       },
       {
         id: 'node-2',
         type: 'Resize',
         data: {},
+        position: {
+          x: 250,
+          y: 0,
+        },
       },
     ],
     edges: [
@@ -65,17 +85,29 @@ const TEMPLATE_TO_PIPELINE = {
         type: 'InputImage',
         deletable: false,
         data: {},
+        position: {
+          x: 0,
+          y: 0,
+        },
       },
       {
         id: 'node-1',
         type: 'Output',
         deletable: false,
         data: {},
+        position: {
+          x: 500,
+          y: 0,
+        },
       },
       {
         id: 'node-2',
         type: 'Resize',
         data: {},
+        position: {
+          x: 250,
+          y: 0,
+        },
       },
     ],
     edges: [
@@ -100,17 +132,29 @@ const TEMPLATE_TO_PIPELINE = {
         type: 'InputImage',
         deletable: false,
         data: {},
+        position: {
+          x: 0,
+          y: 0,
+        },
       },
       {
         id: 'node-1',
         type: 'Output',
         deletable: false,
         data: {},
+        position: {
+          x: 500,
+          y: 0,
+        },
       },
       {
         id: 'node-2',
         type: 'Resize',
         data: {},
+        position: {
+          x: 250,
+          y: 0,
+        },
       },
     ],
     edges: [

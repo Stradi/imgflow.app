@@ -42,6 +42,7 @@ export async function uploadImageOriginal(s3: S3Client, data: Buffer, userId: nu
       CacheControl: 'max-age=31536000',
       ContentType: 'image/jpeg',
       Key: `${userId}/uploads/${randomUuid}.jpg`,
+      ACL: 'public-read',
     })
   );
 
@@ -59,6 +60,7 @@ export function uploadImage(s3: S3Client, data: Buffer, key: string, mime: strin
       CacheControl: 'max-age=31536000',
       ContentType: mime,
       Key: key,
+      ACL: 'public-read',
     })
   );
 }

@@ -1,15 +1,12 @@
 import sharp from 'sharp';
-import { s3, uploadImage } from '../s3';
-import { STEPNAME_TO_FN, TStep, functions } from './steps';
-
-export type TPipeline = {
-  steps: TStep[];
-};
+import { s3, uploadImage, uploadImageOriginal } from '../s3';
+import { STEPNAME_TO_FN, functions } from './steps';
 
 export type TNode = {
   id: string;
   data: any;
   type: string;
+  fn?: Function;
 };
 
 export type TEdge = {
@@ -18,51 +15,61 @@ export type TEdge = {
   target: string;
 };
 
-export type TPipelineNew = {
+export type TPipeline = {
   nodes: TNode[];
   edges: TEdge[];
 };
 
-export async function runPipeline(image: sharp.Sharp, pipeline: TPipeline, key: string) {
-  const outputStep = pipeline.steps.find((step) => step.name === 'Output');
-  if (!outputStep) {
-    return '';
+export async function runPipeline(
+  files: Express.Multer.File[],
+  pipeline: TPipeline,
+  pipelineId: number,
+  userId: number
+) {
+  const { graph, nodes } = buildGraph(sanitizePipelineData(pipeline));
+  const validPaths = getValidPaths(graph, nodes);
+  if (validPaths.length === 0) {
+    throw new Error('Pipeline is not valid');
   }
 
-  for (const step of pipeline.steps) {
-    if (!STEPNAME_TO_FN[step.name]) {
-      console.error(`Could not find step ${step.name}, continuing...`);
+  const processedFiles = [];
+  const originalFiles = [];
+  for (const file of files) {
+    const { uuid, key } = await uploadImageOriginal(s3(), file.buffer, userId);
+    originalFiles.push(key);
+    const sharpImage = sharp(file.buffer);
+
+    for (const path of validPaths) {
+      const processedFileKey = await runFlow(path, sharpImage, `${userId}/${pipelineId}/${uuid}`);
+      processedFiles.push(processedFileKey);
+    }
+  }
+
+  return {
+    originalFiles,
+    processedFiles,
+  };
+}
+
+async function runFlow(flow: TNode[], image: sharp.Sharp, key: string) {
+  for (const step of flow) {
+    if (!STEPNAME_TO_FN[step.type]) {
+      console.error(`Could not find step ${step.type}, continuing`);
       continue;
     }
 
-    if (step.name === 'Output') {
-      await uploadImage(s3(), await image.toBuffer(), `${key}.${step.args.format}`, `image/${step.args.format}`);
-      return `${key}.${step.args.format}`;
+    if (step.type === 'Output') {
+      await uploadImage(s3(), await image.toBuffer(), `${key}.${step.data.format}`, `image/${step.data.format}`);
+      return `${key}.${step.data.format}`;
     }
 
-    functions[STEPNAME_TO_FN[step.name]](image, step.args as any);
+    functions[STEPNAME_TO_FN[step.type]](image, step.data as any);
   }
 
-  console.error('This should never happen. If you see this then I definitely fucked up this shit.');
-  return '';
+  throw new Error('This should never happen. So we are throwing error: Dafuq?');
 }
 
-export async function runPipelineNew(pipeline: TPipelineNew) {
-  const { graph, nodes } = buildGraph(pipeline);
-  const paths = depthFirstTraverse(graph, nodes);
-
-  const populatedPaths = paths.map((path) => {
-    const pathNodes = path.map((id) => {
-      return nodes[id];
-    });
-
-    return pathNodes;
-  });
-
-  console.log(populatedPaths);
-}
-
-function buildGraph(data: TPipelineNew) {
+function buildGraph(data: TPipeline) {
   // TODO: We should actually check if at least one input and output node exists
   // and are not in different islands.
 
@@ -134,4 +141,70 @@ function depthFirstTraverse(
   }
 
   return allPaths;
+}
+
+function nodeToFunction(node: TNode) {
+  switch (node.type) {
+    case 'InputImage':
+      return functions.input;
+    case 'Crop':
+      return functions.crop;
+    case 'Extend':
+      return functions.extend;
+    case 'Resize':
+      return functions.resize;
+    case 'Output':
+      return functions.output;
+    default:
+      return functions.noop;
+  }
+}
+
+function sanitizePipelineData(data: TPipeline) {
+  const whitelistedNodeProps = ['id', 'data', 'type'];
+  const whitelistedEdgeProps = ['id', 'source', 'target'];
+
+  for (const node of data.nodes) {
+    for (const key of Object.keys(node)) {
+      if (!whitelistedNodeProps.includes(key)) {
+        // @ts-ignore
+        delete node[key];
+      }
+    }
+  }
+
+  for (const edge of data.edges) {
+    for (const key of Object.keys(edge)) {
+      if (!whitelistedEdgeProps.includes(key)) {
+        // @ts-ignore
+        delete edge[key];
+      }
+    }
+  }
+
+  return data;
+}
+
+function getValidPaths(graph: Map<string, string[]>, nodes: Record<string, TNode>) {
+  const paths = depthFirstTraverse(graph, nodes).map((path) => path.map((node) => nodes[node]));
+
+  const pathsWithOutput = paths.filter((path) => path.find((node) => node.type === 'Output'));
+  if (pathsWithOutput.length === 0) {
+    return [];
+  }
+
+  const pathsWithInput = paths.filter((path) => path.find((node) => node.type === 'InputImage'));
+  if (pathsWithInput.length === 0) {
+    return [];
+  }
+
+  // Return only the paths that have both Input and Output nodes and populate the functions.
+  return pathsWithInput
+    .filter((path) => pathsWithOutput.find((p) => p === path))
+    .map((path) =>
+      path.map((node) => ({
+        ...node,
+        fn: nodeToFunction(node),
+      }))
+    );
 }

@@ -1,9 +1,7 @@
 import express from 'express';
 import multer from 'multer';
-import sharp from 'sharp';
 import { db } from '../lib/db';
-import { TPipeline, runPipeline } from '../lib/pipeline/runner';
-import { s3, uploadImageOriginal } from '../lib/s3';
+import { runPipeline } from '../lib/pipeline/runner';
 import authMiddleware from '../middlewares/auth';
 import { ApiError } from '../utils/apiError';
 
@@ -204,32 +202,11 @@ router.post('/:id/run', authMiddleware, upload.array('images', 10), async (req, 
   const files = req.files as Express.Multer.File[];
   const userId = req.user.id;
 
-  const processedIds = [];
-  for (const file of files) {
-    const { uuid, key } = await uploadImageOriginal(s3(), file.buffer, userId);
-
-    const sharpFile = sharp(file.buffer);
-    const uploadedFileKey = await runPipeline(
-      sharpFile,
-      JSON.parse(pipeline.dataJson) as TPipeline,
-      `${userId}/${pipeline.id}/${uuid}`
-    );
-
-    if (uploadedFileKey === '') {
-      return res.json({
-        message: 'No output step specified :/',
-      });
-    }
-
-    processedIds.push({
-      uuid,
-      uploadedFileKey,
-    });
-  }
+  const processedFileKeys = await runPipeline(files, JSON.parse(pipeline.dataJson), pipeline.id, userId);
 
   res.json({
     message: 'Success',
-    data: processedIds,
+    data: processedFileKeys,
   });
 });
 
