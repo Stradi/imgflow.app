@@ -1,7 +1,7 @@
 import useCanvasStore from '@/stores/CanvasStore';
 import { getLayoutedElements } from '@/utils/layout';
 import { useEffect, useRef, useState } from 'react';
-import { Background, ReactFlow, ReactFlowProvider } from 'reactflow';
+import { Background, Node, ReactFlow, ReactFlowProvider } from 'reactflow';
 import { shallow } from 'zustand/shallow';
 import ReactiveEdge from './ReactiveEdge';
 import CropNode from './nodes/CropNode';
@@ -22,19 +22,24 @@ const customEdges = {
 
 export default function EditorCanvas() {
   const wrapper = useRef<HTMLDivElement>(null);
+  const [rfInstance, setRfInstance] = useState<any>(null);
+
   const [layoutedElements, setLayoutedElements] = useState<any[]>([]);
 
-  const { nodes, edges, onConnect, onNodesChange, onEdgesChange, onNodesDelete } = useCanvasStore(
-    (state) => ({
-      nodes: state.nodes,
-      edges: state.edges,
-      onConnect: state.onConnect,
-      onNodesChange: state.onNodesChange,
-      onEdgesChange: state.onEdgesChange,
-      onNodesDelete: state.onNodesDelete,
-    }),
-    shallow
-  );
+  const { nodes, setNodes, edges, onConnect, onNodesChange, onEdgesChange, onNodesDelete, getNewNodeID } =
+    useCanvasStore(
+      (state) => ({
+        nodes: state.nodes,
+        setNodes: state.setNodes,
+        edges: state.edges,
+        onConnect: state.onConnect,
+        onNodesChange: state.onNodesChange,
+        onEdgesChange: state.onEdgesChange,
+        onNodesDelete: state.onNodesDelete,
+        getNewNodeID: state.getNewNodeID,
+      }),
+      shallow
+    );
 
   useEffect(() => {
     // @ts-ignore
@@ -49,26 +54,44 @@ export default function EditorCanvas() {
       <ReactFlowProvider>
         <ReactFlow
           fitView
+          onInit={setRfInstance}
           nodeTypes={customNodes}
           // @ts-ignore
           edgeTypes={customEdges}
-          nodes={layoutedNodes}
-          edges={layoutedEdges}
+          nodes={nodes}
+          edges={edges}
           onConnect={onConnect}
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           onNodesDelete={onNodesDelete}
+          onDrop={(event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            const type = event.dataTransfer.getData('application/reactflow');
+            if (typeof type === 'undefined' || !type) {
+              return;
+            }
+
+            const newNode = {
+              id: getNewNodeID(),
+              type,
+              position: rfInstance.project({
+                x: event.clientX - event.currentTarget.getBoundingClientRect().left,
+                y: event.pageY - event.currentTarget.getBoundingClientRect().top,
+              }),
+              data: {},
+            } as Node;
+
+            setNodes([...nodes, newNode]);
+          }}
           onDragOver={(event) => {
             event.preventDefault();
-            event.dataTransfer.dropEffect = 'move';
+            event.stopPropagation();
           }}
           multiSelectionKeyCode={null}
           selectionKeyCode={null}
           proOptions={{
             hideAttribution: true,
-          }}
-          defaultEdgeOptions={{
-            deletable: false,
           }}
         >
           <Background className="bg-gray-100" />

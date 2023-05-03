@@ -2,7 +2,7 @@ import express from 'express';
 import multer from 'multer';
 import sharp from 'sharp';
 import { db } from '../lib/db';
-import { TPipeline, runPipeline } from '../lib/runner';
+import { TPipeline, runPipeline } from '../lib/pipeline/runner';
 import { s3, uploadImageOriginal } from '../lib/s3';
 import authMiddleware from '../middlewares/auth';
 import { ApiError } from '../utils/apiError';
