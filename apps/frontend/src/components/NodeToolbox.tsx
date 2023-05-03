@@ -58,9 +58,8 @@ export default function NodeToolbox() {
           'md:block md:space-y-2 md:overflow-auto md:mt-4'
         )}
       >
-        <SingleNodePreview type="Resize" title="Resize" description="Resizes your image to specified dimensions." />
-        <SingleNodePreview type="Crop" title="Crop" description="Crop your images to specified size" />
-        <SingleNodePreview type="Crop" title="Crop" description="Crop your images to specified size" />
+        <SingleNodePreview type="Output" title="Output" description="Save image with specified format and quality" />
+        <SingleNodePreview type="Resize" title="Resize" description="Resize the image to specified size" />
         <SingleNodePreview type="Crop" title="Crop" description="Crop your images to specified size" />
       </div>
     </div>

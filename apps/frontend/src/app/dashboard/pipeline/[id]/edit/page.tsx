@@ -22,13 +22,14 @@ const Page = ({
 }) => {
   const [isSaving, setIsSaving] = useState(false);
 
-  const { pipelineName, setPipelineName, setNodes, setEdges, setCounters } = useCanvasStore(
+  const { pipelineName, setPipelineName, setNodes, setEdges, setCounters, setNodeData } = useCanvasStore(
     (state) => ({
       pipelineName: state.pipelineName,
       setPipelineName: state.setPipelineName,
       setNodes: state.setNodes,
       setEdges: state.setEdges,
       setCounters: state.setCounters,
+      setNodeData: state.setNodeData,
     }),
     shallow
   );
@@ -39,10 +40,15 @@ const Page = ({
 
       const remoteNodes = JSON.parse(response.data['dataJson'])['nodes'];
       const remoteEdges = JSON.parse(response.data['dataJson'])['edges'];
+
       setCounters(remoteNodes.length, remoteEdges.length);
 
-      setNodes(JSON.parse(response.data['dataJson'])['nodes']);
-      setEdges(JSON.parse(response.data['dataJson'])['edges']);
+      setNodes(remoteNodes);
+      setEdges(remoteEdges);
+
+      for (const node of remoteNodes) {
+        setNodeData(node.id, node.data || {});
+      }
 
       setPipelineName(response.data['name']);
     }

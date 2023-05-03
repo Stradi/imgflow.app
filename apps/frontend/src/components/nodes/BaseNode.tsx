@@ -10,7 +10,7 @@ function BaseNodeHeader({ children }: TBaseNodeHeaderProps) {
 
 type TBaseNodeContentProps = PropsWithChildren;
 function BaseNodeContent({ children }: TBaseNodeContentProps) {
-  return <main className="px-4 py-2">{children}</main>;
+  return <main className="px-4 py-2 space-y-2">{children}</main>;
 }
 
 type TBaseNodeHandleProps = {
@@ -47,7 +47,7 @@ function BaseNode({ children, leftHandle, rightHandle, node }: TBaseNodeProps) {
   return (
     <div
       className={cn(
-        'bg-white/50 backdrop-blur-sm rounded-2xl border border-gray-300 w-[250px]',
+        'bg-white/50 backdrop-blur-sm rounded-2xl border border-gray-300 min-w-[300px]',
         node.selected && 'ring-2 ring-green-200'
       )}
     >

@@ -38,6 +38,10 @@ type TCanvasStore = {
   edges: Edge[];
   setNodes: (nodes: Node[]) => void;
   setEdges: (edges: Edge[]) => void;
+
+  getNodeData: (nodeId: string) => any;
+  setNodeData: (nodeId: string, data: any) => void;
+
   onNodesChange: OnNodesChange;
   onEdgesChange: OnEdgesChange;
   onConnect: OnConnect;
@@ -66,6 +70,24 @@ const useCanvasStore = create<TCanvasStore>((set, get) => ({
   edges: [],
   setNodes: (nodes: Node[]) => set({ nodes }),
   setEdges: (edges: Edge[]) => set({ edges }),
+  getNodeData: (nodeId: string) => {
+    const node = get().nodes.find((node) => node.id === nodeId);
+    return node?.data || {};
+  },
+  setNodeData: (nodeId: string, data: any) => {
+    set({
+      nodes: get().nodes.map((node) => {
+        if (node.id === nodeId) {
+          return {
+            ...node,
+            data,
+          };
+        }
+
+        return node;
+      }),
+    });
+  },
   onNodesChange: (changes: NodeChange[]) => {
     set({
       nodes: applyNodeChanges(changes, get().nodes),

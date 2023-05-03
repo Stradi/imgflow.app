@@ -60,6 +60,7 @@ export default function EditorCanvas() {
     setLayoutedElements(getLayoutedElements([...nodes, ...edges]));
   }, [nodes, edges]);
 
+  // TODO: Add a button to layout the graph
   const layoutedNodes = layoutedElements.filter((x) => x.position);
   const layoutedEdges = layoutedElements.filter((x) => !x.position);
 
