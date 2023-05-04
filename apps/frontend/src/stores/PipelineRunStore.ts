@@ -5,8 +5,10 @@ type TPipelineRun = {
   setImages: (images: File[]) => void;
   pipeline: any;
   setPipeline: (pipeline: any) => void;
-  isFinished: boolean;
-  setIsFinished: (isFinished: boolean) => void;
+  isStarted: boolean;
+  setIsStarted: (value: boolean) => void;
+  isRequestCompleted: boolean;
+  setIsRequestCompleted: (value: boolean) => void;
 };
 
 const usePipelineRun = create<TPipelineRun>((set, get) => ({
@@ -14,8 +16,10 @@ const usePipelineRun = create<TPipelineRun>((set, get) => ({
   setImages: (images: File[]) => set({ images }),
   pipeline: null,
   setPipeline: (pipeline: any) => set({ pipeline }),
-  isFinished: false,
-  setIsFinished: (isFinished: boolean) => set({ isFinished }),
+  isStarted: false,
+  setIsStarted: (value: boolean) => set({ isStarted: value }),
+  isRequestCompleted: false,
+  setIsRequestCompleted: (value: boolean) => set({ isRequestCompleted: value }),
 }));
 
 export default usePipelineRun;

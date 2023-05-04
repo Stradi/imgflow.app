@@ -83,15 +83,3 @@ export async function runPipeline(id: string, files: File[]) {
 
   return response;
 }
-
-export async function getJobStatus(jobId: string) {
-  const response = await doAuthenticatedRequest(`http://localhost:3001/api/v1/poll/${jobId}`, {
-    method: 'GET',
-  });
-
-  if (response['error']) {
-    throw new Error(response['error']);
-  }
-
-  return response;
-}

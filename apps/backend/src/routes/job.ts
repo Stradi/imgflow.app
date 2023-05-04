@@ -1,10 +1,11 @@
 import express from 'express';
 import { getJob } from '../lib/bullmq';
 import { db } from '../lib/db';
+import authMiddleware from '../middlewares/auth';
 const router = express.Router();
 
-router.get('/', async (req, res) => {
-  const jobs = db().job.findMany({
+router.get('/', authMiddleware, async (req, res) => {
+  const jobs = await db().job.findMany({
     where: {
       userId: req.user.id,
     },
@@ -12,11 +13,11 @@ router.get('/', async (req, res) => {
 
   res.json({
     message: 'Success',
-    data: jobs,
+    data: jobs || [],
   });
 });
 
-router.get('/:id', async (req, res) => {
+router.get('/:id', authMiddleware, async (req, res) => {
   const { id } = req.params;
 
   const job = await getJob(id);
@@ -32,7 +33,8 @@ router.get('/:id', async (req, res) => {
   res.json({
     message: 'Success',
     data: {
-      state,
+      id: job.id,
+      status: state,
       progress,
     },
   });

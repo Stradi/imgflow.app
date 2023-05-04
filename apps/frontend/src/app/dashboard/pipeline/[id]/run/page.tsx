@@ -1,11 +1,14 @@
 'use client';
 
 import ImageDropzone from '@/components/pipeline/ImageDropzone';
+import JobTable from '@/components/pipeline/JobTable';
 import UploadedImagesPreview from '@/components/pipeline/UploadedImagesPreview/UploadedImagesPreview';
 import { Button } from '@/components/ui/Button';
-import { getJobStatus, getPipelineById, runPipeline } from '@/services/pipeline';
+import { getAllJobs } from '@/services/job';
+import { getPipelineById, runPipeline } from '@/services/pipeline';
+import useJobStore from '@/stores/JobStore';
 import usePipelineRun from '@/stores/PipelineRunStore';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 const Page = ({
   params: { id: pipelineId },
@@ -14,13 +17,18 @@ const Page = ({
     id: string;
   };
 }) => {
-  const { images, setImages, pipeline, setPipeline, isFinished, setIsFinished } = usePipelineRun((state) => ({
+  const [isStarted, setIsStarted] = useState(false);
+
+  const { images, setImages, pipeline, setPipeline } = usePipelineRun((state) => ({
     images: state.images,
     setImages: state.setImages,
     pipeline: state.pipeline,
     setPipeline: state.setPipeline,
-    isFinished: state.isFinished,
-    setIsFinished: state.setIsFinished,
+  }));
+
+  const { addJob, setJobs } = useJobStore((state) => ({
+    addJob: state.addJob,
+    setJobs: state.setJobs,
   }));
 
   useEffect(() => {
@@ -30,26 +38,26 @@ const Page = ({
       setPipeline(response['data']);
     }
 
+    async function fetchAllJobs() {
+      const response = await getAllJobs();
+      setJobs(response['data']);
+    }
+
     fetchPipeline();
+    fetchAllJobs();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function apiRunPipeline() {
-    setIsFinished(false);
+    setIsStarted(true);
+    const response = await runPipeline(pipeline.id, images);
+    setImages([]);
 
-    const {
-      data: { id: jobId },
-    } = await runPipeline(pipeline.id, images);
-    // TODO: Fix this. Find a way to do this elegantly while showing progress to user.
-    const intervalId = setInterval(async () => {
-      const status = await getJobStatus(jobId);
-      console.log(status);
-
-      if (status.data.state === 'completed') {
-        setIsFinished(true);
-        clearInterval(intervalId);
-      }
-    }, 1000);
+    addJob({
+      id: response['data']['id'],
+      status: 'waiting',
+    });
+    setIsStarted(false);
   }
 
   return (
@@ -71,7 +79,7 @@ const Page = ({
           />
           {images.length > 0 && (
             <div className="bg-gray-50 p-4 h-full flex flex-col gap-2 items-center justify-center rounded-lg">
-              <Button size="lg" onClick={() => apiRunPipeline()}>
+              <Button size="lg" onClick={() => apiRunPipeline()} disabled={images.length > 0 && isStarted}>
                 Run Pipeline
               </Button>
               <p className="text-gray-500">
@@ -89,6 +97,9 @@ const Page = ({
             }}
           />
         </div>
+      </div>
+      <div>
+        <JobTable />
       </div>
     </div>
   );
