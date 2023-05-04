@@ -3,6 +3,10 @@ import { create } from 'zustand';
 export type TJob = {
   id: string;
   status: string;
+  imageCount: number;
+  progress: any;
+  createdAt: string;
+  duration: string;
 };
 
 type TJobStore = {

@@ -212,10 +212,12 @@ router.post('/:id/run', authMiddleware, upload.array('images', 10), async (req, 
       pipelineId: pipeline.id,
       userId,
       status: 'waiting',
+      imageCount: files.length,
+      progress: 0,
     },
   });
 
-  const job = await addJobToQueue({
+  await addJobToQueue({
     files: imageGuids as any,
     pipeline: JSON.parse(pipeline.dataJson),
     pipelineId: pipeline.id,
@@ -225,9 +227,7 @@ router.post('/:id/run', authMiddleware, upload.array('images', 10), async (req, 
 
   res.json({
     message: 'Job created',
-    data: {
-      id: job.id,
-    },
+    data: dbJob,
   });
 });
 

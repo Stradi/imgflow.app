@@ -36,8 +36,12 @@ model Pipeline {
 }
 
 model Job {
-  id     String @id @default(uuid())
-  status String
+  id         String    @id @default(uuid())
+  status     String
+  imageCount Int
+  progress   Int
+  createdAt  DateTime  @default(now())
+  finishedAt DateTime?
 
   pipeline   Pipeline @relation(fields: [pipelineId], references: [id])
   pipelineId Int

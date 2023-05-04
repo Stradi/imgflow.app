@@ -20,22 +20,26 @@ router.get('/', authMiddleware, async (req, res) => {
 router.get('/:id', authMiddleware, async (req, res) => {
   const { id } = req.params;
 
-  const job = await getJob(id);
+  const job = await db().job.findFirst({
+    where: {
+      id,
+      userId: req.user.id,
+    },
+  });
+
   if (!job) {
-    return res.json({
-      error: 'Job not found',
+    return res.status(404).json({
+      message: 'Job not found',
     });
   }
 
-  const state = await job.getState();
-  const progress = job.progress;
+  const redisJob = await getJob(job.id);
 
   res.json({
     message: 'Success',
     data: {
-      id: job.id,
-      status: state,
-      progress,
+      ...job,
+      progress: redisJob?.progress,
     },
   });
 });

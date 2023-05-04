@@ -8,6 +8,7 @@ import { getAllJobs } from '@/services/job';
 import { getPipelineById, runPipeline } from '@/services/pipeline';
 import useJobStore from '@/stores/JobStore';
 import usePipelineRun from '@/stores/PipelineRunStore';
+import { relativeTimeBetweenTwoDates, toRelativeDate } from '@/utils/date';
 import { useEffect, useState } from 'react';
 
 const Page = ({
@@ -40,7 +41,18 @@ const Page = ({
 
     async function fetchAllJobs() {
       const response = await getAllJobs();
-      setJobs(response['data']);
+      setJobs(
+        response['data'].map((job: any) => ({
+          id: job['id'],
+          status: job['status'],
+          imageCount: job['imageCount'],
+          progress: job['progress'],
+          createdAt: toRelativeDate(job['createdAt']),
+          duration: job['finishedAt']
+            ? relativeTimeBetweenTwoDates(new Date(job['createdAt']), new Date(job['finishedAt']))
+            : relativeTimeBetweenTwoDates(new Date(job['createdAt']), new Date()),
+        }))
+      );
     }
 
     fetchPipeline();
@@ -56,13 +68,19 @@ const Page = ({
     addJob({
       id: response['data']['id'],
       status: 'waiting',
+      imageCount: response['data']['imageCount'],
+      progress: `${response['data']['progress']}%`,
+      createdAt: toRelativeDate(response['data']['createdAt']),
+      duration: response['data']['finishedAt']
+        ? relativeTimeBetweenTwoDates(new Date(response['data']['createdAt']), new Date(response['data']['finishedAt']))
+        : relativeTimeBetweenTwoDates(new Date(response['data']['createdAt']), new Date()),
     });
     setIsStarted(false);
   }
 
   return (
-    <div className="p-4">
-      <div className="mb-4">
+    <div className="p-4 flex flex-col gap-4">
+      <div>
         <h1 className="text-2xl font-medium">Run &apos;{(pipeline && pipeline.name && pipeline.name) || ''}&apos;</h1>
       </div>
       <div className="grid lg:grid-cols-2 gap-2">
@@ -98,7 +116,8 @@ const Page = ({
           />
         </div>
       </div>
-      <div>
+      <div className="space-y-2">
+        <h2 className="text-xl font-medium">Jobs</h2>
         <JobTable />
       </div>
     </div>

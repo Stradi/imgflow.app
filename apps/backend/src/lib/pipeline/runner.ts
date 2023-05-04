@@ -20,15 +20,33 @@ export type TPipeline = {
   edges: TEdge[];
 };
 
-export async function runPipeline(files: any, pipeline: TPipeline, pipelineId: number, userId: number) {
+export async function runPipeline(
+  files: any,
+  pipeline: TPipeline,
+  pipelineId: number,
+  userId: number,
+  onProgress: (progress: any) => void
+) {
+  onProgress({
+    message: 'Building graph',
+    progress: 0,
+  });
+
   const { graph, nodes } = buildGraph(sanitizePipelineData(pipeline));
+
   const validPaths = getValidPaths(graph, nodes);
   if (validPaths.length === 0) {
     throw new Error('Pipeline is not valid');
   }
 
+  const totalStepCount = files.length * validPaths.length;
+  let currentStep = 0;
+
   const processedFiles = [];
   const originalFiles = [];
+
+  onProgress(0);
+
   for (const file of files) {
     originalFiles.push(file.key);
     const sharpImage = sharp(file.stream);
@@ -36,8 +54,13 @@ export async function runPipeline(files: any, pipeline: TPipeline, pipelineId: n
     for (const path of validPaths) {
       const processedFileKey = await runFlow(path, sharpImage, `${userId}/${pipelineId}/${file.uuid}`);
       processedFiles.push(processedFileKey);
+
+      currentStep++;
+      onProgress(Math.round((currentStep / totalStepCount) * 100));
     }
   }
+
+  onProgress(100);
 
   return {
     originalFiles,

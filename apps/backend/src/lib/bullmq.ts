@@ -61,7 +61,9 @@ const worker = new Worker(
       }))
     );
 
-    const result = await runPipeline(streams, pipeline, pipelineId, userId);
+    const result = await runPipeline(streams, pipeline, pipelineId, userId, (progress: any) => {
+      job.updateProgress(progress);
+    });
 
     // TODO: Maybe we can add timing stats here and bill the user accordingly??
     return result;
@@ -92,6 +94,8 @@ worker.on('completed', async (job, result) => {
     },
     data: {
       status: 'completed',
+      progress: 100,
+      finishedAt: new Date(),
     },
   });
 });
@@ -111,5 +115,3 @@ worker.on('failed', async (job, error) => {
 worker.on('error', (error) => {
   console.log('Worker Error... FUCK!', error);
 });
-
-// TODO: listen worker.on('progress').
