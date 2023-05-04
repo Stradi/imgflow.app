@@ -13,6 +13,7 @@ model Account {
   password  String
   files     File[]
   pipelines Pipeline[]
+  jobs      Job[]
 }
 
 model File {
@@ -27,6 +28,19 @@ model Pipeline {
   id       Int    @id @default(autoincrement())
   name     String
   dataJson String
+
+  user   Account @relation(fields: [userId], references: [id])
+  userId Int
+
+  jobs Job[]
+}
+
+model Job {
+  id     String @id @default(uuid())
+  status String
+
+  pipeline   Pipeline @relation(fields: [pipelineId], references: [id])
+  pipelineId Int
 
   user   Account @relation(fields: [userId], references: [id])
   userId Int

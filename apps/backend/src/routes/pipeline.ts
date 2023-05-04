@@ -207,12 +207,20 @@ router.post('/:id/run', authMiddleware, upload.array('images', 10), async (req, 
     imageGuids.push(await uploadImageOriginal(s3(), file.buffer, userId));
   }
 
-  // const processedFileKeys = await runPipeline(files, JSON.parse(pipeline.dataJson), pipeline.id, userId);
+  const dbJob = await db().job.create({
+    data: {
+      pipelineId: pipeline.id,
+      userId,
+      status: 'waiting',
+    },
+  });
+
   const job = await addJobToQueue({
     files: imageGuids as any,
     pipeline: JSON.parse(pipeline.dataJson),
     pipelineId: pipeline.id,
     userId,
+    jobId: dbJob.id,
   });
 
   res.json({

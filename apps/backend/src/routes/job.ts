@@ -1,14 +1,23 @@
 import express from 'express';
 import { getJob } from '../lib/bullmq';
+import { db } from '../lib/db';
 const router = express.Router();
+
+router.get('/', async (req, res) => {
+  const jobs = db().job.findMany({
+    where: {
+      userId: req.user.id,
+    },
+  });
+
+  res.json({
+    message: 'Success',
+    data: jobs,
+  });
+});
 
 router.get('/:id', async (req, res) => {
   const { id } = req.params;
-  if (isNaN(Number(id))) {
-    return res.json({
-      error: 'Invalid id',
-    });
-  }
 
   const job = await getJob(id);
   if (!job) {

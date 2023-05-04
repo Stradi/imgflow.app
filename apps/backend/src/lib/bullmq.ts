@@ -1,4 +1,5 @@
-import { Queue, Worker } from 'bullmq';
+import { Job, Queue, Worker } from 'bullmq';
+import { db } from './db';
 import { TPipeline, runPipeline } from './pipeline/runner';
 import { downloadObject, s3 } from './s3';
 
@@ -33,9 +34,12 @@ export async function addJobToQueue(data: {
     key: string;
     uuid: string;
   }[];
+  jobId: string;
 }) {
   const queue = getJobQueue();
-  const job = await queue.add('pipeline', data);
+  const job = await queue.add('pipeline', data, {
+    jobId: data.jobId,
+  });
   return job;
 }
 
@@ -68,16 +72,40 @@ const worker = new Worker(
   }
 );
 
-worker.on('active', (job) => {
+worker.on('active', async (job) => {
   console.log(`Job ${job.id} active.`);
+  await db().job.update({
+    where: {
+      id: job.id,
+    },
+    data: {
+      status: 'active',
+    },
+  });
 });
 
-worker.on('completed', (job, result) => {
+worker.on('completed', async (job, result) => {
   console.log(`Job ${job.id} completed.`);
+  await db().job.update({
+    where: {
+      id: job.id,
+    },
+    data: {
+      status: 'completed',
+    },
+  });
 });
 
-worker.on('failed', (job, error) => {
+worker.on('failed', async (job, error) => {
   console.error('Whoopsie.', error);
+  await db().job.update({
+    where: {
+      id: (job as Job<any, any, string>).id,
+    },
+    data: {
+      status: 'failed',
+    },
+  });
 });
 
 worker.on('error', (error) => {
