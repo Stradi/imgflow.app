@@ -1,5 +1,5 @@
 import sharp from 'sharp';
-import { s3, uploadImage, uploadImageOriginal } from '../s3';
+import { s3, uploadImage } from '../s3';
 import { STEPNAME_TO_FN, functions } from './steps';
 
 export type TNode = {
@@ -20,12 +20,7 @@ export type TPipeline = {
   edges: TEdge[];
 };
 
-export async function runPipeline(
-  files: Express.Multer.File[],
-  pipeline: TPipeline,
-  pipelineId: number,
-  userId: number
-) {
+export async function runPipeline(files: any, pipeline: TPipeline, pipelineId: number, userId: number) {
   const { graph, nodes } = buildGraph(sanitizePipelineData(pipeline));
   const validPaths = getValidPaths(graph, nodes);
   if (validPaths.length === 0) {
@@ -35,12 +30,11 @@ export async function runPipeline(
   const processedFiles = [];
   const originalFiles = [];
   for (const file of files) {
-    const { uuid, key } = await uploadImageOriginal(s3(), file.buffer, userId);
-    originalFiles.push(key);
-    const sharpImage = sharp(file.buffer);
+    originalFiles.push(file.key);
+    const sharpImage = sharp(file.stream);
 
     for (const path of validPaths) {
-      const processedFileKey = await runFlow(path, sharpImage, `${userId}/${pipelineId}/${uuid}`);
+      const processedFileKey = await runFlow(path, sharpImage, `${userId}/${pipelineId}/${file.uuid}`);
       processedFiles.push(processedFileKey);
     }
   }

@@ -8,6 +8,8 @@ declare global {
       CF_R2_SECRET_ACCESS_KEY: string;
       REDIS_HOST: string;
       REDIS_PORT: string;
+      REDIS_USERNAME: string;
+      REDIS_PASSWORD: string;
     }
   }
 }

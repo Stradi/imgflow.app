@@ -1,6 +1,6 @@
 import crypto from 'crypto';
 
-import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import { GetObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 
 import sharp = require('sharp');
 
@@ -63,6 +63,17 @@ export function uploadImage(s3: S3Client, data: Buffer, key: string, mime: strin
       ACL: 'public-read',
     })
   );
+}
+
+export async function downloadObject(s3: S3Client, key: string) {
+  const response = await s3.send(
+    new GetObjectCommand({
+      Bucket: 'imgflow',
+      Key: key,
+    })
+  );
+
+  return response.Body;
 }
 
 /* 
