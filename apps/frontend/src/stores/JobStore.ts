@@ -1,3 +1,4 @@
+import { ReactNode } from 'react';
 import { create } from 'zustand';
 
 export type TJob = {
@@ -7,6 +8,7 @@ export type TJob = {
   progress: any;
   createdAt: string;
   duration: string;
+  actions: ReactNode;
 };
 
 type TJobStore = {

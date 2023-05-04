@@ -1,6 +1,7 @@
 'use client';
 
 import ImageDropzone from '@/components/pipeline/ImageDropzone';
+import JobImagesModal from '@/components/pipeline/JobImagesModal';
 import JobTable from '@/components/pipeline/JobTable';
 import UploadedImagesPreview from '@/components/pipeline/UploadedImagesPreview/UploadedImagesPreview';
 import { Button } from '@/components/ui/Button';
@@ -51,6 +52,7 @@ const Page = ({
           duration: job['finishedAt']
             ? relativeTimeBetweenTwoDates(new Date(job['createdAt']), new Date(job['finishedAt']))
             : relativeTimeBetweenTwoDates(new Date(job['createdAt']), new Date()),
+          actions: job['status'] === 'completed' ? <JobImagesModal job={job} /> : <p>No actions available</p>,
         }))
       );
     }
@@ -74,6 +76,12 @@ const Page = ({
       duration: response['data']['finishedAt']
         ? relativeTimeBetweenTwoDates(new Date(response['data']['createdAt']), new Date(response['data']['finishedAt']))
         : relativeTimeBetweenTwoDates(new Date(response['data']['createdAt']), new Date()),
+      actions:
+        response['data']['status'] === 'completed' ? (
+          <JobImagesModal job={response['data']} />
+        ) : (
+          <p>No actions available</p>
+        ),
     });
     setIsStarted(false);
   }

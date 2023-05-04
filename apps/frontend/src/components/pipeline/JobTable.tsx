@@ -3,6 +3,7 @@ import useJobStore from '@/stores/JobStore';
 import { relativeTimeBetweenTwoDates, toRelativeDate } from '@/utils/date';
 import { useEffect, useMemo } from 'react';
 import { useTable } from 'react-table';
+import JobImagesModal from './JobImagesModal';
 
 export default function JobTable() {
   const columns = useMemo(
@@ -62,6 +63,8 @@ export default function JobTable() {
         duration: job['data']['finishedAt']
           ? relativeTimeBetweenTwoDates(new Date(job['data']['createdAt']), new Date(job['data']['finishedAt']))
           : relativeTimeBetweenTwoDates(new Date(job['data']['createdAt']), new Date()),
+        actions:
+          job['data']['status'] === 'completed' ? <JobImagesModal job={job['data']} /> : <p>No actions available</p>,
       });
     }
 

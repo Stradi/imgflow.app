@@ -11,17 +11,8 @@ model Account {
   id        Int        @id @default(autoincrement())
   email     String     @unique
   password  String
-  files     File[]
   pipelines Pipeline[]
   jobs      Job[]
-}
-
-model File {
-  id          Int    @id @default(autoincrement())
-  storageUuid String
-
-  user   Account @relation(fields: [userId], references: [id])
-  userId Int
 }
 
 model Pipeline {
@@ -48,4 +39,14 @@ model Job {
 
   user   Account @relation(fields: [userId], references: [id])
   userId Int
+
+  files File[]
+}
+
+model File {
+  id         Int    @id @default(autoincrement())
+  storageKey String
+
+  job   Job    @relation(fields: [jobId], references: [id])
+  jobId String
 }

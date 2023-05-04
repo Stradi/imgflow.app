@@ -98,6 +98,20 @@ worker.on('completed', async (job, result) => {
       finishedAt: new Date(),
     },
   });
+
+  const fileInserts = [];
+  for (const file of result.processedFiles) {
+    fileInserts.push(
+      db().file.create({
+        data: {
+          storageKey: file,
+          jobId: job.id as string,
+        },
+      })
+    );
+  }
+
+  await db().$transaction(fileInserts);
 });
 
 worker.on('failed', async (job, error) => {
