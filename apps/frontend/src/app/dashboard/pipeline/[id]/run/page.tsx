@@ -47,7 +47,7 @@ const Page = ({
           id: job['id'],
           status: job['status'],
           imageCount: job['imageCount'],
-          progress: job['progress'],
+          progress: `${job['progress']}%`,
           createdAt: toRelativeDate(job['createdAt']),
           duration: job['finishedAt']
             ? relativeTimeBetweenTwoDates(new Date(job['createdAt']), new Date(job['finishedAt']))

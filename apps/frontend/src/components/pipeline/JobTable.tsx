@@ -13,16 +13,16 @@ export default function JobTable() {
         accessor: 'id', // accessor is the "key" in the data
       },
       {
-        Header: 'Image Count',
-        accessor: 'imageCount',
-      },
-      {
         Header: 'Status',
         accessor: 'status',
       },
       {
         Header: 'Progress',
         accessor: 'progress',
+      },
+      {
+        Header: 'Image Count',
+        accessor: 'imageCount',
       },
       {
         Header: 'Created At',
@@ -84,8 +84,8 @@ export default function JobTable() {
 
   return (
     <div className="relative overflow-x-auto sm:rounded-lg">
-      <table {...getTableProps()} className="w-full text-sm text-left text-gray-500">
-        <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+      <table {...getTableProps()} className="w-full text-sm text-left text-gray-500 border-gray-200 border">
+        <thead className="text-xs text-gray-700 uppercase bg-gray-100 border-b border-gray-200">
           {headerGroups.map((headerGroup) => (
             <tr {...headerGroup.getHeaderGroupProps()} key={headerGroup.getHeaderGroupProps().key}>
               {headerGroup.headers.map((column) => (

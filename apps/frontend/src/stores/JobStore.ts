@@ -20,7 +20,7 @@ type TJobStore = {
 
 const useJobStore = create<TJobStore>((set, get) => ({
   jobs: [],
-  addJob: (job: TJob) => set({ jobs: [...get().jobs, job] }),
+  addJob: (job: TJob) => set({ jobs: [job, ...get().jobs] }),
   setJobs: (jobs: TJob[]) => set({ jobs }),
   updateJob: (id: string, job: TJob) => {
     const jobs = get().jobs.map((j) => (j.id === id ? job : j));

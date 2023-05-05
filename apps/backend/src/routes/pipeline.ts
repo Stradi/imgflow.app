@@ -80,6 +80,9 @@ router.get('/:id/jobs', authMiddleware, async (req, res) => {
     where: {
       pipelineId: Number(id),
     },
+    orderBy: {
+      createdAt: 'desc',
+    },
   });
 
   res.json({
