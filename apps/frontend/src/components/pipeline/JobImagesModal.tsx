@@ -110,6 +110,35 @@ type TOutputGroupProps = {
 };
 
 function OutputGroup({ outputName, files, isOpen, showCollapsible = true }: TOutputGroupProps) {
+  const [preparingZip, setPreparingZip] = useState(false);
+
+  async function generateZip() {
+    setPreparingZip(true);
+    const zip = new JSZip();
+
+    let idx = 0;
+    for (const file of files) {
+      const extension = file.storageKey.split('.').pop();
+
+      const fileBlob = await fetch(`https://cdn.devguidez.com/imgflow/${file.storageKey}`).then((r) => r.blob());
+      zip.file(`${idx}.${extension}`, fileBlob);
+      idx++;
+    }
+
+    const generatedZip = await zip.generateAsync({ type: 'blob' });
+    const url = window.URL.createObjectURL(generatedZip);
+    const link = document.createElement('a');
+
+    link.href = url;
+    link.setAttribute('download', `output-${outputName.split('.')[0]}.zip`);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+
+    window.URL.revokeObjectURL(url);
+    setPreparingZip(false);
+  }
+
   return (
     <Collapsible defaultOpen={isOpen} className="data-[state='open']:bg-gray-50 p-2 rounded-md">
       <div className="space-y-1">
@@ -117,7 +146,15 @@ function OutputGroup({ outputName, files, isOpen, showCollapsible = true }: TOut
           <h3 className="text-lg font-medium">{outputName}</h3>
           {showCollapsible && (
             <div className="flex gap-1 items-center">
-              <Button variant="outline">Download these files</Button>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  generateZip();
+                }}
+                disabled={preparingZip}
+              >
+                Download these files
+              </Button>
               <CollapsibleTrigger asChild>
                 <Button variant="outline" className="data-[state='open']:bg-gray-100 data-[state='open']:shadow-inner">
                   <ChevronsDownUpIcon className="w-4 h-4 my-0 mx-0" />
