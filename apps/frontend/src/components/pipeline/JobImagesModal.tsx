@@ -1,9 +1,10 @@
 import { getJobFiles } from '@/services/job';
 import { TJob } from '@/stores/JobStore';
 import JSZip from 'jszip';
-import Link from 'next/link';
+import { ChevronsDownUpIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Button } from '../ui/Button';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '../ui/Collapsible';
 import { Dialog, DialogContent, DialogTrigger } from '../ui/Dialog';
 
 export type TJobImagesModalProps = {
@@ -14,6 +15,15 @@ export default function JobImagesModal({ job }: TJobImagesModalProps) {
   const [files, setFiles] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [preparingZip, setPreparingZip] = useState(false);
+
+  const filesGroupedByOutputsName = files.reduce((acc: any, file: any) => {
+    const outputName = file.storageKey.split('/').pop();
+    if (!acc[outputName]) {
+      acc[outputName] = [];
+    }
+    acc[outputName].push(file);
+    return acc;
+  }, {});
 
   useEffect(() => {
     async function fetchJobFiles() {
@@ -61,22 +71,28 @@ export default function JobImagesModal({ job }: TJobImagesModalProps) {
       <DialogTrigger>
         <Button>View Images</Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="h-full max-h-full md:h-auto md:max-h-[85%] overflow-y-auto">
         <div className="space-y-4">
           <h3 className="text-lg leading-6 font-medium text-gray-900">
             Images <code>({files.length})</code>
           </h3>
           {isLoading && <div>Loading...</div>}
           {!isLoading && (
-            <div className="grid grid-cols-5 gap-1">
-              {files.slice(0, 10).map((file: any) => (
-                <SingleJobImage storageKey={file.storageKey} key={file.id} />
+            <div className="space-y-4">
+              {Object.keys(filesGroupedByOutputsName).map((outputName, idx) => (
+                <OutputGroup
+                  isOpen={idx === 0}
+                  key={outputName}
+                  outputName={outputName}
+                  files={filesGroupedByOutputsName[outputName]}
+                  showCollapsible={Object.keys(filesGroupedByOutputsName).length > 1}
+                />
               ))}
             </div>
           )}
           <div className="flex justify-between">
             <Button onClick={() => createZip()} disabled={preparingZip}>
-              Download as ZIP file
+              Download All as Zip
             </Button>
           </div>
         </div>
@@ -85,17 +101,44 @@ export default function JobImagesModal({ job }: TJobImagesModalProps) {
   );
 }
 
-type TSingleJobImageProps = {
-  storageKey: string;
+type TOutputGroupProps = {
+  outputName: string;
+  files: any[];
+  isOpen: boolean;
+  showCollapsible?: boolean;
 };
 
-function SingleJobImage({ storageKey }: TSingleJobImageProps) {
-  const storageURL = `https://cdn.devguidez.com/imgflow/${storageKey}`;
-
+function OutputGroup({ outputName, files, isOpen, showCollapsible = true }: TOutputGroupProps) {
   return (
-    <Link href={storageURL} target="_blank" className="hover:-translate-y-0.5 transition-transform duration-100">
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img src={storageURL} className="rounded-sm" />
-    </Link>
+    <Collapsible defaultOpen={isOpen} className="data-[state='open']:bg-gray-50 p-2 rounded-md">
+      <div className="space-y-1">
+        <header className="flex justify-between items-center">
+          <h3 className="text-lg font-medium">{outputName}</h3>
+          {showCollapsible && (
+            <div className="flex gap-1 items-center">
+              <Button variant="outline">Download these files</Button>
+              <CollapsibleTrigger asChild>
+                <Button variant="outline" className="data-[state='open']:bg-gray-100 data-[state='open']:shadow-inner">
+                  <ChevronsDownUpIcon className="w-4 h-4 my-0 mx-0" />
+                </Button>
+              </CollapsibleTrigger>
+            </div>
+          )}
+        </header>
+        <CollapsibleContent>
+          <div className="grid grid-cols-5 gap-1">
+            {files.map((file: any) => (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                key={file.id}
+                src={`https://cdn.devguidez.com/imgflow/${file.storageKey}`}
+                alt=""
+                className="rounded-sm"
+              />
+            ))}
+          </div>
+        </CollapsibleContent>
+      </div>
+    </Collapsible>
   );
 }
