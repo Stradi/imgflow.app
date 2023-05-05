@@ -22,7 +22,7 @@ export async function login({ email, password }: TLoginArgs): Promise<{
     };
   } | null;
 }> {
-  const response = await fetch('http://localhost:3001/api/v1/account/login', {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/account/login`, {
     method: 'POST',
     headers: {
       Accept: 'application/json',
@@ -77,7 +77,7 @@ export const CreateAccountErrors = {
 };
 
 export async function createAccount({ email, password }: TCreateAccountArgs) {
-  const response = await fetch('http://localhost:3001/api/v1/account/create-account', {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/account/create-account`, {
     method: 'POST',
     headers: {
       Accept: 'application/json',
@@ -119,7 +119,7 @@ type TRefreshTokenArgs = {
 };
 
 export async function refreshToken({ refreshToken }: TRefreshTokenArgs) {
-  const response = await fetch('http://localhost:3001/api/v1/account/refresh', {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/account/refresh`, {
     method: 'POST',
     headers: {
       Accept: 'application/json',

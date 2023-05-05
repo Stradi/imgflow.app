@@ -47,7 +47,7 @@ export default function JobImagesModal({ job }: TJobImagesModalProps) {
       for (const file of filesGroupedByOutputsName[folder]) {
         const extension = file.storageKey.split('.').pop();
 
-        const fileBlob = await fetch(`https://cdn.devguidez.com/imgflow/${file.storageKey}`).then((r) => r.blob());
+        const fileBlob = await fetch(`${process.env.NEXT_PUBLIC_CDN_URL}/${file.storageKey}`).then((r) => r.blob());
         folderZip.file(`${idx}.${extension}`, fileBlob);
         idx++;
       }
@@ -120,7 +120,7 @@ function OutputGroup({ outputName, files, isOpen, showCollapsible = true }: TOut
     for (const file of files) {
       const extension = file.storageKey.split('.').pop();
 
-      const fileBlob = await fetch(`https://cdn.devguidez.com/imgflow/${file.storageKey}`).then((r) => r.blob());
+      const fileBlob = await fetch(`${process.env.NEXT_PUBLIC_CDN_URL}/${file.storageKey}`).then((r) => r.blob());
       zip.file(`${idx}.${extension}`, fileBlob);
       idx++;
     }
@@ -169,7 +169,7 @@ function OutputGroup({ outputName, files, isOpen, showCollapsible = true }: TOut
               // eslint-disable-next-line @next/next/no-img-element
               <img
                 key={file.id}
-                src={`https://cdn.devguidez.com/imgflow/${file.storageKey}`}
+                src={`${process.env.NEXT_PUBLIC_CDN_URL}/${file.storageKey}`}
                 alt=""
                 className="rounded-sm"
               />

@@ -1,7 +1,7 @@
 import { doAuthenticatedRequest } from './auth';
 
 export async function getAllPipelines() {
-  const response = await doAuthenticatedRequest('http://localhost:3001/api/v1/pipeline', {
+  const response = await doAuthenticatedRequest(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/pipeline`, {
     method: 'GET',
   });
 
@@ -9,7 +9,7 @@ export async function getAllPipelines() {
 }
 
 export async function createNewPipeline(name: string, dataJson: string) {
-  const response = await doAuthenticatedRequest('http://localhost:3001/api/v1/pipeline', {
+  const response = await doAuthenticatedRequest(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/pipeline`, {
     method: 'POST',
     body: JSON.stringify({ name, dataJson }),
     headers: {
@@ -26,7 +26,7 @@ export async function createNewPipeline(name: string, dataJson: string) {
 }
 
 export async function getPipelineById(id: string) {
-  const response = await doAuthenticatedRequest(`http://localhost:3001/api/v1/pipeline/${id}`, {
+  const response = await doAuthenticatedRequest(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/pipeline/${id}`, {
     method: 'GET',
   });
 
@@ -38,7 +38,7 @@ export async function getPipelineById(id: string) {
 }
 
 export async function savePipeline(id: string, name: string, dataJson: string) {
-  const response = await doAuthenticatedRequest(`http://localhost:3001/api/v1/pipeline/${id}`, {
+  const response = await doAuthenticatedRequest(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/pipeline/${id}`, {
     method: 'PUT',
     body: JSON.stringify({ name, dataJson }),
     headers: {
@@ -55,7 +55,7 @@ export async function savePipeline(id: string, name: string, dataJson: string) {
 }
 
 export async function deletePipeline(id: string) {
-  const response = await doAuthenticatedRequest(`http://localhost:3001/api/v1/pipeline/${id}`, {
+  const response = await doAuthenticatedRequest(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/pipeline/${id}`, {
     method: 'DELETE',
   });
 
@@ -72,7 +72,7 @@ export async function runPipeline(id: string, files: File[]) {
     formData.append('images', file);
   }
 
-  const response = await doAuthenticatedRequest(`http://localhost:3001/api/v1/pipeline/${id}/run`, {
+  const response = await doAuthenticatedRequest(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/pipeline/${id}/run`, {
     method: 'POST',
     body: formData,
   });
