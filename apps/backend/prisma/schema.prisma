@@ -20,7 +20,7 @@ model Pipeline {
   name     String
   dataJson String
 
-  user   Account @relation(fields: [userId], references: [id])
+  user   Account @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId Int
 
   jobs Job[]
@@ -34,10 +34,10 @@ model Job {
   createdAt  DateTime  @default(now())
   finishedAt DateTime?
 
-  pipeline   Pipeline @relation(fields: [pipelineId], references: [id])
+  pipeline   Pipeline @relation(fields: [pipelineId], references: [id], onDelete: Cascade)
   pipelineId Int
 
-  user   Account @relation(fields: [userId], references: [id])
+  user   Account @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId Int
 
   files File[]
@@ -47,6 +47,6 @@ model File {
   id         Int    @id @default(autoincrement())
   storageKey String
 
-  job   Job    @relation(fields: [jobId], references: [id])
+  job   Job    @relation(fields: [jobId], references: [id], onDelete: Cascade)
   jobId String
 }
