@@ -1,7 +1,7 @@
 import { doAuthenticatedRequest } from './auth';
 
-export async function getAllJobs() {
-  const response = await doAuthenticatedRequest(`http://localhost:3001/api/v1/job`, {
+export async function getAllJobs(pipelineId: string) {
+  const response = await doAuthenticatedRequest(`http://localhost:3001/api/v1/pipeline/${pipelineId}/jobs`, {
     method: 'GET',
   });
 

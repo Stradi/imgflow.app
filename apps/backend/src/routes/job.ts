@@ -4,19 +4,6 @@ import { db } from '../lib/db';
 import authMiddleware from '../middlewares/auth';
 const router = express.Router();
 
-router.get('/', authMiddleware, async (req, res) => {
-  const jobs = await db().job.findMany({
-    where: {
-      userId: req.user.id,
-    },
-  });
-
-  res.json({
-    message: 'Success',
-    data: jobs || [],
-  });
-});
-
 router.get('/:id', authMiddleware, async (req, res) => {
   const { id } = req.params;
 

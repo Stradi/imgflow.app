@@ -41,7 +41,7 @@ const Page = ({
     }
 
     async function fetchAllJobs() {
-      const response = await getAllJobs();
+      const response = await getAllJobs(pipelineId);
       setJobs(
         response['data'].map((job: any) => ({
           id: job['id'],

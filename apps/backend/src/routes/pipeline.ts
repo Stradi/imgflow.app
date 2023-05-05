@@ -67,6 +67,27 @@ router.get('/:id', authMiddleware, async (req, res) => {
   });
 });
 
+router.get('/:id/jobs', authMiddleware, async (req, res) => {
+  const { id } = req.params;
+
+  if (isNaN(Number(id))) {
+    return res.json({
+      error: 'Invalid id',
+    });
+  }
+
+  const jobs = await db().job.findMany({
+    where: {
+      pipelineId: Number(id),
+    },
+  });
+
+  res.json({
+    message: 'Success',
+    data: jobs,
+  });
+});
+
 router.put('/:id', authMiddleware, async (req, res) => {
   const { name, dataJson } = req.body;
   if (!name && !dataJson) {
