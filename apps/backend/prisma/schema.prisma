@@ -20,6 +20,10 @@ model Pipeline {
   name     String
   dataJson String
 
+  runCount            Int       @default(0)
+  lastRun             DateTime?
+  processedImageCount Int       @default(0)
+
   user   Account @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId Int
 

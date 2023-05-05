@@ -5,6 +5,7 @@ import PipelineCard, { EmptyPipelineCard } from '@/components/pipeline/PipelineC
 import { Button } from '@/components/ui/Button';
 import { Dialog, DialogTrigger } from '@/components/ui/Dialog';
 import { createNewPipeline, deletePipeline, getAllPipelines } from '@/services/pipeline';
+import { toRelativeDate } from '@/utils/date';
 import TEMPLATE_TO_PIPELINE from '@/utils/templateToPipeline';
 import { useEffect, useState } from 'react';
 
@@ -52,9 +53,9 @@ const Page = () => {
               key={pipeline.id}
               href={`/dashboard/pipeline/${pipeline.id}`}
               title={pipeline.name}
-              lastRun={new Date(Date.now())}
-              runCount={200}
-              processedImageCount={1000}
+              lastRun={pipeline.lastRun ? toRelativeDate(pipeline.lastRun) : 'Never'}
+              runCount={pipeline.runCount}
+              processedImageCount={pipeline.processedImageCount}
               image="https://picsum.photos/1024/256"
               onDelete={async () => {
                 await deletePipeline(pipeline.id).catch((err) => {

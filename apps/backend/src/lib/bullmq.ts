@@ -99,6 +99,21 @@ worker.on('completed', async (job, result) => {
     },
   });
 
+  await db().pipeline.update({
+    where: {
+      id: job.data.pipelineId,
+    },
+    data: {
+      runCount: {
+        increment: 1,
+      },
+      processedImageCount: {
+        increment: result.processedFiles.length,
+      },
+      lastRun: new Date(),
+    },
+  });
+
   const fileInserts = [];
   for (const file of result.processedFiles) {
     fileInserts.push(

@@ -8,7 +8,7 @@ export type TPipelineCardProps = {
   href?: string;
   image?: string;
   runCount: number;
-  lastRun: Date;
+  lastRun: string;
   processedImageCount: number;
   onDelete?: () => void;
 };
@@ -35,7 +35,7 @@ export default function PipelineCard({
         <h3 className="font-medium text-lg">{title}</h3>
         <div>
           <p className="text-gray-500">
-            Ran {runCount} times · Last run {lastRun.toLocaleDateString()}
+            Ran {runCount} times · Last run {lastRun}
           </p>
           <p className="text-gray-500">Processed {processedImageCount} images total</p>
         </div>
