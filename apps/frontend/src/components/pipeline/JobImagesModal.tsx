@@ -39,18 +39,19 @@ export default function JobImagesModal({ job }: TJobImagesModalProps) {
   async function createZip() {
     setPreparingZip(true);
     const zip = new JSZip();
-    const downloadedFiles = await Promise.all(
-      files.map((file: any) => {
-        const storageURL = `https://cdn.devguidez.com/imgflow/${file.storageKey}`;
-        return fetch(storageURL);
-      })
-    );
 
-    const blobs = await Promise.all(downloadedFiles.map((file) => file.blob()));
+    const folders = Object.keys(filesGroupedByOutputsName);
+    for (const folder of folders) {
+      const folderZip = zip.folder(`output-${folder.split('.')[0]}`) as JSZip;
+      let idx = 0;
+      for (const file of filesGroupedByOutputsName[folder]) {
+        const extension = file.storageKey.split('.').pop();
 
-    blobs.forEach((blob, index) => {
-      zip.file(`${index}.${(files[index] as any).storageKey.split('.')[1]}`, blob);
-    });
+        const fileBlob = await fetch(`https://cdn.devguidez.com/imgflow/${file.storageKey}`).then((r) => r.blob());
+        folderZip.file(`${idx}.${extension}`, fileBlob);
+        idx++;
+      }
+    }
 
     const generatedZip = await zip.generateAsync({ type: 'blob' });
     const url = window.URL.createObjectURL(generatedZip);
