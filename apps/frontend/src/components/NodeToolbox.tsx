@@ -1,7 +1,9 @@
 import useCanvasStore from '@/stores/CanvasStore';
 import { cn } from '@/utils/tw';
 import { InfoIcon } from 'lucide-react';
+import { useState } from 'react';
 import { HoverCard, HoverCardContent, HoverCardTrigger } from './ui/HoverCard';
+import { Input } from './ui/Input';
 
 type TSingleNodePreview = {
   title: string;
@@ -14,7 +16,7 @@ function SingleNodePreview({ title, description, type }: TSingleNodePreview) {
   return (
     <div
       className={cn(
-        'select-none p-2 rounded-2xl hover:cursor-pointer transition duration-100',
+        'select-none p-2 rounded-md hover:cursor-pointer transition duration-100',
         'max-w-3/5 basis-3/5 grow-0 shrink-0 border border-gray-200 hover:border-green-400',
         'md:max-w-none md:basis-auto md:grow-0 md:shrink-0'
       )}
@@ -48,19 +50,44 @@ function SingleNodePreview({ title, description, type }: TSingleNodePreview) {
   );
 }
 
+const ALL_NODES = [
+  {
+    name: 'Output',
+    description: 'Save image with specified format and quality',
+    dom: <SingleNodePreview type="Output" title="Output" description="Save image with specified format and quality" />,
+  },
+  {
+    name: 'Resize',
+    description: 'Resize the image to specified size',
+    dom: <SingleNodePreview type="Resize" title="Resize" description="Resize the image to specified size" />,
+  },
+  {
+    name: 'Crop',
+    description: 'Crop your images to specified size',
+    dom: <SingleNodePreview type="Crop" title="Crop" description="Crop your images to specified size" />,
+  },
+];
+
 export default function NodeToolbox() {
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const filteredNodes = ALL_NODES.filter((node) => {
+    return node.name.toLowerCase().includes(searchTerm.toLowerCase());
+  });
+
   return (
-    <div className="w-full h-full bg-white/50 backdrop-blur-sm border-2 rounded-xl p-4 border-gray-300">
+    <div className="space-y-2 w-full h-full bg-white/50 backdrop-blur-sm border-2 rounded-xl p-4 border-gray-300">
       <p className="text-xl font-medium">Nodes</p>
+      <div>
+        <Input placeholder="Search nodes" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+      </div>
       <div
         className={cn(
           'flex items-stretch gap-2 flex-nowrap overflow-x-auto overflow-y-hidden',
           'md:block md:space-y-2 md:overflow-auto md:mt-4'
         )}
       >
-        <SingleNodePreview type="Output" title="Output" description="Save image with specified format and quality" />
-        <SingleNodePreview type="Resize" title="Resize" description="Resize the image to specified size" />
-        <SingleNodePreview type="Crop" title="Crop" description="Crop your images to specified size" />
+        {filteredNodes.map((node) => node.dom)}
       </div>
     </div>
   );

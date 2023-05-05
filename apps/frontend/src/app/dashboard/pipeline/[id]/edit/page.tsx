@@ -60,7 +60,7 @@ const Page = ({
   return (
     <div>
       <Toaster />
-      <div className="h-16 border-b border-gray-200 flex items-center p-3 gap-4">
+      <div className="border-b border-gray-200 flex items-center p-2 gap-1">
         <Input
           className="md:w-1/3"
           type="text"
