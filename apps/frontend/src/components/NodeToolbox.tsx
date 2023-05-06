@@ -66,6 +66,47 @@ const ALL_NODES = [
     description: 'Crop your images to specified size',
     dom: <SingleNodePreview type="Crop" title="Crop" description="Crop your images to specified size" />,
   },
+  {
+    name: 'Rotate',
+    description: 'Rotate your image with specified angle',
+    dom: <SingleNodePreview type="Rotate" title="Rotate" description="Rotate your image with specified angle" />,
+  },
+  {
+    name: 'Modulate',
+    description: 'Adjust brightness, saturation, and hue of your image',
+    dom: (
+      <SingleNodePreview
+        type="Modulate"
+        title="Modulate"
+        description="Adjust brightness, saturation, and hue of your image"
+      />
+    ),
+  },
+  {
+    name: 'Flip',
+    description: 'Flip your image horizontally or vertically',
+    dom: <SingleNodePreview type="Flip" title="Flip" description="Flip your image horizontally or vertically" />,
+  },
+  {
+    name: 'Blur',
+    description: 'Blur your image with specified amount',
+    dom: <SingleNodePreview type="Blur" title="Blur" description="Blur the image" />,
+  },
+  {
+    name: 'Gamma',
+    description: 'Adjust gamma of your image',
+    dom: <SingleNodePreview type="Gamma" title="Gamma" description="Adjust gamma of your image" />,
+  },
+  {
+    name: 'Negative',
+    description: 'Invert the colors of your image',
+    dom: <SingleNodePreview type="Negative" title="Negative" description="Invert the colors of your image" />,
+  },
+  {
+    name: 'Grayscale',
+    description: 'Convert your image to grayscale',
+    dom: <SingleNodePreview type="Grayscale" title="Grayscale" description="Convert your image to grayscale" />,
+  },
 ];
 
 export default function NodeToolbox() {

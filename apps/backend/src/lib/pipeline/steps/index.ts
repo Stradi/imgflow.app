@@ -1,24 +1,60 @@
-import { crop } from './crop';
+import { TBlurOptions, blur } from './blur';
+import { TCropOptions, crop } from './crop';
 import { TExtendOptions, extend } from './extend';
+import { TFlipOptions, flip } from './flip';
+import { TGammaOptions, gamma } from './gamma';
+import { TGrayscaleOptions, grayscale } from './grayscale';
+import { TModulateOptions, modulate } from './modulate';
+import { TNegativeOptions, negative } from './negative';
 import { TOutputOptions, output } from './output';
 import { TResizeOptions, resize } from './resize';
+import { TRotateOptions, rotate } from './rotate';
+import { TTintOptions, tint } from './tint';
 
-export type TStep = TOutputOptions | TResizeOptions | TExtendOptions;
+export type TStep =
+  | TOutputOptions
+  | TResizeOptions
+  | TExtendOptions
+  | TCropOptions
+  | TRotateOptions
+  | TModulateOptions
+  | TFlipOptions
+  | TBlurOptions
+  | TGammaOptions
+  | TNegativeOptions
+  | TTintOptions
+  | TGrayscaleOptions;
 
 export const functions = {
   input: () => {},
-  resize,
   output,
+  resize,
   extend,
   crop,
+  rotate,
+  modulate,
+  flip,
+  blur,
+  gamma,
+  negative,
+  tint,
+  grayscale,
   noop: () => {},
 };
 
 export const STEPNAME_TO_FN: Record<string, keyof typeof functions> = {
   InputImage: 'input',
-  Resize: 'resize',
   Output: 'output',
+  Resize: 'resize',
   Extend: 'extend',
   Crop: 'crop',
+  Rotate: 'rotate',
+  Modulate: 'modulate',
+  Flip: 'flip',
+  Blur: 'blur',
+  Gamma: 'gamma',
+  Negative: 'negative',
+  Tint: 'tint',
+  Grayscale: 'grayscale',
   Default: 'noop',
 };

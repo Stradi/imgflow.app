@@ -4,16 +4,30 @@ import { useEffect, useRef, useState } from 'react';
 import { Background, Node, ReactFlow, ReactFlowProvider } from 'reactflow';
 import { shallow } from 'zustand/shallow';
 import ReactiveEdge from './ReactiveEdge';
+import BlurNode from './nodes/BlurNode';
 import CropNode from './nodes/CropNode';
+import FlipNode from './nodes/FlipNode';
+import GammaNode from './nodes/GammaNode';
+import GrayscaleNode from './nodes/GrayscaleNode';
 import InputImageNode from './nodes/InputImageNode';
+import ModulateNode from './nodes/ModulateNode';
+import NegativeNode from './nodes/NegativeNode';
 import OutputNode from './nodes/OutputNode';
 import ResizeNode from './nodes/ResizeNode';
+import RotateNode from './nodes/RotateNode';
 
 const customNodes = {
   InputImage: InputImageNode,
   Output: OutputNode,
   Resize: ResizeNode,
   Crop: CropNode,
+  Rotate: RotateNode,
+  Modulate: ModulateNode,
+  Flip: FlipNode,
+  Blur: BlurNode,
+  Gamma: GammaNode,
+  Negative: NegativeNode,
+  Grayscale: GrayscaleNode,
 };
 
 const customEdges = {

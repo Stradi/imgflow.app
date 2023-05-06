@@ -10,9 +10,10 @@ export type TNumberInputProps = {
   placeholder?: string;
   min?: number;
   max?: number;
+  step?: string;
 };
 
-export default function NumberInput({ label, value, onValueChange, placeholder, min, max }: TNumberInputProps) {
+export default function NumberInput({ label, value, onValueChange, placeholder, min, max, step }: TNumberInputProps) {
   return (
     <div className="grid grid-cols-4 gap-2 items-center nodrag">
       <Label>{label}</Label>
@@ -21,6 +22,7 @@ export default function NumberInput({ label, value, onValueChange, placeholder, 
         type="number"
         min={min}
         max={max}
+        step={step}
         placeholder={placeholder}
         value={value}
         onChange={(e) => onValueChange(Number.parseInt(e.target.value))}
