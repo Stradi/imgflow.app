@@ -81,7 +81,7 @@ async function runFlow(flow: TNode[], image: sharp.Sharp, key: string) {
       return finalKey;
     }
 
-    functions[STEPNAME_TO_FN[step.type]](image, step.data as any);
+    await functions[STEPNAME_TO_FN[step.type]](image, step.data as any);
   }
 
   throw new Error('This should never happen. So we are throwing error: Dafuq?');

@@ -24,7 +24,7 @@ export default function SelectInput({
   return (
     <div className="grid grid-cols-4 gap-2 items-center nodrag">
       <Label>{label}</Label>
-      <Select onValueChange={onValueChange} defaultValue={defaultValue}>
+      <Select onValueChange={onValueChange} defaultValue={defaultValue} value={value}>
         <SelectTrigger className="col-span-3">
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>

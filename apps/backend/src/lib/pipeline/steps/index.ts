@@ -9,6 +9,7 @@ import { TNegativeOptions, negative } from './negative';
 import { TOutputOptions, output } from './output';
 import { TResizeOptions, resize } from './resize';
 import { TRotateOptions, rotate } from './rotate';
+import { TTextOptions, text } from './text';
 import { TTintOptions, tint } from './tint';
 
 export type TStep =
@@ -23,7 +24,8 @@ export type TStep =
   | TGammaOptions
   | TNegativeOptions
   | TTintOptions
-  | TGrayscaleOptions;
+  | TGrayscaleOptions
+  | TTextOptions;
 
 export const functions = {
   input: () => {},
@@ -39,6 +41,7 @@ export const functions = {
   negative,
   tint,
   grayscale,
+  text,
   noop: () => {},
 };
 
@@ -56,5 +59,6 @@ export const STEPNAME_TO_FN: Record<string, keyof typeof functions> = {
   Negative: 'negative',
   Tint: 'tint',
   Grayscale: 'grayscale',
+  Text: 'text',
   Default: 'noop',
 };

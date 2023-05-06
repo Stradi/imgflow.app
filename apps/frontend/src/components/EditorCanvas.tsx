@@ -15,6 +15,7 @@ import NegativeNode from './nodes/NegativeNode';
 import OutputNode from './nodes/OutputNode';
 import ResizeNode from './nodes/ResizeNode';
 import RotateNode from './nodes/RotateNode';
+import TextNode from './nodes/TextNode';
 
 const customNodes = {
   InputImage: InputImageNode,
@@ -28,6 +29,7 @@ const customNodes = {
   Gamma: GammaNode,
   Negative: NegativeNode,
   Grayscale: GrayscaleNode,
+  Text: TextNode,
 };
 
 const customEdges = {

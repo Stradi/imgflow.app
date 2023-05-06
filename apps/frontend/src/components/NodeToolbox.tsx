@@ -107,6 +107,11 @@ const ALL_NODES = [
     description: 'Convert your image to grayscale',
     dom: <SingleNodePreview type="Grayscale" title="Grayscale" description="Convert your image to grayscale" />,
   },
+  {
+    name: 'Text',
+    description: 'Add text to your image',
+    dom: <SingleNodePreview type="Text" title="Text" description="Add text to your image" />,
+  },
 ];
 
 export default function NodeToolbox() {
