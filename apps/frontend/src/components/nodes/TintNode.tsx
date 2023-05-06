@@ -1,9 +1,8 @@
 import useCanvasStore from '@/stores/CanvasStore';
 import BaseNode from './BaseNode';
 import ColorPickerInput from './inputs/ColorPickerInput';
-import NumberInput from './inputs/NumberInput';
 
-export default function RotateNode(props: any) {
+export default function TintNode(props: any) {
   const { getNodeData, setNodeData } = useCanvasStore((state) => ({
     getNodeData: state.getNodeData,
     setNodeData: state.setNodeData,
@@ -19,28 +18,15 @@ export default function RotateNode(props: any) {
         type: 'source',
       }}
     >
-      <BaseNode.Header>Rotate</BaseNode.Header>
+      <BaseNode.Header>Tint</BaseNode.Header>
       <BaseNode.Content>
-        <NumberInput
-          label="Angle"
-          placeholder="Angle of rotation"
-          value={getNodeData(props.id).angle}
-          min={0}
-          max={360}
-          onValueChange={(e) =>
-            setNodeData(props.id, {
-              ...getNodeData(props.id),
-              angle: e,
-            })
-          }
-        />
         <ColorPickerInput
-          label="Background color"
-          value={getNodeData(props.id).background}
+          label="Color"
+          value={getNodeData(props.id).color}
           onValueChange={(e) =>
             setNodeData(props.id, {
               ...getNodeData(props.id),
-              background: e,
+              color: e,
             })
           }
         />

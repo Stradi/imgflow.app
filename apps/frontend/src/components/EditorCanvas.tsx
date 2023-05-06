@@ -16,6 +16,7 @@ import OutputNode from './nodes/OutputNode';
 import ResizeNode from './nodes/ResizeNode';
 import RotateNode from './nodes/RotateNode';
 import TextNode from './nodes/TextNode';
+import TintNode from './nodes/TintNode';
 
 const customNodes = {
   InputImage: InputImageNode,
@@ -30,6 +31,7 @@ const customNodes = {
   Negative: NegativeNode,
   Grayscale: GrayscaleNode,
   Text: TextNode,
+  Tint: TintNode,
 };
 
 const customEdges = {

@@ -3,7 +3,7 @@ import sharp from 'sharp';
 export type TTintOptions = {
   name: 'Tint';
   args: {
-    color: sharp.Color;
+    color: string;
   };
 };
 

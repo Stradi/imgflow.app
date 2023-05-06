@@ -4,7 +4,7 @@ export type TRotateOptions = {
   name: 'Rotate';
   args: {
     angle?: number;
-    background?: sharp.Color;
+    background?: string;
   };
 };
 

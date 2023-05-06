@@ -6,7 +6,7 @@ export type TResizeOptions = {
     width: number;
     height: number;
     fit?: 'contain' | 'cover' | 'fill' | 'inside' | 'outside';
-    background?: sharp.Color;
+    background?: string;
   };
 };
 

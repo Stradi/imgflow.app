@@ -8,7 +8,7 @@ export type TExtendOptions = {
     bottom?: number;
     right?: number;
     extendWith?: 'background' | 'copy' | 'mirror' | 'repeat';
-    background?: sharp.Color;
+    background?: string;
   };
 };
 

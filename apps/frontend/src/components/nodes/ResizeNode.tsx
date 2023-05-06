@@ -1,5 +1,6 @@
 import useCanvasStore from '@/stores/CanvasStore';
 import BaseNode from './BaseNode';
+import ColorPickerInput from './inputs/ColorPickerInput';
 import NumberInput from './inputs/NumberInput';
 import SelectInput from './inputs/SelectInput';
 
@@ -59,6 +60,16 @@ export default function ResizeNode(props: any) {
           }
           defaultValue={getNodeData(props.id).format}
           options={['contain', 'cover', 'fill', 'inside', 'outsite']}
+        />
+        <ColorPickerInput
+          label="Background color"
+          value={getNodeData(props.id).background}
+          onValueChange={(e) =>
+            setNodeData(props.id, {
+              ...getNodeData(props.id),
+              background: e,
+            })
+          }
         />
       </BaseNode.Content>
     </BaseNode>

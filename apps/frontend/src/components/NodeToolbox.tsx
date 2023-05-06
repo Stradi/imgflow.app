@@ -112,6 +112,11 @@ const ALL_NODES = [
     description: 'Add text to your image',
     dom: <SingleNodePreview type="Text" title="Text" description="Add text to your image" />,
   },
+  {
+    name: 'Tint',
+    description: 'Tint your image with specified color',
+    dom: <SingleNodePreview type="Tint" title="Tint" description="Tint your image with specified color" />,
+  },
 ];
 
 export default function NodeToolbox() {
