@@ -49,9 +49,9 @@ export async function runPipeline(
 
   for (const file of files) {
     originalFiles.push(file.key);
-    const sharpImage = sharp(file.stream);
 
     for (const path of validPaths) {
+      const sharpImage = sharp(file.stream);
       const processedFileKey = await runFlow(path, sharpImage, `${userId}/${pipelineId}/${file.uuid}`);
       processedFiles.push(processedFileKey);
 
