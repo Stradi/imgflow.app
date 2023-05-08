@@ -8,6 +8,27 @@ export default function BlurNode(props: any) {
     setNodeData: state.setNodeData,
   }));
 
+  function getValidationError() {
+    const { sigma } = getNodeData(props.id);
+    if (!sigma || isNaN(sigma)) {
+      return 'Amount cannot be empty';
+    }
+
+    if (sigma < 0 || sigma > 100) {
+      return 'Amount must be between 0 and 100';
+    }
+
+    return '';
+  }
+
+  function set(data: any) {
+    setNodeData(props.id, {
+      ...getNodeData(props.id),
+      ...data,
+      getValidationError,
+    });
+  }
+
   return (
     <BaseNode
       node={props}
@@ -26,7 +47,7 @@ export default function BlurNode(props: any) {
           min={0}
           max={100}
           value={getNodeData(props.id).sigma}
-          onValueChange={(e) => setNodeData(props.id, { ...getNodeData(props.id), sigma: e })}
+          onValueChange={(e) => set({ sigma: e })}
         />
       </BaseNode.Content>
     </BaseNode>

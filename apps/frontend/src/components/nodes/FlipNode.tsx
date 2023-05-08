@@ -8,6 +8,18 @@ export default function FlipNode(props: any) {
     setNodeData: state.setNodeData,
   }));
 
+  function getValidationError() {
+    return '';
+  }
+
+  function set(data: any) {
+    setNodeData(props.id, {
+      ...getNodeData(props.id),
+      ...data,
+      getValidationError,
+    });
+  }
+
   return (
     <BaseNode
       node={props}
@@ -20,16 +32,8 @@ export default function FlipNode(props: any) {
     >
       <BaseNode.Header collapsible>Flip</BaseNode.Header>
       <BaseNode.Content>
-        <CheckboxInput
-          label="Horizontal"
-          value={getNodeData(props.id).x}
-          onValueChange={(e) => setNodeData(props.id, { ...getNodeData(props.id), x: e })}
-        />
-        <CheckboxInput
-          label="Vertical"
-          value={getNodeData(props.id).y}
-          onValueChange={(e) => setNodeData(props.id, { ...getNodeData(props.id), y: e })}
-        />
+        <CheckboxInput label="Horizontal" value={getNodeData(props.id).x} onValueChange={(e) => set({ x: e })} />
+        <CheckboxInput label="Vertical" value={getNodeData(props.id).y} onValueChange={(e) => set({ y: e })} />
       </BaseNode.Content>
     </BaseNode>
   );

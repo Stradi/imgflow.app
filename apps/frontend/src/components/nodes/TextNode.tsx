@@ -11,6 +11,31 @@ export default function TextNode(props: any) {
     setNodeData: state.setNodeData,
   }));
 
+  function getValidationError() {
+    const { text, size } = getNodeData(props.id);
+    if (!text) {
+      return 'Text cannot be empty';
+    }
+
+    if (!size || isNaN(size)) {
+      return 'Size cannot be empty';
+    }
+
+    if (size < 0 || size > 100) {
+      return 'Size must be between 0 and 100';
+    }
+
+    return '';
+  }
+
+  function set(data: any) {
+    setNodeData(props.id, {
+      ...getNodeData(props.id),
+      ...data,
+      getValidationError,
+    });
+  }
+
   return (
     <BaseNode
       node={props}
@@ -27,21 +52,21 @@ export default function TextNode(props: any) {
           label="Text"
           placeholder="Text"
           value={getNodeData(props.id).text}
-          onValueChange={(e) => setNodeData(props.id, { ...getNodeData(props.id), text: e })}
+          onValueChange={(e) => set({ text: e })}
         />
         <SliderInput
           label="Size"
           min={0}
           max={100}
           value={getNodeData(props.id).size}
-          onValueChange={(e) => setNodeData(props.id, { ...getNodeData(props.id), size: e })}
+          onValueChange={(e) => set({ size: e })}
           step={1}
         />
         <SelectInput
           label="Position"
           placeholder="Position of text"
           value={getNodeData(props.id).position}
-          onValueChange={(e) => setNodeData(props.id, { ...getNodeData(props.id), position: e })}
+          onValueChange={(e) => set({ position: e })}
           options={[
             'Top Left',
             'Top Center',
@@ -57,7 +82,7 @@ export default function TextNode(props: any) {
         <ColorPickerInput
           label="Text Color"
           value={getNodeData(props.id).textColor}
-          onValueChange={(e) => setNodeData(props.id, { ...getNodeData(props.id), textColor: e })}
+          onValueChange={(e) => set({ textColor: e })}
         />
       </BaseNode.Content>
     </BaseNode>

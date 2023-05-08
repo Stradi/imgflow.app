@@ -8,6 +8,51 @@ export default function CropNode(props: any) {
     setNodeData: state.setNodeData,
   }));
 
+  function getValidationError() {
+    const { top, left, bottom, right } = getNodeData(props.id);
+    if (!top || isNaN(top)) {
+      return 'Top cannot be empty';
+    }
+
+    if (top < 0 || top > 10000) {
+      return 'Top must be between 0 and 10000';
+    }
+
+    if (!left || isNaN(left)) {
+      return 'Left cannot be empty';
+    }
+
+    if (left < 0 || left > 10000) {
+      return 'Left must be between 0 and 10000';
+    }
+
+    if (!bottom || isNaN(bottom)) {
+      return 'Bottom cannot be empty';
+    }
+
+    if (bottom < 0 || bottom > 10000) {
+      return 'Bottom must be between 0 and 10000';
+    }
+
+    if (!right || isNaN(right)) {
+      return 'Right cannot be empty';
+    }
+
+    if (right < 0 || right > 10000) {
+      return 'Right must be between 0 and 10000';
+    }
+
+    return '';
+  }
+
+  function set(data: any) {
+    setNodeData(props.id, {
+      ...getNodeData(props.id),
+      ...data,
+      getValidationError,
+    });
+  }
+
   return (
     <BaseNode
       node={props}
@@ -27,8 +72,7 @@ export default function CropNode(props: any) {
           min={0}
           max={10000}
           onValueChange={(e) =>
-            setNodeData(props.id, {
-              ...getNodeData(props.id),
+            set({
               top: e,
             })
           }
@@ -40,8 +84,7 @@ export default function CropNode(props: any) {
           min={0}
           max={10000}
           onValueChange={(e) =>
-            setNodeData(props.id, {
-              ...getNodeData(props.id),
+            set({
               left: e,
             })
           }
@@ -53,8 +96,7 @@ export default function CropNode(props: any) {
           min={0}
           max={10000}
           onValueChange={(e) =>
-            setNodeData(props.id, {
-              ...getNodeData(props.id),
+            set({
               width: e,
             })
           }
@@ -66,8 +108,7 @@ export default function CropNode(props: any) {
           min={0}
           max={10000}
           onValueChange={(e) =>
-            setNodeData(props.id, {
-              ...getNodeData(props.id),
+            set({
               height: e,
             })
           }

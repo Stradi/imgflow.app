@@ -56,6 +56,8 @@ export default function ReactiveEdge({
         x: e.clientX - offset.left,
         y: e.clientY - offset.top,
       }),
+      // TODO: We somehow should add validation data in here for each node type
+      // Here and in `EditorCanvas.ReactFlow.onDrop` event.
       data: {},
     } as Node;
 

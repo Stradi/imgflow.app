@@ -10,6 +10,35 @@ export default function ResizeNode(props: any) {
     setNodeData: state.setNodeData,
   }));
 
+  function getValidationError() {
+    const { width, height } = getNodeData(props.id);
+    if (!width || isNaN(width)) {
+      return 'Width cannot be empty';
+    }
+
+    if (width < 0 || width > 10000) {
+      return 'Width must be between 0 and 10000';
+    }
+
+    if (!height || isNaN(height)) {
+      return 'Height cannot be empty';
+    }
+
+    if (height < 0 || height > 10000) {
+      return 'Height must be between 0 and 10000';
+    }
+
+    return '';
+  }
+
+  function set(data: any) {
+    setNodeData(props.id, {
+      ...getNodeData(props.id),
+      ...data,
+      getValidationError,
+    });
+  }
+
   return (
     <BaseNode
       node={props}
@@ -29,8 +58,7 @@ export default function ResizeNode(props: any) {
           min={0}
           max={10000}
           onValueChange={(e) =>
-            setNodeData(props.id, {
-              ...getNodeData(props.id),
+            set({
               width: e,
             })
           }
@@ -42,8 +70,7 @@ export default function ResizeNode(props: any) {
           min={0}
           max={10000}
           onValueChange={(e) =>
-            setNodeData(props.id, {
-              ...getNodeData(props.id),
+            set({
               height: e,
             })
           }
@@ -53,8 +80,7 @@ export default function ResizeNode(props: any) {
           placeholder="Select fitting method"
           value={getNodeData(props.id).format}
           onValueChange={(e) =>
-            setNodeData(props.id, {
-              ...getNodeData(props.id),
+            set({
               fit: e,
             })
           }
@@ -65,8 +91,7 @@ export default function ResizeNode(props: any) {
           label="Background color"
           value={getNodeData(props.id).background}
           onValueChange={(e) =>
-            setNodeData(props.id, {
-              ...getNodeData(props.id),
+            set({
               background: e,
             })
           }

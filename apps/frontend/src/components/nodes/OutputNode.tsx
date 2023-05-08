@@ -10,6 +10,31 @@ export default function OutputNode(props: any) {
     setNodeData: state.setNodeData,
   }));
 
+  function getValidationError() {
+    const { filename, format, quality } = getNodeData(props.id);
+    if (!filename || !format || !quality) {
+      return 'All fields are required';
+    }
+
+    if (filename === '') {
+      return 'Filename cannot be empty';
+    }
+
+    if (quality < 0 || quality > 100) {
+      return 'Quality must be between 0 and 100';
+    }
+
+    return '';
+  }
+
+  function set(data: any) {
+    setNodeData(props.id, {
+      ...getNodeData(props.id),
+      ...data,
+      getValidationError,
+    });
+  }
+
   return (
     <BaseNode
       node={props}
@@ -24,8 +49,7 @@ export default function OutputNode(props: any) {
           placeholder="Enter filename"
           value={getNodeData(props.id).filename}
           onValueChange={(e) =>
-            setNodeData(props.id, {
-              ...getNodeData(props.id),
+            set({
               filename: e,
             })
           }
@@ -35,8 +59,7 @@ export default function OutputNode(props: any) {
           placeholder="Select output format"
           value={getNodeData(props.id).format}
           onValueChange={(e) =>
-            setNodeData(props.id, {
-              ...getNodeData(props.id),
+            set({
               format: e,
             })
           }
@@ -50,8 +73,7 @@ export default function OutputNode(props: any) {
           min={0}
           max={100}
           onValueChange={(e) =>
-            setNodeData(props.id, {
-              ...getNodeData(props.id),
+            set({
               quality: e,
             })
           }

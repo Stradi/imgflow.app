@@ -9,6 +9,27 @@ export default function RotateNode(props: any) {
     setNodeData: state.setNodeData,
   }));
 
+  function getValidationError() {
+    const { angle } = getNodeData(props.id);
+    if (!angle || isNaN(angle)) {
+      return 'Angle cannot be empty';
+    }
+
+    if (angle < 0 || angle > 360) {
+      return 'Angle must be between 0 and 360';
+    }
+
+    return '';
+  }
+
+  function set(data: any) {
+    setNodeData(props.id, {
+      ...getNodeData(props.id),
+      ...data,
+      getValidationError,
+    });
+  }
+
   return (
     <BaseNode
       node={props}
@@ -28,8 +49,7 @@ export default function RotateNode(props: any) {
           min={0}
           max={360}
           onValueChange={(e) =>
-            setNodeData(props.id, {
-              ...getNodeData(props.id),
+            set({
               angle: e,
             })
           }
@@ -38,8 +58,7 @@ export default function RotateNode(props: any) {
           label="Background color"
           value={getNodeData(props.id).background}
           onValueChange={(e) =>
-            setNodeData(props.id, {
-              ...getNodeData(props.id),
+            set({
               background: e,
             })
           }

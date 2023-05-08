@@ -24,7 +24,7 @@ const Page = ({
 }) => {
   const [isSaving, setIsSaving] = useState(false);
 
-  const { pipelineName, setPipelineName, setNodes, setEdges, setCounters, setNodeData } = useCanvasStore(
+  const { pipelineName, setPipelineName, setNodes, setEdges, setCounters, setNodeData, nodes } = useCanvasStore(
     (state) => ({
       pipelineName: state.pipelineName,
       setPipelineName: state.setPipelineName,
@@ -32,6 +32,7 @@ const Page = ({
       setEdges: state.setEdges,
       setCounters: state.setCounters,
       setNodeData: state.setNodeData,
+      nodes: state.nodes,
     }),
     shallow
   );
@@ -79,6 +80,22 @@ const Page = ({
               return;
             }
 
+            const firstInvalidNode = nodes.find(
+              (node) => node.data.getValidationError && node.data.getValidationError() !== ''
+            );
+            if (firstInvalidNode) {
+              toast.error(
+                <div>
+                  <p className="font-medium text-sm">Please fix the error in {firstInvalidNode.type} node.</p>
+                  <p className="text-sm">{firstInvalidNode.data.getValidationError()}</p>
+                </div>,
+                {
+                  duration: 2000,
+                }
+              );
+              return;
+            }
+
             setIsSaving(true);
             await savePipeline(
               pipelineId,
@@ -89,6 +106,9 @@ const Page = ({
               })
             );
             setIsSaving(false);
+            toast.success('Pipeline saved successfully.', {
+              duration: 2000,
+            });
           }}
         >
           Save Pipeline

@@ -8,6 +8,43 @@ export default function ModulateNode(props: any) {
     setNodeData: state.setNodeData,
   }));
 
+  function getValidationError() {
+    const { brightness, saturation, hue } = getNodeData(props.id);
+    if (!brightness || isNaN(brightness)) {
+      return 'Brightness cannot be empty';
+    }
+
+    if (brightness < 0 || brightness > 5) {
+      return 'Brightness must be between 0 and 5';
+    }
+
+    if (!saturation || isNaN(saturation)) {
+      return 'Saturation cannot be empty';
+    }
+
+    if (saturation < 0 || saturation > 5) {
+      return 'Saturation must be between 0 and 5';
+    }
+
+    if (!hue || isNaN(hue)) {
+      return 'Hue cannot be empty';
+    }
+
+    if (hue < 0 || hue > 360) {
+      return 'Hue must be between 0 and 5';
+    }
+
+    return '';
+  }
+
+  function set(data: any) {
+    setNodeData(props.id, {
+      ...getNodeData(props.id),
+      ...data,
+      getValidationError,
+    });
+  }
+
   return (
     <BaseNode
       node={props}
@@ -27,8 +64,7 @@ export default function ModulateNode(props: any) {
           min={0}
           max={5}
           onValueChange={(e) =>
-            setNodeData(props.id, {
-              ...getNodeData(props.id),
+            set({
               brightness: e,
             })
           }
@@ -40,8 +76,7 @@ export default function ModulateNode(props: any) {
           min={0}
           max={5}
           onValueChange={(e) =>
-            setNodeData(props.id, {
-              ...getNodeData(props.id),
+            set({
               saturation: e,
             })
           }
@@ -53,8 +88,7 @@ export default function ModulateNode(props: any) {
           min={0}
           max={360}
           onValueChange={(e) =>
-            setNodeData(props.id, {
-              ...getNodeData(props.id),
+            set({
               hue: e,
             })
           }
