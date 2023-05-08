@@ -138,7 +138,9 @@ export default function NodeToolbox() {
           'md:block md:space-y-2 md:overflow-auto md:mt-4'
         )}
       >
-        {filteredNodes.map((node) => node.dom)}
+        {filteredNodes.map((node) => (
+          <div key={node.name}>{node.dom}</div>
+        ))}
       </div>
     </div>
   );

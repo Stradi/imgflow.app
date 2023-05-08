@@ -11,7 +11,6 @@ type TBaseNodeHeaderProps = PropsWithChildren & {
 };
 
 function BaseNodeHeader({ children, collapsible, isCollapsed, onCollapseChange }: TBaseNodeHeaderProps) {
-  console.log(collapsible);
   return (
     <header className="font-medium bg-white/50 rounded-2xl px-4 py-2 border-b border-gray-300">
       <div className="flex justify-between items-center">
