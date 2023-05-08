@@ -17,7 +17,7 @@ const TEMPLATE_TO_PIPELINE = {
         deletable: false,
         data: {},
         position: {
-          x: 250,
+          x: 400,
           y: 0,
         },
       },
@@ -49,7 +49,7 @@ const TEMPLATE_TO_PIPELINE = {
         deletable: false,
         data: {},
         position: {
-          x: 500,
+          x: 800,
           y: 0,
         },
       },
@@ -58,7 +58,7 @@ const TEMPLATE_TO_PIPELINE = {
         type: 'Resize',
         data: {},
         position: {
-          x: 250,
+          x: 400,
           y: 0,
         },
       },
@@ -96,7 +96,7 @@ const TEMPLATE_TO_PIPELINE = {
         deletable: false,
         data: {},
         position: {
-          x: 500,
+          x: 800,
           y: 0,
         },
       },
@@ -105,7 +105,7 @@ const TEMPLATE_TO_PIPELINE = {
         type: 'Resize',
         data: {},
         position: {
-          x: 250,
+          x: 400,
           y: 0,
         },
       },
@@ -143,7 +143,7 @@ const TEMPLATE_TO_PIPELINE = {
         deletable: false,
         data: {},
         position: {
-          x: 500,
+          x: 800,
           y: 0,
         },
       },
@@ -152,7 +152,7 @@ const TEMPLATE_TO_PIPELINE = {
         type: 'Resize',
         data: {},
         position: {
-          x: 250,
+          x: 400,
           y: 0,
         },
       },
