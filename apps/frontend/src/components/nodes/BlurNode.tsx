@@ -18,7 +18,7 @@ export default function BlurNode(props: any) {
         type: 'source',
       }}
     >
-      <BaseNode.Header>Blur</BaseNode.Header>
+      <BaseNode.Header collapsible>Blur</BaseNode.Header>
       <BaseNode.Content>
         <NumberInput
           label="Amount"

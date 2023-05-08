@@ -18,7 +18,7 @@ export default function TintNode(props: any) {
         type: 'source',
       }}
     >
-      <BaseNode.Header>Tint</BaseNode.Header>
+      <BaseNode.Header collapsible>Tint</BaseNode.Header>
       <BaseNode.Content>
         <ColorPickerInput
           label="Color"

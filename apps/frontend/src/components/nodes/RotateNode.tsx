@@ -19,7 +19,7 @@ export default function RotateNode(props: any) {
         type: 'source',
       }}
     >
-      <BaseNode.Header>Rotate</BaseNode.Header>
+      <BaseNode.Header collapsible>Rotate</BaseNode.Header>
       <BaseNode.Content>
         <NumberInput
           label="Angle"

@@ -18,7 +18,7 @@ export default function CropNode(props: any) {
         type: 'source',
       }}
     >
-      <BaseNode.Header>Crop</BaseNode.Header>
+      <BaseNode.Header collapsible>Crop</BaseNode.Header>
       <BaseNode.Content>
         <NumberInput
           label="Top"

@@ -20,7 +20,7 @@ export default function ResizeNode(props: any) {
         type: 'source',
       }}
     >
-      <BaseNode.Header>Resize</BaseNode.Header>
+      <BaseNode.Header collapsible>Resize</BaseNode.Header>
       <BaseNode.Content>
         <NumberInput
           label="Width"

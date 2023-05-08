@@ -21,7 +21,7 @@ export default function TextNode(props: any) {
         type: 'source',
       }}
     >
-      <BaseNode.Header>Text</BaseNode.Header>
+      <BaseNode.Header collapsible>Text</BaseNode.Header>
       <BaseNode.Content>
         <TextInput
           label="Text"

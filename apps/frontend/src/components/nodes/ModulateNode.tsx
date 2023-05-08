@@ -18,7 +18,7 @@ export default function ModulateNode(props: any) {
         type: 'source',
       }}
     >
-      <BaseNode.Header>Modulate</BaseNode.Header>
+      <BaseNode.Header collapsible>Modulate</BaseNode.Header>
       <BaseNode.Content>
         <NumberInput
           label="Brightness"

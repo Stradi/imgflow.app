@@ -18,7 +18,7 @@ export default function GammaNode(props: any) {
         type: 'source',
       }}
     >
-      <BaseNode.Header>Gamma</BaseNode.Header>
+      <BaseNode.Header collapsible>Gamma</BaseNode.Header>
       <BaseNode.Content>
         <div className="space-y-4 pb-2">
           <SliderInput

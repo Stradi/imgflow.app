@@ -18,7 +18,7 @@ export default function FlipNode(props: any) {
         type: 'source',
       }}
     >
-      <BaseNode.Header>Flip</BaseNode.Header>
+      <BaseNode.Header collapsible>Flip</BaseNode.Header>
       <BaseNode.Content>
         <CheckboxInput
           label="Horizontal"

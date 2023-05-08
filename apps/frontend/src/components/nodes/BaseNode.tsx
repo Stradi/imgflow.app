@@ -1,11 +1,30 @@
 import { findByType } from '@/utils/react';
 import { cn } from '@/utils/tw';
-import { PropsWithChildren } from 'react';
+import { ChevronsDownUpIcon, ChevronsUpDownIcon } from 'lucide-react';
+import { PropsWithChildren, cloneElement, useState } from 'react';
 import { Handle, Node, Position } from 'reactflow';
 
-type TBaseNodeHeaderProps = PropsWithChildren;
-function BaseNodeHeader({ children }: TBaseNodeHeaderProps) {
-  return <header className="font-medium bg-white/50 rounded-2xl px-4 py-2 border-b border-gray-300">{children}</header>;
+type TBaseNodeHeaderProps = PropsWithChildren & {
+  collapsible?: boolean;
+  isCollapsed?: boolean;
+  onCollapseChange?: () => void;
+};
+
+function BaseNodeHeader({ children, collapsible, isCollapsed, onCollapseChange }: TBaseNodeHeaderProps) {
+  console.log(collapsible);
+  return (
+    <header className="font-medium bg-white/50 rounded-2xl px-4 py-2 border-b border-gray-300">
+      <div className="flex justify-between items-center">
+        {children}
+        {collapsible &&
+          (isCollapsed ? (
+            <ChevronsUpDownIcon className="w-4 h-4 cursor-pointer" onClick={onCollapseChange} />
+          ) : (
+            <ChevronsDownUpIcon className="w-4 h-4 cursor-pointer" onClick={onCollapseChange} />
+          ))}
+      </div>
+    </header>
+  );
 }
 
 type TBaseNodeContentProps = PropsWithChildren;
@@ -41,8 +60,23 @@ type TBaseNodeProps = PropsWithChildren & {
   node: Node;
 };
 function BaseNode({ children, leftHandle, rightHandle, node }: TBaseNodeProps) {
+  const [isCollapsed, setIsCollapsed] = useState(false);
+
   const header = findByType(children, BaseNodeHeader);
   const content = findByType(children, BaseNodeContent);
+
+  let headerToRender = header;
+
+  // @ts-ignore
+  if (header && header[0] && header[0].props.collapsible) {
+    // @ts-ignore
+    headerToRender = cloneElement(header[0], {
+      // @ts-ignore
+      collapsible: true,
+      isCollapsed,
+      onCollapseChange: () => setIsCollapsed(!isCollapsed),
+    });
+  }
 
   return (
     <div
@@ -52,8 +86,8 @@ function BaseNode({ children, leftHandle, rightHandle, node }: TBaseNodeProps) {
       )}
     >
       {leftHandle && <BaseNodeHandle type={leftHandle.type} position={Position.Left} />}
-      {header}
-      {content}
+      {headerToRender}
+      {isCollapsed ? null : content}
       {rightHandle && <BaseNodeHandle type={rightHandle.type} position={Position.Right} />}
     </div>
   );
