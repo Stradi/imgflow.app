@@ -1,9 +1,9 @@
 'use client';
 
+import withAuth from '@/components/WithAuth';
 import { Button, buttonVariants } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Label } from '@/components/ui/Label';
-import useAuthGuard from '@/hooks/useAuthGuard';
 import { CreateAccountErrors, createAccount } from '@/services/auth';
 import { TErrorTypes, getErrorMessage } from '@/utils/errorMessages';
 import { motion } from 'framer-motion';
@@ -14,8 +14,6 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 const Page = () => {
-  useAuthGuard(true, '/dashboard');
-
   const [isLoading, setIsLoading] = useState(false);
 
   const router = useRouter();
@@ -44,8 +42,6 @@ const Page = () => {
         } else {
           throw resp.error;
         }
-      } else {
-        router.push('/dashboard');
       }
     } catch (err: any) {
       console.error(err);
@@ -111,4 +107,4 @@ const Page = () => {
   );
 };
 
-export default Page;
+export default withAuth(Page, 'auth');

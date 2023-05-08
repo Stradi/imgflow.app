@@ -1,7 +1,8 @@
 import bcrypt from 'bcrypt';
 import express from 'express';
-import jwt, { JwtPayload } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 import { db } from '../lib/db';
+import authMiddleware from '../middlewares/auth';
 
 const router = express.Router();
 
@@ -33,8 +34,7 @@ router.post('/create-account', async (req, res) => {
     },
   });
 
-  const accessToken = jwt.sign({ id: createdUser.id }, process.env.JWT_ACCESS_SECRET as string, { expiresIn: '15m' });
-  const refreshToken = jwt.sign({ id: createdUser.id }, process.env.JWT_REFRESH_SECRET as string, { expiresIn: '1d' });
+  const accessToken = jwt.sign({ id: createdUser.id }, process.env.JWT_ACCESS_SECRET as string, { expiresIn: '7d' });
 
   return res.json({
     message: 'Account created successfully',
@@ -44,7 +44,6 @@ router.post('/create-account', async (req, res) => {
         email: createdUser.email,
       },
       accessToken,
-      refreshToken,
     },
   });
 });
@@ -76,8 +75,7 @@ router.post('/login', async (req, res) => {
     });
   }
 
-  const accessToken = jwt.sign({ id: user.id }, process.env.JWT_ACCESS_SECRET as string, { expiresIn: '15m' });
-  const refreshToken = jwt.sign({ id: user.id }, process.env.JWT_REFRESH_SECRET as string, { expiresIn: '1d' });
+  const accessToken = jwt.sign({ id: user.id }, process.env.JWT_ACCESS_SECRET as string, { expiresIn: '7d' });
 
   return res.json({
     message: 'Login successful',
@@ -87,40 +85,30 @@ router.post('/login', async (req, res) => {
         email: user.email,
       },
       accessToken,
-      refreshToken,
     },
   });
 });
 
-router.post('/refresh', async (req, res) => {
-  const { refreshToken } = req.body;
-  if (!refreshToken) {
+router.get('/me', authMiddleware, async (req, res) => {
+  const user = await db().account.findUnique({
+    where: {
+      id: req.user.id,
+    },
+  });
+
+  if (!user) {
     return res.json({
-      error: 'Invalid body',
+      error: "User doesn't exist",
     });
   }
-
-  let decoded = null;
-  try {
-    decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET as string);
-  } catch (e) {
-    return res.json({
-      error: 'Invalid token',
-    });
-  }
-
-  const accessToken = jwt.sign({ id: (decoded as JwtPayload).id }, process.env.JWT_ACCESS_SECRET as string, {
-    expiresIn: '15m',
-  });
-  const newRefreshToken = jwt.sign({ id: (decoded as JwtPayload).id }, process.env.JWT_REFRESH_SECRET as string, {
-    expiresIn: '1d',
-  });
 
   return res.json({
-    message: 'Token refreshed',
+    message: 'User found',
     data: {
-      accessToken,
-      refreshToken: newRefreshToken,
+      user: {
+        id: user.id,
+        email: user.email,
+      },
     },
   });
 });

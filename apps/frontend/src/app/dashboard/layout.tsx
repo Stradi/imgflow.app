@@ -1,15 +1,14 @@
 'use client';
 
+import withAuth from '@/components/WithAuth';
 import DashboardNavigation from '@/components/ui/DashboardNavigation';
 import DashboardSidebar from '@/components/ui/DashboardSidebar';
-import useAuthGuard from '@/hooks/useAuthGuard';
+import { TUser } from '@/stores/AuthStore';
 import { PropsWithChildren } from 'react';
 
 type TLayoutProps = PropsWithChildren;
 
 const Layout = ({ children }: TLayoutProps) => {
-  useAuthGuard(false, '/login');
-
   return (
     <div>
       <DashboardNavigation />
@@ -19,4 +18,8 @@ const Layout = ({ children }: TLayoutProps) => {
   );
 };
 
-export default Layout;
+export default withAuth<
+  PropsWithChildren & {
+    user: TUser;
+  }
+>(Layout, 'all');
