@@ -10,6 +10,8 @@ import { getPipelineById, runPipeline } from '@/services/pipeline';
 import useJobStore from '@/stores/JobStore';
 import usePipelineRun from '@/stores/PipelineRunStore';
 import { relativeTimeBetweenTwoDates, toRelativeDate } from '@/utils/date';
+import { EditIcon } from 'lucide-react';
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
 
 const Page = ({
@@ -88,8 +90,13 @@ const Page = ({
 
   return (
     <div className="p-4 flex flex-col gap-4">
-      <div>
+      <div className="flex justify-between">
         <h1 className="text-2xl font-medium">Run &apos;{(pipeline && pipeline.name && pipeline.name) || ''}&apos;</h1>
+        <Link href={`/dashboard/pipeline/${pipelineId}/edit`} passHref>
+          <Button variant="outline">
+            <EditIcon className="w-4 h-4 mr-2" /> Edit This Pipeline
+          </Button>
+        </Link>
       </div>
       <div className="grid lg:grid-cols-2 gap-2">
         <div className="flex flex-col gap-2">

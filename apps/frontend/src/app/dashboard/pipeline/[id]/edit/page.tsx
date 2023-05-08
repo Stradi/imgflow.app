@@ -9,6 +9,8 @@ import { Input } from '@/components/ui/Input';
 import { getPipelineById, savePipeline } from '@/services/pipeline';
 import useCanvasStore from '@/stores/CanvasStore';
 import { cn } from '@/utils/tw';
+import { PlayIcon } from 'lucide-react';
+import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { Toaster, toast } from 'react-hot-toast';
 import { shallow } from 'zustand/shallow';
@@ -91,6 +93,12 @@ const Page = ({
         >
           Save Pipeline
         </Button>
+        <Link href={`/dashboard/pipeline/${pipelineId}/run`} passHref className="ml-auto">
+          <Button variant="outline">
+            <PlayIcon className="w-4 h-4 mr-2" />
+            Run This Pipeline
+          </Button>
+        </Link>
       </div>
       <div className="relative md:w-[calc(100vw-256px)] w-screen h-[calc(100vh-128px)]">
         {isSaving && (
