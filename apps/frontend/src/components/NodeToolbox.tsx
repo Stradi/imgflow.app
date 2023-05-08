@@ -127,15 +127,15 @@ export default function NodeToolbox() {
   });
 
   return (
-    <div className="space-y-2 w-full h-full bg-white/50 backdrop-blur-sm border-2 rounded-xl p-4 border-gray-300">
+    <div className="space-y-2 w-full h-full bg-white/50 backdrop-blur-sm border-2 rounded-xl p-4 border-gray-300 overflow-hidden">
       <p className="text-xl font-medium">Nodes</p>
       <div>
         <Input placeholder="Search nodes" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
       </div>
       <div
         className={cn(
-          'flex items-stretch gap-2 flex-nowrap overflow-x-auto overflow-y-hidden',
-          'md:block md:space-y-2 md:overflow-auto md:mt-4'
+          'flex items-stretch gap-2 flex-nowrap overflow-x-auto pr-2',
+          'md:block md:space-y-2 md:h-full md:overflow-y-scroll md:mt-4'
         )}
       >
         {filteredNodes.map((node) => (
