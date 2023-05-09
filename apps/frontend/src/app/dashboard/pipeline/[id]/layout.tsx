@@ -34,14 +34,14 @@ const Layout = ({ children, params: { id } }: TLayoutProps) => {
 
   if (isFetching) {
     return (
-      <div className="p-4 space-y-4">
+      <div className="py-4 px-2 space-y-4 max-w-5xl mx-auto">
         <div className="text-2xl">Loading pipeline...</div>
       </div>
     );
   } else {
     if (pipeline === null) {
       return (
-        <div className="p-4 space-y-4">
+        <div className="py-4 px-2 max-w-5xl mx-auto space-y-4">
           <div className="text-2xl">
             Well, something happened. Either this pipeline <span className="font-medium">doesn&apos;t exists</span>, or{' '}
             <span className="font-medium">you don&apos;t have access</span> to it.

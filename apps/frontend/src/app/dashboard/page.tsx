@@ -25,7 +25,7 @@ const Page = () => {
   }, [_]);
 
   return (
-    <div className="p-4 space-y-4">
+    <div className="py-4 px-2 space-y-4 max-w-5xl mx-auto">
       <div>
         <h1 className="text-2xl font-medium">My Pipelines</h1>
       </div>
