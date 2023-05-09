@@ -33,12 +33,15 @@ export default function DashboardSidebar() {
       className="fixed top-0 left-0 z-40 w-64 h-screen pt-16 transition-transform -translate-x-full bg-white border-r border-gray-200 md:translate-x-0"
       aria-label="Sidebar"
     >
-      <div className="h-full overflow-y-auto bg-white px-2">
+      <div className="h-full overflow-y-auto bg-white px-2 flex flex-col justify-between">
         <ul className="space-y-2 group/all">
           <DashboardSidebarItem href="/dashboard" label="Dashboard" icon={<LayoutDashboardIcon />} />
           <DashboardSidebarItem href="/dashboard/billing" label="Billing" icon={<WalletIcon />} />
           <DashboardSidebarItem href="/dashboard/settings" label="Settings" icon={<SettingsIcon />} />
         </ul>
+        <div className="px-2 w-full mb-2">
+          <Button variant="outline">Logout</Button>
+        </div>
       </div>
       {/* TODO: Add logged in user stuff to bottom */}
     </aside>

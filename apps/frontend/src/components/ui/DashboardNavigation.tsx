@@ -1,39 +1,118 @@
+import useAuthStore from '@/stores/AuthStore';
+import { cn } from '@/utils/tw';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import React, { forwardRef, useEffect, useState } from 'react';
+import { Button } from './Button';
+
+type TNavigationItemProps = {
+  href: string;
+  label: string;
+  isActive?: boolean;
+  onMouseEnter?: (event: React.MouseEvent<HTMLAnchorElement>) => void;
+};
+
+const NavigationItem = forwardRef<HTMLAnchorElement, TNavigationItemProps>(
+  ({ href, label, isActive, onMouseEnter }, ref) => {
+    return (
+      <Link href={href} onMouseEnter={onMouseEnter} ref={ref}>
+        <li
+          className={cn(
+            'relative p-2 text-sm font-medium text-gray-400',
+            'group/item group-hover/all:hover:text-gray-950 group-hover/all:text-gray-400',
+            'transition-[color] duration-100',
+            isActive && 'text-gray-950'
+          )}
+        >
+          {label}
+        </li>
+      </Link>
+    );
+  }
+);
+NavigationItem.displayName = 'NavigationItem';
+
 export default function DashboardNavigation() {
+  // 500px is the first item in my screen, so why not start with that
+  const [left, setLeft] = useState(500);
+  const [width, setWidth] = useState(0);
+
+  const { logout } = useAuthStore((state) => ({
+    logout: state.logout,
+  }));
+
+  function handleOnMouseEnter(e: React.MouseEvent<HTMLAnchorElement>) {
+    const target = e.target as HTMLAnchorElement;
+    const { offsetLeft, offsetWidth } = target;
+    setLeft(offsetLeft + target.offsetWidth / 2);
+    setWidth(offsetWidth);
+  }
+
+  const [items] = useState([
+    {
+      href: '/dashboard',
+      label: 'Overview',
+      ref: React.createRef<HTMLAnchorElement>(),
+    },
+    {
+      href: '/dashboard/usage',
+      label: 'Usage',
+      ref: React.createRef<HTMLAnchorElement>(),
+    },
+    {
+      href: '/dashboard/settings',
+      label: 'Settings',
+      ref: React.createRef<HTMLAnchorElement>(),
+    },
+  ]);
+
+  const pathname = usePathname();
+  const activeItem = items.find((item) => item.href === pathname);
+
+  function moveIndicatorToDefaultPosition() {
+    if (activeItem && activeItem.ref && activeItem.ref.current) {
+      setLeft(activeItem.ref.current.offsetLeft + activeItem.ref.current.offsetWidth / 2);
+      setWidth(activeItem.ref.current.offsetWidth);
+    } else {
+      setWidth(0);
+    }
+  }
+
+  useEffect(() => {
+    moveIndicatorToDefaultPosition();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeItem]);
+
   return (
-    <nav className="fixed top-0 z-50 w-full bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700">
-      <div className="px-3 py-3 lg:px-5 lg:pl-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center justify-start">
-            <button
-              data-drawer-target="logo-sidebar"
-              data-drawer-toggle="logo-sidebar"
-              aria-controls="logo-sidebar"
-              type="button"
-              className="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
-            >
-              <span className="sr-only">Open sidebar</span>
-              <svg
-                className="w-6 h-6"
-                aria-hidden="true"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  clipRule="evenodd"
-                  fillRule="evenodd"
-                  d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z"
-                ></path>
-              </svg>
-            </button>
-            <a href="https://flowbite.com" className="flex ml-2 md:mr-24">
-              <span className="self-center text-xl font-semibold md:text-2xl whitespace-nowrap dark:text-white">
-                ImgFlow
-              </span>
-            </a>
+    <header>
+      <nav className="border-b relative border-gray-300">
+        <div
+          className="transition-[left,width] duration-300 absolute bottom-0 left-0 h-0.5 bg-gray-950 rounded-full"
+          style={{
+            left: left - (width * 0.75) / 2,
+            width: width * 0.75,
+          }}
+        />
+        <div className="max-w-5xl mx-auto flex justify-between">
+          <ul className="flex group/all" onMouseLeave={() => moveIndicatorToDefaultPosition()}>
+            {items.map((item) => (
+              <NavigationItem
+                key={item.href}
+                ref={item.ref}
+                href={item.href}
+                label={item.label}
+                isActive={item.href === activeItem?.href}
+                onMouseEnter={handleOnMouseEnter}
+              />
+            ))}
+          </ul>
+          <div>
+            <Button size="sm" variant="ghost" onClick={() => logout()}>
+              Logout
+            </Button>
           </div>
         </div>
-      </div>
-    </nav>
+      </nav>
+    </header>
   );
 }
