@@ -11,9 +11,7 @@ const Layout = ({ children }: TLayoutProps) => {
   return (
     <div>
       <DashboardNavigation />
-      <div className="max-w-5xl mx-auto">
-        <div>{children}</div>
-      </div>
+      <div>{children}</div>
     </div>
   );
 };

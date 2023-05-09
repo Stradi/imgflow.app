@@ -89,7 +89,7 @@ const Page = ({
   }
 
   return (
-    <div className="p-4 flex flex-col gap-4">
+    <div className="p-4 flex flex-col gap-4 max-w-5xl mx-auto">
       <div className="flex justify-between">
         <h1 className="text-2xl font-medium">Run &apos;{(pipeline && pipeline.name && pipeline.name) || ''}&apos;</h1>
         <Link href={`/dashboard/pipeline/${pipelineId}/edit`} passHref>

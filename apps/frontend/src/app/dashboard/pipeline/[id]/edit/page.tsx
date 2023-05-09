@@ -8,7 +8,6 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { getPipelineById, savePipeline } from '@/services/pipeline';
 import useCanvasStore from '@/stores/CanvasStore';
-import { cn } from '@/utils/tw';
 import { PlayIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
@@ -61,78 +60,88 @@ const Page = ({
   }, []);
 
   return (
-    <div>
+    <div className="flex flex-col h-[calc(100vh-81px)]">
       <Toaster />
-      <div className="border-b border-gray-200 flex items-center p-2 gap-1">
-        <Input
-          className="md:w-1/3"
-          type="text"
-          placeholder="Pipeline Name"
-          value={pipelineName}
-          onChange={(e) => setPipelineName(e.target.value)}
-        />
-        <Button
-          onClick={async () => {
-            if (!pipelineName) {
-              toast.error('Please name your pipeline.', {
+      <div className="border-b w-full border-gray-200 p-2 max-w-5xl mx-auto">
+        <div className="w-full flex items-center gap-2">
+          <Input
+            className="w-1/3"
+            type="text"
+            placeholder="Pipeline Name"
+            value={pipelineName}
+            onChange={(e) => setPipelineName(e.target.value)}
+          />
+          <Button
+            onClick={async () => {
+              if (!pipelineName) {
+                toast.error('Please name your pipeline.', {
+                  duration: 2000,
+                });
+                return;
+              }
+
+              const firstInvalidNode = nodes.find(
+                (node) => node.data.getValidationError && node.data.getValidationError() !== ''
+              );
+              if (firstInvalidNode) {
+                toast.error(
+                  <div>
+                    <p className="font-medium text-sm">Please fix the error in {firstInvalidNode.type} node.</p>
+                    <p className="text-sm">{firstInvalidNode.data.getValidationError()}</p>
+                  </div>,
+                  {
+                    duration: 2000,
+                  }
+                );
+                return;
+              }
+
+              setIsSaving(true);
+              await savePipeline(
+                pipelineId,
+                pipelineName,
+                JSON.stringify({
+                  nodes: useCanvasStore.getState().nodes,
+                  edges: useCanvasStore.getState().edges,
+                })
+              );
+              setIsSaving(false);
+              toast.success('Pipeline saved successfully.', {
                 duration: 2000,
               });
-              return;
-            }
-
-            const firstInvalidNode = nodes.find(
-              (node) => node.data.getValidationError && node.data.getValidationError() !== ''
-            );
-            if (firstInvalidNode) {
-              toast.error(
-                <div>
-                  <p className="font-medium text-sm">Please fix the error in {firstInvalidNode.type} node.</p>
-                  <p className="text-sm">{firstInvalidNode.data.getValidationError()}</p>
-                </div>,
-                {
-                  duration: 2000,
-                }
-              );
-              return;
-            }
-
-            setIsSaving(true);
-            await savePipeline(
-              pipelineId,
-              pipelineName,
-              JSON.stringify({
-                nodes: useCanvasStore.getState().nodes,
-                edges: useCanvasStore.getState().edges,
-              })
-            );
-            setIsSaving(false);
-            toast.success('Pipeline saved successfully.', {
-              duration: 2000,
-            });
-          }}
-        >
-          Save Pipeline
-        </Button>
-        <Link href={`/dashboard/pipeline/${pipelineId}/run`} passHref className="ml-auto">
-          <Button variant="outline">
-            <PlayIcon className="w-4 h-4 mr-2" />
-            Run This Pipeline
+            }}
+          >
+            Save Pipeline
           </Button>
-        </Link>
+          <Link href={`/dashboard/pipeline/${pipelineId}/run`} passHref className="ml-auto">
+            <Button variant="outline">
+              <PlayIcon className="w-4 h-4 mr-2" />
+              Run This Pipeline
+            </Button>
+          </Link>
+        </div>
       </div>
-      <div className="relative md:w-[calc(100vw-256px)] w-screen h-[calc(100vh-128px)]">
-        {isSaving && (
-          <div className="absolute inset-0 w-full h-full z-20 bg-black/50 backdrop-blur-sm flex items-center justify-center">
-            <div className="text-white text-4xl">Saving your changes...</div>
-          </div>
-        )}
-        <div
-          className={cn(
-            'absolute z-10',
-            'md:m-4 md:w-80 md:h-[calc(100%-2*16px)]',
-            'bottom-0 m-2 w-[calc(100%-2*8px)]'
+      {/* <div className="absolute left-0 w-screen h-[calc(100vh-64px)]">
+        <div className="relative h-full w-full">
+          {isSaving && (
+            <div className="absolute inset-0 w-full h-full z-20 bg-black/50 backdrop-blur-sm flex items-center justify-center">
+              <div className="text-white text-4xl">Saving your changes...</div>
+            </div>
           )}
-        >
+          <div
+            className={cn(
+              'absolute z-10',
+              'md:m-4 md:w-80 md:h-[calc(100%-2*16px)]',
+              'bottom-0 m-2 w-[calc(100%-2*8px)]'
+            )}
+          >
+            <NodeToolbox />
+          </div>
+          <EditorCanvas />
+        </div>
+      </div> */}
+      <div className="relative w-full grow">
+        <div className="absolute md:inset-2 md:w-80 md:h-[calc(100%-16px)] z-10 w-[calc(100%-16px)] bottom-2 left-2 h-min">
           <NodeToolbox />
         </div>
         <EditorCanvas />
