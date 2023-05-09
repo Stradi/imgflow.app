@@ -1,54 +1,71 @@
 import { getJobDetails } from '@/services/job';
 import useJobStore from '@/stores/JobStore';
 import { relativeTimeBetweenTwoDates, toRelativeDate } from '@/utils/date';
-import { useEffect, useMemo } from 'react';
-import { useTable } from 'react-table';
+import { cn } from '@/utils/tw';
+import { createColumnHelper, flexRender, getCoreRowModel, useReactTable } from '@tanstack/react-table';
+import { useEffect } from 'react';
 import JobImagesModal from './JobImagesModal';
 
-export default function JobTable() {
-  const columns = useMemo(
-    () => [
-      {
-        Header: 'ID',
-        accessor: 'id', // accessor is the "key" in the data
-      },
-      {
-        Header: 'Status',
-        accessor: 'status',
-      },
-      {
-        Header: 'Progress',
-        accessor: 'progress',
-      },
-      {
-        Header: 'Image Count',
-        accessor: 'imageCount',
-      },
-      {
-        Header: 'Created At',
-        accessor: 'createdAt',
-      },
-      {
-        Header: 'Duration',
-        accessor: 'duration',
-      },
-      {
-        Header: 'Actions',
-        accessor: 'actions',
-      },
-    ],
-    []
-  );
+const columnHelper = createColumnHelper();
+const columns = [
+  columnHelper.accessor<any, any>('id', {
+    cell: (cell) => <span>{cell.getValue()}</span>,
+    header: 'ID',
+  }),
+  columnHelper.accessor<any, any>('status', {
+    cell: (cell) => {
+      const status = cell.getValue();
+      return (
+        <span
+          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+            status === 'completed'
+              ? 'bg-green-100 text-green-800'
+              : status === 'active'
+              ? 'bg-blue-100 text-blue-800'
+              : status === 'waiting'
+              ? 'bg-yellow-100 text-yellow-800'
+              : 'bg-red-100 text-red-800'
+          }`}
+        >
+          {status}
+        </span>
+      );
+    },
+    header: 'Status',
+  }),
+  columnHelper.accessor<any, any>('progress', {
+    cell: (cell) => <span>{cell.getValue()}</span>,
+    header: 'Progress',
+  }),
+  columnHelper.accessor<any, any>('imageCount', {
+    cell: (cell) => <span>{cell.getValue()}</span>,
+    header: 'Image Count',
+  }),
+  columnHelper.accessor<any, any>('createdAt', {
+    cell: (cell) => <span>{cell.getValue()}</span>,
+    header: 'Created At',
+  }),
+  columnHelper.accessor<any, any>('duration', {
+    cell: (cell) => <span>{cell.getValue()}</span>,
+    header: 'Duration',
+  }),
+  columnHelper.accessor<any, any>('actions', {
+    cell: (cell) => <span>{cell.getValue()}</span>,
+    header: 'Actions',
+  }),
+];
 
+export default function JobTable() {
   const { jobs, updateJob } = useJobStore((state) => ({
     jobs: state.jobs,
     updateJob: state.updateJob,
   }));
 
-  const tableInstance = useTable({
+  const tableInstance = useReactTable({
     // @ts-ignore
     columns,
     data: jobs,
+    getCoreRowModel: getCoreRowModel(),
   });
 
   useEffect(() => {
@@ -80,17 +97,15 @@ export default function JobTable() {
     return () => clearInterval(intervalId);
   }, [jobs, updateJob]);
 
-  const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = tableInstance;
-
   return (
     <div className="relative overflow-x-auto sm:rounded-lg">
-      <table {...getTableProps()} className="w-full text-sm text-left text-gray-500 border-gray-200 border">
+      <table className="w-full table-fixed text-sm text-left text-gray-600 border-gray-200 border">
         <thead className="text-xs text-gray-700 uppercase bg-gray-100 border-b border-gray-200">
-          {headerGroups.map((headerGroup) => (
-            <tr {...headerGroup.getHeaderGroupProps()} key={headerGroup.getHeaderGroupProps().key}>
-              {headerGroup.headers.map((column) => (
-                <th {...column.getHeaderProps()} key={column.getHeaderProps().key} className="px-6 py-3">
-                  {column.render('Header')}
+          {tableInstance.getHeaderGroups().map((headerGroup) => (
+            <tr key={headerGroup.id}>
+              {headerGroup.headers.map((header) => (
+                <th key={header.id} className={cn(`px-3 py-2`)}>
+                  {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                 </th>
               ))}
             </tr>
@@ -99,29 +114,20 @@ export default function JobTable() {
         {jobs.length === 0 ? (
           <tbody>
             <tr>
-              <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">No jobs found</td>
+              <td className="px-3 py-1 font-medium text-gray-900 whitespace-nowrap">No jobs found</td>
             </tr>
           </tbody>
         ) : (
-          <tbody {...getTableBodyProps()}>
-            {rows.map((row) => {
-              prepareRow(row);
-              return (
-                <tr {...row.getRowProps()} key={row.getRowProps().key} className="bg-white border-b hover:bg-gray-50">
-                  {row.cells.map((cell) => {
-                    return (
-                      <td
-                        {...cell.getCellProps()}
-                        key={cell.getCellProps().key}
-                        className="px-6 py-4 text-gray-900 whitespace-nowrap"
-                      >
-                        {cell.render('Cell')}
-                      </td>
-                    );
-                  })}
-                </tr>
-              );
-            })}
+          <tbody>
+            {tableInstance.getRowModel().rows.map((row) => (
+              <tr key={row.id} className="hover:bg-gray-50 transition duration-100 hover:text-gray-950">
+                {row.getVisibleCells().map((cell) => (
+                  <td key={cell.id} className={cn(`px-3 py-1`)}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </td>
+                ))}
+              </tr>
+            ))}
           </tbody>
         )}
       </table>

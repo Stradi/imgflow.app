@@ -18,6 +18,7 @@
     "@radix-ui/react-radio-group": "^1.1.2",
     "@radix-ui/react-select": "^1.2.1",
     "@radix-ui/react-slider": "^1.1.1",
+    "@tanstack/react-table": "^8.9.1",
     "@types/jszip": "^3.4.1",
     "@types/node": "18.15.12",
     "@types/react": "18.0.37",
@@ -40,7 +41,6 @@
     "react-dropzone": "^14.2.3",
     "react-hook-form": "^7.43.9",
     "react-hot-toast": "^2.4.1",
-    "react-table": "^7.8.0",
     "reactflow": "^11.7.0",
     "tailwind-merge": "^1.12.0",
     "tailwindcss": "3.3.1",
@@ -51,7 +51,6 @@
   },
   "devDependencies": {
     "@types/dagre": "^0.7.48",
-    "@types/lodash.clonedeep": "^4.5.7",
-    "@types/react-table": "^7.7.14"
+    "@types/lodash.clonedeep": "^4.5.7"
   }
 }
