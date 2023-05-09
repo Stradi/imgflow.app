@@ -1,4 +1,6 @@
 import useCanvasStore from '@/stores/CanvasStore';
+import { isNumberValid, isStringValid } from '@/utils/check';
+import { useEffect } from 'react';
 import BaseNode from './BaseNode';
 import NumberInput from './inputs/NumberInput';
 import SelectInput from './inputs/SelectInput';
@@ -12,16 +14,16 @@ export default function OutputNode(props: any) {
 
   function getValidationError() {
     const { filename, format, quality } = getNodeData(props.id);
-    if (!filename || !format || !quality) {
-      return 'All fields are required';
+    if (!isStringValid(filename)) {
+      return "'filename' cannot be empty";
     }
 
-    if (filename === '') {
-      return 'Filename cannot be empty';
+    if (!isStringValid(format)) {
+      return "'format' cannot be empty";
     }
 
-    if (quality < 0 || quality > 100) {
-      return 'Quality must be between 0 and 100';
+    if (!isNumberValid(quality, 0, 100)) {
+      return "'quality' must be between 0 and 100";
     }
 
     return '';
@@ -34,6 +36,23 @@ export default function OutputNode(props: any) {
       getValidationError,
     });
   }
+
+  useEffect(() => {
+    const { filename, format, quality } = getNodeData(props.id);
+    if (!isStringValid(filename)) {
+      set({ filename: 'output' });
+    }
+
+    if (!isStringValid(format)) {
+      set({ format: 'webp' });
+    }
+
+    if (!isNumberValid(quality, 0, 100)) {
+      set({ quality: 75 });
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <BaseNode

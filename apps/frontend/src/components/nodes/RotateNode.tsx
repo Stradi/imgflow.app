@@ -1,4 +1,6 @@
 import useCanvasStore from '@/stores/CanvasStore';
+import { isNumberValid } from '@/utils/check';
+import { useEffect } from 'react';
 import BaseNode from './BaseNode';
 import ColorPickerInput from './inputs/ColorPickerInput';
 import NumberInput from './inputs/NumberInput';
@@ -11,12 +13,8 @@ export default function RotateNode(props: any) {
 
   function getValidationError() {
     const { angle } = getNodeData(props.id);
-    if (!angle || isNaN(angle)) {
-      return 'Angle cannot be empty';
-    }
-
-    if (angle < 0 || angle > 360) {
-      return 'Angle must be between 0 and 360';
+    if (!isNumberValid(angle, 0, 360)) {
+      return "'angle' must be between 0 and 360";
     }
 
     return '';
@@ -29,6 +27,15 @@ export default function RotateNode(props: any) {
       getValidationError,
     });
   }
+
+  useEffect(() => {
+    const { angle } = getNodeData(props.id);
+    if (!isNumberValid(angle, 0, 360)) {
+      set({ angle: 0 });
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <BaseNode

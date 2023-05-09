@@ -1,4 +1,6 @@
 import useCanvasStore from '@/stores/CanvasStore';
+import { isNumberValid } from '@/utils/check';
+import { useEffect } from 'react';
 import BaseNode from './BaseNode';
 import NumberInput from './inputs/NumberInput';
 
@@ -9,37 +11,21 @@ export default function CropNode(props: any) {
   }));
 
   function getValidationError() {
-    const { top, left, bottom, right } = getNodeData(props.id);
-    if (!top || isNaN(top)) {
-      return 'Top cannot be empty';
+    const { top, left, width, height } = getNodeData(props.id);
+    if (!isNumberValid(top, 0, 10000)) {
+      return "'top' must be between 0 and 10000";
     }
 
-    if (top < 0 || top > 10000) {
-      return 'Top must be between 0 and 10000';
+    if (!isNumberValid(left, 0, 10000)) {
+      return "'left' must be between 0 and 10000";
     }
 
-    if (!left || isNaN(left)) {
-      return 'Left cannot be empty';
+    if (!isNumberValid(width, 1, 10000)) {
+      return "'width' must be between 1 and 10000";
     }
 
-    if (left < 0 || left > 10000) {
-      return 'Left must be between 0 and 10000';
-    }
-
-    if (!bottom || isNaN(bottom)) {
-      return 'Bottom cannot be empty';
-    }
-
-    if (bottom < 0 || bottom > 10000) {
-      return 'Bottom must be between 0 and 10000';
-    }
-
-    if (!right || isNaN(right)) {
-      return 'Right cannot be empty';
-    }
-
-    if (right < 0 || right > 10000) {
-      return 'Right must be between 0 and 10000';
+    if (!isNumberValid(height, 1, 10000)) {
+      return "'height' must be between 0 and 10000";
     }
 
     return '';
@@ -52,6 +38,27 @@ export default function CropNode(props: any) {
       getValidationError,
     });
   }
+
+  useEffect(() => {
+    const { top, left, width, height } = getNodeData(props.id);
+    if (!isNumberValid(top, 0, 10000)) {
+      set({ top: 0 });
+    }
+
+    if (!isNumberValid(left, 0, 10000)) {
+      set({ left: 0 });
+    }
+
+    if (!isNumberValid(width, 1, 10000)) {
+      set({ width: 1 });
+    }
+
+    if (!isNumberValid(height, 1, 10000)) {
+      set({ height: 1 });
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <BaseNode

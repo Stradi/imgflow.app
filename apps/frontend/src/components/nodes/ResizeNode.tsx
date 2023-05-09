@@ -1,4 +1,6 @@
 import useCanvasStore from '@/stores/CanvasStore';
+import { isNumberValid, isStringValid } from '@/utils/check';
+import { useEffect } from 'react';
 import BaseNode from './BaseNode';
 import ColorPickerInput from './inputs/ColorPickerInput';
 import NumberInput from './inputs/NumberInput';
@@ -11,21 +13,17 @@ export default function ResizeNode(props: any) {
   }));
 
   function getValidationError() {
-    const { width, height } = getNodeData(props.id);
-    if (!width || isNaN(width)) {
-      return 'Width cannot be empty';
+    const { width, height, fit } = getNodeData(props.id);
+    if (!isNumberValid(width, 1, 10000)) {
+      return "'width' must be between 1 and 10000";
     }
 
-    if (width < 0 || width > 10000) {
-      return 'Width must be between 0 and 10000';
+    if (!isNumberValid(height, 1, 10000)) {
+      return "'height' must be between 1 and 10000";
     }
 
-    if (!height || isNaN(height)) {
-      return 'Height cannot be empty';
-    }
-
-    if (height < 0 || height > 10000) {
-      return 'Height must be between 0 and 10000';
+    if (!isStringValid(fit)) {
+      return "'fit' cannot be empty";
     }
 
     return '';
@@ -38,6 +36,23 @@ export default function ResizeNode(props: any) {
       getValidationError,
     });
   }
+
+  useEffect(() => {
+    const { width, height, fit } = getNodeData(props.id);
+
+    if (!isNumberValid(width, 1, 10000)) {
+      set({ width: 1 });
+    }
+
+    if (!isNumberValid(height, 1, 10000)) {
+      set({ height: 1 });
+    }
+
+    if (!isStringValid(fit)) {
+      set({ fit: 'contain' });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <BaseNode

@@ -1,4 +1,6 @@
 import useCanvasStore from '@/stores/CanvasStore';
+import { isNumberValid } from '@/utils/check';
+import { useEffect } from 'react';
 import BaseNode from './BaseNode';
 import SliderInput from './inputs/SliderInput';
 
@@ -10,20 +12,12 @@ export default function GammaNode(props: any) {
 
   function getValidationError() {
     const { gamma, gammaOut } = getNodeData(props.id);
-    if (!gamma || isNaN(gamma)) {
-      return 'Gamma cannot be empty';
+    if (!isNumberValid(gamma, 1, 3)) {
+      return "'gamma' must be between 1 and 3";
     }
 
-    if (gamma < 1 || gamma > 3) {
-      return 'Gamma must be between 1 and 3';
-    }
-
-    if (!gammaOut || isNaN(gammaOut)) {
-      return 'Gamma Out cannot be empty';
-    }
-
-    if (gammaOut < 1 || gammaOut > 3) {
-      return 'Gamma Out must be between 1 and 3';
+    if (!isNumberValid(gammaOut, 1, 3)) {
+      return "'gammaOut' must be between 1 and 3";
     }
 
     return '';
@@ -36,6 +30,19 @@ export default function GammaNode(props: any) {
       getValidationError,
     });
   }
+
+  useEffect(() => {
+    const { gamma, gammaOut } = getNodeData(props.id);
+    if (!isNumberValid(gamma, 1, 3)) {
+      set({ gamma: 1 });
+    }
+
+    if (!isNumberValid(gammaOut, 1, 3)) {
+      set({ gammaOut: 1 });
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <BaseNode

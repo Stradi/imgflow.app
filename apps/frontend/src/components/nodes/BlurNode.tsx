@@ -1,4 +1,6 @@
 import useCanvasStore from '@/stores/CanvasStore';
+import { isNumberValid } from '@/utils/check';
+import { useEffect } from 'react';
 import BaseNode from './BaseNode';
 import NumberInput from './inputs/NumberInput';
 
@@ -10,12 +12,8 @@ export default function BlurNode(props: any) {
 
   function getValidationError() {
     const { sigma } = getNodeData(props.id);
-    if (!sigma || isNaN(sigma)) {
-      return 'Amount cannot be empty';
-    }
-
-    if (sigma < 0 || sigma > 100) {
-      return 'Amount must be between 0 and 100';
+    if (!isNumberValid(sigma, 0, 100)) {
+      return "'sigma' must be between 0 and 100";
     }
 
     return '';
@@ -28,6 +26,14 @@ export default function BlurNode(props: any) {
       getValidationError,
     });
   }
+
+  useEffect(() => {
+    const { sigma } = getNodeData(props.id);
+    if (!isNumberValid(sigma, 0, 100)) {
+      set({ sigma: 10 });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <BaseNode

@@ -1,4 +1,6 @@
 import useCanvasStore from '@/stores/CanvasStore';
+import { isNumberValid, isStringValid } from '@/utils/check';
+import { useEffect } from 'react';
 import BaseNode from './BaseNode';
 import ColorPickerInput from './inputs/ColorPickerInput';
 import SelectInput from './inputs/SelectInput';
@@ -13,16 +15,12 @@ export default function TextNode(props: any) {
 
   function getValidationError() {
     const { text, size } = getNodeData(props.id);
-    if (!text) {
-      return 'Text cannot be empty';
+    if (!isStringValid(text)) {
+      return "'text' field cannot be empty";
     }
 
-    if (!size || isNaN(size)) {
-      return 'Size cannot be empty';
-    }
-
-    if (size < 0 || size > 100) {
-      return 'Size must be between 0 and 100';
+    if (!isNumberValid(size, 0, 100)) {
+      return "'size' field must be between 0 and 100";
     }
 
     return '';
@@ -35,6 +33,19 @@ export default function TextNode(props: any) {
       getValidationError,
     });
   }
+
+  useEffect(() => {
+    const { text, size } = getNodeData(props.id);
+
+    if (!isStringValid(text)) {
+      set({ text: 'ImgFlow' });
+    }
+
+    if (!isNumberValid(size, 0, 100)) {
+      set({ size: 50 });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <BaseNode

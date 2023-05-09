@@ -1,4 +1,6 @@
 import useCanvasStore from '@/stores/CanvasStore';
+import { isNumberValid } from '@/utils/check';
+import { useEffect } from 'react';
 import BaseNode from './BaseNode';
 import NumberInput from './inputs/NumberInput';
 
@@ -10,28 +12,16 @@ export default function ModulateNode(props: any) {
 
   function getValidationError() {
     const { brightness, saturation, hue } = getNodeData(props.id);
-    if (!brightness || isNaN(brightness)) {
-      return 'Brightness cannot be empty';
+    if (!isNumberValid(brightness, 0, 5)) {
+      return "'brightness' must be between 0 and 5";
     }
 
-    if (brightness < 0 || brightness > 5) {
-      return 'Brightness must be between 0 and 5';
+    if (!isNumberValid(saturation, 0, 5)) {
+      return "'saturation' must be between 0 and 5";
     }
 
-    if (!saturation || isNaN(saturation)) {
-      return 'Saturation cannot be empty';
-    }
-
-    if (saturation < 0 || saturation > 5) {
-      return 'Saturation must be between 0 and 5';
-    }
-
-    if (!hue || isNaN(hue)) {
-      return 'Hue cannot be empty';
-    }
-
-    if (hue < 0 || hue > 360) {
-      return 'Hue must be between 0 and 5';
+    if (!isNumberValid(hue, 0, 360)) {
+      return "'hue' must be between 0 and 360";
     }
 
     return '';
@@ -44,6 +34,23 @@ export default function ModulateNode(props: any) {
       getValidationError,
     });
   }
+
+  useEffect(() => {
+    const { brightness, saturation, hue } = getNodeData(props.id);
+    if (!isNumberValid(brightness, 0, 5)) {
+      set({ brightness: 0 });
+    }
+
+    if (!isNumberValid(saturation, 0, 5)) {
+      set({ saturation: 0 });
+    }
+
+    if (!isNumberValid(hue, 0, 360)) {
+      set({ hue: 0 });
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <BaseNode
