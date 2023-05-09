@@ -107,11 +107,7 @@ const ALL_NODES = [
     description: 'Convert your image to grayscale',
     dom: <SingleNodePreview type="Grayscale" title="Grayscale" description="Convert your image to grayscale" />,
   },
-  {
-    name: 'Text',
-    description: 'Add text to your image',
-    dom: <SingleNodePreview type="Text" title="Text" description="Add text to your image" />,
-  },
+  // TODO: Removed text, will include it when it's ready.
   {
     name: 'Tint',
     description: 'Tint your image with specified color',
@@ -127,17 +123,12 @@ export default function NodeToolbox() {
   });
 
   return (
-    <div className="space-y-2 w-full h-full bg-white/50 backdrop-blur-sm border-2 rounded-xl p-4 border-gray-300 overflow-hidden">
+    <div className="space-y-2 w-full h-full bg-white/50 backdrop-blur-sm border-2 rounded-xl p-4 border-gray-300 overflow-y-auto">
       <p className="text-xl font-medium">Nodes</p>
       <div>
         <Input placeholder="Search nodes" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
       </div>
-      <div
-        className={cn(
-          'flex items-stretch gap-2 flex-nowrap overflow-x-auto pr-2',
-          'md:block md:space-y-2 md:h-full md:overflow-y-scroll md:mt-4'
-        )}
-      >
+      <div className={cn('flex items-stretch gap-2 flex-nowrap', 'md:block md:space-y-2 md:h-full md:my-4')}>
         {filteredNodes.map((node) => (
           <div key={node.name}>{node.dom}</div>
         ))}

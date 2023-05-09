@@ -121,25 +121,6 @@ const Page = ({
           </Link>
         </div>
       </div>
-      {/* <div className="absolute left-0 w-screen h-[calc(100vh-64px)]">
-        <div className="relative h-full w-full">
-          {isSaving && (
-            <div className="absolute inset-0 w-full h-full z-20 bg-black/50 backdrop-blur-sm flex items-center justify-center">
-              <div className="text-white text-4xl">Saving your changes...</div>
-            </div>
-          )}
-          <div
-            className={cn(
-              'absolute z-10',
-              'md:m-4 md:w-80 md:h-[calc(100%-2*16px)]',
-              'bottom-0 m-2 w-[calc(100%-2*8px)]'
-            )}
-          >
-            <NodeToolbox />
-          </div>
-          <EditorCanvas />
-        </div>
-      </div> */}
       <div className="relative w-full grow">
         <div className="absolute md:inset-2 md:w-80 md:h-[calc(100%-16px)] z-10 w-[calc(100%-16px)] bottom-2 left-2 h-min">
           <NodeToolbox />
