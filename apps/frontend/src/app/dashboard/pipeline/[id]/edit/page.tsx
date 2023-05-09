@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { getPipelineById, savePipeline } from '@/services/pipeline';
 import useCanvasStore from '@/stores/CanvasStore';
+import { isPipelineValid } from '@/utils/graph';
 import { PlayIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
@@ -79,6 +80,19 @@ const Page = ({
                 toast.error('Please name your pipeline.', {
                   duration: 2000,
                 });
+                return;
+              }
+
+              if (
+                !isPipelineValid({
+                  nodes: useCanvasStore.getState().nodes,
+                  edges: useCanvasStore.getState().edges,
+                })
+              ) {
+                toast.error('Please connect at least one input and one output node', {
+                  duration: 2000,
+                });
+
                 return;
               }
 
