@@ -12,8 +12,8 @@ export default function BlurNode(props: any) {
 
   function getValidationError() {
     const { sigma } = getNodeData(props.id);
-    if (!isNumberValid(sigma, 0, 100)) {
-      return "'sigma' must be between 0 and 100";
+    if (!isNumberValid(sigma, 0.3, 100)) {
+      return "'sigma' must be between 0.3 and 100";
     }
 
     return '';
@@ -29,7 +29,7 @@ export default function BlurNode(props: any) {
 
   useEffect(() => {
     const { sigma } = getNodeData(props.id);
-    if (!isNumberValid(sigma, 0, 100)) {
+    if (!isNumberValid(sigma, 0.3, 100)) {
       set({ sigma: 10 });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
