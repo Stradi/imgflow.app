@@ -46,6 +46,8 @@ type TCanvasStore = {
   onEdgesChange: OnEdgesChange;
   onConnect: OnConnect;
   onNodesDelete: OnNodesDelete;
+
+  reset: () => void;
 };
 
 const useCanvasStore = create<TCanvasStore>((set, get) => ({
@@ -117,6 +119,15 @@ const useCanvasStore = create<TCanvasStore>((set, get) => ({
 
         return [...remainingEdges, ...createdEdges];
       }, get().edges),
+    });
+  },
+  reset: () => {
+    nodeIdCounter = 0;
+    edgeIdCounter = 0;
+    set({
+      nodes: [],
+      edges: [],
+      pipelineName: 'Untitled Pipeline',
     });
   },
 }));

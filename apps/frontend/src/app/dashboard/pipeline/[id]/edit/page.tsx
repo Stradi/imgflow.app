@@ -23,7 +23,7 @@ const Page = ({
 }) => {
   const [isSaving, setIsSaving] = useState(false);
 
-  const { pipelineName, setPipelineName, setNodes, setEdges, setCounters, setNodeData, nodes } = useCanvasStore(
+  const { pipelineName, setPipelineName, setNodes, setEdges, setCounters, setNodeData, nodes, reset } = useCanvasStore(
     (state) => ({
       pipelineName: state.pipelineName,
       setPipelineName: state.setPipelineName,
@@ -32,12 +32,14 @@ const Page = ({
       setCounters: state.setCounters,
       setNodeData: state.setNodeData,
       nodes: state.nodes,
+      reset: state.reset,
     }),
     shallow
   );
 
   useEffect(() => {
     async function fetchPipeline() {
+      reset();
       const response = await getPipelineById(pipelineId);
 
       const remoteNodes = JSON.parse(response.data['dataJson'])['nodes'];
