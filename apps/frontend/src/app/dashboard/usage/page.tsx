@@ -1,5 +1,6 @@
 'use client';
 
+import UsageCard from '@/components/usage/UsageCard';
 import { getUsage } from '@/services/auth';
 import { Loader2Icon } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -30,9 +31,19 @@ const Page = () => {
   }
 
   return (
-    <div>
-      <h1>Usage</h1>
+    <div className="px-2 py-4 max-w-5xl mx-auto">
+      <h1 className="text-2xl font-medium">Usage</h1>
       <p>{JSON.stringify(usage)}</p>
+      <div className="grid gap-2 grid-cols-1 sm:grid-cols-3 md:grid-cols-4">
+        <UsageCard
+          title="Test"
+          description="This is the test description. It can be long and span multiple lines."
+          usage={{
+            current: 50,
+            max: 100,
+          }}
+        />
+      </div>
     </div>
   );
 };

@@ -118,6 +118,16 @@ router.get('/usage', authMiddleware, async (req, res) => {
     where: {
       id: req.user.id,
     },
+    include: {
+      pipelines: {
+        select: {
+          id: true,
+          processedImageCount: true,
+          runCount: true,
+          name: true,
+        },
+      },
+    },
   });
 
   if (!user) {
@@ -133,6 +143,7 @@ router.get('/usage', authMiddleware, async (req, res) => {
       totalProcessDuration: user.totalProcessDuration,
       monthlyImagesProcessed: user.monthlyImagesProcessed,
       monthlyProcessDuration: user.monthlyProcessDuration,
+      pipelines: user.pipelines,
     },
   });
 });
