@@ -27,3 +27,11 @@ export function isBooleanValid(value: any) {
     return false;
   }
 }
+
+export function isColorValid(value: any) {
+  if (typeof value === 'undefined' || value === null || typeof value !== 'string') {
+    return false;
+  }
+
+  return /^#(?:(?:[\da-f]{3}){1,2}|(?:[\da-f]{4}){1,2})$/i.test(value);
+}

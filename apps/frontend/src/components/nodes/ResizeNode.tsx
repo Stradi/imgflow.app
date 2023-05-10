@@ -1,5 +1,5 @@
 import useCanvasStore from '@/stores/CanvasStore';
-import { isNumberValid, isStringValid } from '@/utils/check';
+import { isColorValid, isNumberValid, isStringValid } from '@/utils/check';
 import { useEffect } from 'react';
 import BaseNode from './BaseNode';
 import ColorPickerInput from './inputs/ColorPickerInput';
@@ -13,7 +13,7 @@ export default function ResizeNode(props: any) {
   }));
 
   function getValidationError() {
-    const { width, height, fit } = getNodeData(props.id);
+    const { width, height, fit, background } = getNodeData(props.id);
     if (!isNumberValid(width, 1, 10000)) {
       return "'width' must be between 1 and 10000";
     }
@@ -24,6 +24,10 @@ export default function ResizeNode(props: any) {
 
     if (!isStringValid(fit)) {
       return "'fit' cannot be empty";
+    }
+
+    if (!isColorValid(background)) {
+      return "'background' must be a valid color";
     }
 
     return '';
@@ -38,7 +42,7 @@ export default function ResizeNode(props: any) {
   }
 
   useEffect(() => {
-    const { width, height, fit } = getNodeData(props.id);
+    const { width, height, fit, background } = getNodeData(props.id);
 
     if (!isNumberValid(width, 1, 10000)) {
       set({ width: 1 });
@@ -50,6 +54,10 @@ export default function ResizeNode(props: any) {
 
     if (!isStringValid(fit)) {
       set({ fit: 'contain' });
+    }
+
+    if (!isColorValid(background)) {
+      set({ background: '#000000' });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

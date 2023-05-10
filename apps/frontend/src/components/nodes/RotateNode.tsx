@@ -1,5 +1,5 @@
 import useCanvasStore from '@/stores/CanvasStore';
-import { isNumberValid } from '@/utils/check';
+import { isColorValid, isNumberValid } from '@/utils/check';
 import { useEffect } from 'react';
 import BaseNode from './BaseNode';
 import ColorPickerInput from './inputs/ColorPickerInput';
@@ -12,9 +12,13 @@ export default function RotateNode(props: any) {
   }));
 
   function getValidationError() {
-    const { angle } = getNodeData(props.id);
+    const { angle, background } = getNodeData(props.id);
     if (!isNumberValid(angle, 0, 360)) {
       return "'angle' must be between 0 and 360";
+    }
+
+    if (!isColorValid(background)) {
+      return "'background' must be a valid color";
     }
 
     return '';
@@ -29,9 +33,13 @@ export default function RotateNode(props: any) {
   }
 
   useEffect(() => {
-    const { angle } = getNodeData(props.id);
+    const { angle, background } = getNodeData(props.id);
     if (!isNumberValid(angle, 0, 360)) {
       set({ angle: 0 });
+    }
+
+    if (!isColorValid(background)) {
+      set({ background: '#000000' });
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps

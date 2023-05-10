@@ -38,11 +38,11 @@ export default function ModulateNode(props: any) {
   useEffect(() => {
     const { brightness, saturation, hue } = getNodeData(props.id);
     if (!isNumberValid(brightness, 0, 5)) {
-      set({ brightness: 0 });
+      set({ brightness: 1 });
     }
 
     if (!isNumberValid(saturation, 0, 5)) {
-      set({ saturation: 0 });
+      set({ saturation: 1 });
     }
 
     if (!isNumberValid(hue, 0, 360)) {
