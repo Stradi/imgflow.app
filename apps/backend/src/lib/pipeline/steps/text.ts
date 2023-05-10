@@ -31,8 +31,10 @@ const GRAVITY_MAP = {
   'Bottom Right': 'southeast',
 };
 
-export async function text(image: sharp.Sharp, options: TTextOptions['args']) {
-  const metadata = await image.metadata();
+export async function text(buffer: Buffer, options: TTextOptions['args']) {
+  const newImg = sharp(buffer);
+
+  const metadata = await newImg.metadata();
   const imageSize = {
     width: metadata.width as number,
     height: metadata.height as number,
@@ -40,7 +42,7 @@ export async function text(image: sharp.Sharp, options: TTextOptions['args']) {
 
   const textWidth = Math.round((options.size / 100) * imageSize.width);
 
-  image.composite([
+  newImg.composite([
     {
       input: {
         text: {
@@ -53,4 +55,6 @@ export async function text(image: sharp.Sharp, options: TTextOptions['args']) {
       gravity: GRAVITY_MAP[options.position],
     },
   ]);
+
+  return await newImg.toBuffer();
 }

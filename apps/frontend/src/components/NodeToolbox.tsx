@@ -107,7 +107,11 @@ const ALL_NODES = [
     description: 'Convert your image to grayscale',
     dom: <SingleNodePreview type="Grayscale" title="Grayscale" description="Convert your image to grayscale" />,
   },
-  // TODO: Removed text, will include it when it's ready.
+  {
+    name: 'Text',
+    description: 'Add text to your image',
+    dom: <SingleNodePreview type="Text" title="Text" description="Add text to your image" />,
+  },
   {
     name: 'Tint',
     description: 'Tint your image with specified color',

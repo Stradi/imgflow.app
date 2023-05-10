@@ -7,6 +7,9 @@ export type TTintOptions = {
   };
 };
 
-export function tint(image: sharp.Sharp, options: TTintOptions['args']) {
-  image.tint(options.color);
+export async function tint(buffer: Buffer, options: TTintOptions['args']) {
+  const newImg = sharp(buffer);
+  newImg.tint(options.color);
+
+  return await newImg.toBuffer();
 }

@@ -12,6 +12,9 @@ export type TExtendOptions = {
   };
 };
 
-export function extend(image: sharp.Sharp, options: TExtendOptions['args']) {
-  image.extend(options);
+export async function extend(buffer: Buffer, options: TExtendOptions['args']) {
+  const newImg = sharp(buffer);
+  newImg.extend(options);
+
+  return await newImg.toBuffer();
 }

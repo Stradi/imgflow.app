@@ -8,6 +8,9 @@ export type TGammaOptions = {
   };
 };
 
-export function gamma(image: sharp.Sharp, options: TGammaOptions['args']) {
-  image.gamma(options.gamma, options.gammaOut);
+export async function gamma(buffer: Buffer, options: TGammaOptions['args']) {
+  const newImg = sharp(buffer);
+  newImg.gamma(options.gamma, options.gammaOut);
+
+  return await newImg.toBuffer();
 }

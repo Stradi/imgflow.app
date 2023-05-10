@@ -10,11 +10,14 @@ export type TResizeOptions = {
   };
 };
 
-export function resize(image: sharp.Sharp, options: TResizeOptions['args']) {
-  image.resize({
+export async function resize(buffer: Buffer, options: TResizeOptions['args']) {
+  const newImg = sharp(buffer);
+  newImg.resize({
     width: options.width,
     height: options.height,
     fit: options.fit,
     background: options.background,
   });
+
+  return await newImg.toBuffer();
 }

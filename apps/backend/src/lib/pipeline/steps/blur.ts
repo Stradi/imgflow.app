@@ -7,6 +7,9 @@ export type TBlurOptions = {
   };
 };
 
-export function blur(image: sharp.Sharp, options: TBlurOptions['args']) {
-  image.blur(options.sigma);
+export async function blur(image: Buffer, options: TBlurOptions['args']) {
+  const newImg = sharp(image);
+  newImg.blur(options.sigma);
+
+  return await newImg.toBuffer();
 }

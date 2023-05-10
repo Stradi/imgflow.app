@@ -5,6 +5,9 @@ export type TNegativeOptions = {
   args: {};
 };
 
-export function negative(image: sharp.Sharp, options: TNegativeOptions['args']) {
-  image.negate(true);
+export async function negative(buffer: Buffer, options: TNegativeOptions['args']) {
+  const newImg = sharp(buffer);
+  newImg.negate(true);
+
+  return await newImg.toBuffer();
 }

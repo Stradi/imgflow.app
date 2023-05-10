@@ -9,10 +9,14 @@ export type TModulateOptions = {
   };
 };
 
-export function modulate(image: sharp.Sharp, options: TModulateOptions['args']) {
-  image.modulate({
+export async function modulate(buffer: Buffer, options: TModulateOptions['args']) {
+  const newImg = sharp(buffer);
+
+  newImg.modulate({
     brightness: options.brightness,
     saturation: options.saturation,
     hue: options.hue,
   });
+
+  return await newImg.toBuffer();
 }

@@ -8,12 +8,16 @@ export type TFlipOptions = {
   };
 };
 
-export function flip(image: sharp.Sharp, options: TFlipOptions['args']) {
+export async function flip(buffer: Buffer, options: TFlipOptions['args']) {
+  const newImg = sharp(buffer);
+
   if (options.x) {
-    image.flop();
+    newImg.flop();
   }
 
   if (options.y) {
-    image.flip();
+    newImg.flip();
   }
+
+  return await newImg.toBuffer();
 }

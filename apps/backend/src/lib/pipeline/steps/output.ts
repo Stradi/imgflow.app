@@ -8,8 +8,12 @@ export type TOutputOptions = {
   };
 };
 
-export function output(image: sharp.Sharp, options: TOutputOptions['args']) {
-  image.toFormat(options.format, {
+export async function output(buffer: Buffer, options: TOutputOptions['args']) {
+  const newImg = sharp(buffer);
+
+  newImg.toFormat(options.format, {
     quality: options.quality,
   });
+
+  return await newImg.toBuffer();
 }

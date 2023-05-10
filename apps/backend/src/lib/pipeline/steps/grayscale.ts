@@ -5,6 +5,9 @@ export type TGrayscaleOptions = {
   args: {};
 };
 
-export function grayscale(image: sharp.Sharp, options: TGrayscaleOptions['args']) {
-  image.grayscale(true);
+export async function grayscale(buffer: Buffer, options: TGrayscaleOptions['args']) {
+  const newImg = sharp(buffer);
+  newImg.grayscale(true);
+
+  return await newImg.toBuffer();
 }

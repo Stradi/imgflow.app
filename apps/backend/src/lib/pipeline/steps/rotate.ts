@@ -8,8 +8,12 @@ export type TRotateOptions = {
   };
 };
 
-export function rotate(image: sharp.Sharp, options: TRotateOptions['args']) {
-  image.rotate(options.angle, {
+export async function rotate(buffer: Buffer, options: TRotateOptions['args']) {
+  const newImg = sharp(buffer);
+
+  newImg.rotate(options.angle, {
     background: options.background,
   });
+
+  return await newImg.toBuffer();
 }

@@ -70,6 +70,8 @@ export async function runPipeline(
 }
 
 async function runFlow(flow: TNode[], image: sharp.Sharp, key: string) {
+  let finalImg = await image.toBuffer();
+
   for (const step of flow) {
     if (!STEPNAME_TO_FN[step.type]) {
       console.error(`Could not find step ${step.type}, continuing`);
@@ -78,11 +80,12 @@ async function runFlow(flow: TNode[], image: sharp.Sharp, key: string) {
 
     if (step.type === 'Output') {
       const finalKey = `${key}/${step.data.filename}.${step.data.format}`;
-      await uploadImage(s3(), await image.toBuffer(), finalKey, `image/${step.data.format}`);
+      await uploadImage(s3(), await finalImg, finalKey, `image/${step.data.format}`);
       return finalKey;
     }
 
-    await functions[STEPNAME_TO_FN[step.type]](image, step.data as any);
+    const newImg = await functions[STEPNAME_TO_FN[step.type]](finalImg, step.data as any);
+    finalImg = newImg;
   }
 
   throw new Error('This should never happen. So we are throwing error: Dafuq?');

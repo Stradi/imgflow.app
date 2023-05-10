@@ -28,7 +28,9 @@ export type TStep =
   | TTextOptions;
 
 export const functions = {
-  input: () => {},
+  input: (buffer: Buffer) => {
+    return buffer;
+  },
   output,
   resize,
   extend,
@@ -42,7 +44,9 @@ export const functions = {
   tint,
   grayscale,
   text,
-  noop: () => {},
+  noop: (buffer: Buffer) => {
+    return buffer;
+  },
 };
 
 export const STEPNAME_TO_FN: Record<string, keyof typeof functions> = {
