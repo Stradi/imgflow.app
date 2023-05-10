@@ -88,7 +88,7 @@ worker.on('active', async (job) => {
 
 worker.on('completed', async (job, result) => {
   console.log(`Job ${job.id} completed.`);
-  await db().job.update({
+  const updatedJob = await db().job.update({
     where: {
       id: job.id,
     },
@@ -96,6 +96,28 @@ worker.on('completed', async (job, result) => {
       status: 'completed',
       progress: 100,
       finishedAt: new Date(),
+    },
+  });
+
+  await db().account.update({
+    where: {
+      id: job.data.userId,
+    },
+    data: {
+      totalImagesProcessed: {
+        increment: result.processedFiles.length,
+      },
+      totalProcessDuration: {
+        // Milliseconds
+        increment: (updatedJob.finishedAt as Date).getTime() - updatedJob.createdAt.getTime(),
+      },
+      monthlyImagesProcessed: {
+        increment: result.processedFiles.length,
+      },
+      monthlyProcessDuration: {
+        // Milliseconds
+        increment: (updatedJob.finishedAt as Date).getTime() - updatedJob.createdAt.getTime(),
+      },
     },
   });
 

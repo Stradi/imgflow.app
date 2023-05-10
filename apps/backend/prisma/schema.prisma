@@ -8,9 +8,16 @@ datasource db {
 }
 
 model Account {
-  id        Int        @id @default(autoincrement())
-  email     String     @unique
-  password  String
+  id       Int    @id @default(autoincrement())
+  email    String @unique
+  password String
+
+  totalImagesProcessed Int @default(0)
+  totalProcessDuration Int @default(0)
+
+  monthlyImagesProcessed Int @default(0)
+  monthlyProcessDuration Int @default(0)
+
   pipelines Pipeline[]
   jobs      Job[]
 }

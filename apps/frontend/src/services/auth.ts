@@ -132,3 +132,15 @@ export async function doAuthenticatedRequest(url: string, options: RequestInit):
 
   return data;
 }
+
+export async function getUsage() {
+  const response = await doAuthenticatedRequest(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/account/usage`, {
+    method: 'GET',
+  });
+
+  if (response['error']) {
+    throw new Error(response['error']);
+  }
+
+  return response['data'];
+}

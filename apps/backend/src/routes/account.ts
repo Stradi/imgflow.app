@@ -113,4 +113,28 @@ router.get('/me', authMiddleware, async (req, res) => {
   });
 });
 
+router.get('/usage', authMiddleware, async (req, res) => {
+  const user = await db().account.findUnique({
+    where: {
+      id: req.user.id,
+    },
+  });
+
+  if (!user) {
+    return res.json({
+      error: "User doesn't exits",
+    });
+  }
+
+  return res.json({
+    message: 'User found',
+    data: {
+      totalImagesProcessed: user.totalImagesProcessed,
+      totalProcessDuration: user.totalProcessDuration,
+      monthlyImagesProcessed: user.monthlyImagesProcessed,
+      monthlyProcessDuration: user.monthlyProcessDuration,
+    },
+  });
+});
+
 export default router;
