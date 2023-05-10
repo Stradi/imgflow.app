@@ -12,8 +12,10 @@ export type TSliderInputProps = {
 
 export default function SliderInput({ label, value, onValueChange, min, max, step = 1 }: TSliderInputProps) {
   return (
-    <div className="grid grid-cols-5 gap-2 items-center nodrag">
-      <Label htmlFor={label}>{label}</Label>
+    <div className="grid grid-cols-4 gap-2 items-center nodrag">
+      <Label htmlFor={label}>
+        {label} ({value})
+      </Label>
       <Slider
         className="col-span-3"
         defaultValue={[value || (min + max) / 2]}
@@ -24,7 +26,6 @@ export default function SliderInput({ label, value, onValueChange, min, max, ste
         value={[value]}
         onValueChange={(v) => onValueChange(v[0])}
       />
-      <p>{value}</p>
     </div>
   );
 }

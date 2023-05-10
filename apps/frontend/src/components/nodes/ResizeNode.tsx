@@ -101,13 +101,13 @@ export default function ResizeNode(props: any) {
         <SelectInput
           label="Fit"
           placeholder="Select fitting method"
-          value={getNodeData(props.id).format}
+          value={getNodeData(props.id).fit}
           onValueChange={(e) =>
             set({
               fit: e,
             })
           }
-          defaultValue={getNodeData(props.id).format}
+          defaultValue={getNodeData(props.id).fit}
           options={['contain', 'cover', 'fill', 'inside', 'outsite']}
         />
         <ColorPickerInput
