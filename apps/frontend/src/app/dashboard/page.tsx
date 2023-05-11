@@ -4,6 +4,9 @@ import CreatePipelineModalContent from '@/components/pipeline/CreatePipelineModa
 import PipelineCard, { EmptyPipelineCard } from '@/components/pipeline/PipelineCard';
 import { Button } from '@/components/ui/Button';
 import { Dialog, DialogTrigger } from '@/components/ui/Dialog';
+import CreditCount from '@/components/usage/CreditCount';
+import SubscriptionInfo from '@/components/usage/SubscriptionInfo';
+import { getUsage } from '@/services/auth';
 import { createNewPipeline, deletePipeline, getAllPipelines } from '@/services/pipeline';
 import { toRelativeDate } from '@/utils/date';
 import TEMPLATE_TO_PIPELINE from '@/utils/templateToPipeline';
@@ -14,18 +17,34 @@ const Page = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [pipelines, setPipelines] = useState([]);
+  const [usage, setUsage] = useState<any>({});
 
   useEffect(() => {
+    async function fetchUsage() {
+      const response = await getUsage();
+      setUsage(response);
+    }
+
     async function fetchPipelines() {
       const response = await getAllPipelines();
       setPipelines(response.data.sort((a: any, b: any) => b.id - a.id));
     }
 
+    fetchUsage();
     fetchPipelines();
   }, [_]);
 
   return (
     <div className="py-4 px-2 space-y-4 max-w-5xl mx-auto">
+      <div className="space-y-4">
+        <CreditCount count={usage.credits} />
+        <SubscriptionInfo
+          subscription={{
+            plan: 'Lite Plan',
+            renewsAt: new Date(new Date().setDate(new Date().getDate() + 7)),
+          }}
+        />
+      </div>
       <div>
         <h1 className="text-2xl font-medium">My Pipelines</h1>
       </div>
