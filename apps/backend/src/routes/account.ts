@@ -3,6 +3,12 @@ import express from 'express';
 import jwt from 'jsonwebtoken';
 import { db } from '../lib/db';
 import authMiddleware from '../middlewares/auth';
+import {
+  PRODUCT_TO_ID,
+  SUBSCRIPTION_VARIANT_TO_DESCRIPTION,
+  SUBSCRIPTION_VARIANT_TO_ID,
+  SUBSCRIPTION_VARIANT_TO_READABLE,
+} from '../utils/checkout';
 
 const router = express.Router();
 
@@ -172,11 +178,21 @@ router.get('/credits', authMiddleware, async (req, res) => {
 });
 
 router.post('/checkout', authMiddleware, async (req, res) => {
-  if (!req.body || !req.body.amount) {
+  const { product, variant } = req.body;
+  if (
+    !req.body ||
+    !product ||
+    !variant ||
+    !Object.keys(PRODUCT_TO_ID).includes(product) || // Invalid Product (not "subscription")
+    !Object.keys(SUBSCRIPTION_VARIANT_TO_ID).includes(variant) // Invalid Variant
+  ) {
     return res.json({
       error: 'Invalid body',
     });
   }
+
+  const productId = PRODUCT_TO_ID[req.body.product];
+  const variantId = SUBSCRIPTION_VARIANT_TO_ID[req.body.variant];
 
   const user = await db().account.findUnique({
     where: {
@@ -203,19 +219,27 @@ router.post('/checkout', authMiddleware, async (req, res) => {
         attributes: {
           checkout_data: {
             email: user.email,
+            custom: {
+              userId: user.id.toString(),
+            },
+          },
+          product_options: {
+            enabled_variants: [variantId],
+            name: SUBSCRIPTION_VARIANT_TO_READABLE[variant],
+            description: SUBSCRIPTION_VARIANT_TO_DESCRIPTION[variant],
           },
         },
         relationships: {
           store: {
             data: {
               type: 'stores',
-              id: '',
+              id: process.env.LEMONSQUEEZY_STORE_ID,
             },
           },
           variant: {
             data: {
               type: 'variants',
-              id: '',
+              id: variantId,
             },
           },
         },
@@ -224,6 +248,7 @@ router.post('/checkout', authMiddleware, async (req, res) => {
   });
 
   if (!response.ok) {
+    console.error(JSON.stringify(await response.json()));
     return res.json({
       error: 'Something went wrong',
     });
