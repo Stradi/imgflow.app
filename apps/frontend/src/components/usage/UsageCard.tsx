@@ -30,7 +30,7 @@ export default function UsageCard({ title, usage, description, onClick }: TUsage
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-medium">{title}</h3>
         <p className="text-sm font-medium text-gray-700">
-          {usage.current}/{usage.max}
+          {usage.current.toFixed(0)}/{usage.max.toFixed(0)}
         </p>
       </div>
       <div>

@@ -10,6 +10,7 @@ export type TPipelineCardProps = {
   runCount: number;
   lastRun: string;
   processedImageCount: number;
+  hideButtons?: boolean;
   onDelete?: () => void;
 };
 
@@ -20,17 +21,20 @@ export default function PipelineCard({
   runCount,
   lastRun,
   processedImageCount,
+  hideButtons = false,
   onDelete,
 }: TPipelineCardProps) {
   return (
     <div className="border border-gray-200 rounded-xl group hover:border-green-500 overflow-hidden transition-all duration-200 hover:shadow-md hover:shadow-green-100">
-      <div className="overflow-hidden">
-        <img
-          src={image}
-          alt="Pipeline preview"
-          className="select-none rounded-t-xl group-hover:scale-110 transition duration-200"
-        />
-      </div>
+      {image && (
+        <div className="overflow-hidden">
+          <img
+            src={image}
+            alt="Pipeline preview"
+            className="select-none rounded-t-xl group-hover:scale-110 transition duration-200"
+          />
+        </div>
+      )}
       <div className="space-y-2 p-4">
         <h3 className="font-medium text-lg">{title}</h3>
         <div>
@@ -39,27 +43,29 @@ export default function PipelineCard({
           </p>
           <p className="text-gray-500">Processed {processedImageCount} images total</p>
         </div>
-        <div className="flex gap-2">
-          <Link
-            className={buttonVariants({
-              variant: 'default',
-              className: 'basis-1/2',
-            })}
-            href={`${href}/run`}
-          >
-            Run
-          </Link>
-          <Link
-            className={buttonVariants({
-              variant: 'secondary',
-              className: 'basis-1/2',
-            })}
-            href={`${href}/edit`}
-          >
-            Edit
-          </Link>
-          <ConfirmDeleteButton onDelete={onDelete} />
-        </div>
+        {!hideButtons && (
+          <div className="flex gap-2">
+            <Link
+              className={buttonVariants({
+                variant: 'default',
+                className: 'basis-1/2',
+              })}
+              href={`${href}/run`}
+            >
+              Run
+            </Link>
+            <Link
+              className={buttonVariants({
+                variant: 'secondary',
+                className: 'basis-1/2',
+              })}
+              href={`${href}/edit`}
+            >
+              Edit
+            </Link>
+            <ConfirmDeleteButton onDelete={onDelete} />
+          </div>
+        )}
       </div>
     </div>
   );

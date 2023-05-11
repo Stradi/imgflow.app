@@ -5,6 +5,7 @@ import JobImagesModal from '@/components/pipeline/JobImagesModal';
 import JobTable from '@/components/pipeline/JobTable';
 import UploadedImagesPreview from '@/components/pipeline/UploadedImagesPreview/UploadedImagesPreview';
 import { Button } from '@/components/ui/Button';
+import { getCredits } from '@/services/auth';
 import { getAllJobs } from '@/services/job';
 import { getPipelineById, runPipeline } from '@/services/pipeline';
 import useJobStore from '@/stores/JobStore';
@@ -22,6 +23,7 @@ const Page = ({
   };
 }) => {
   const [isStarted, setIsStarted] = useState(false);
+  const [creditsLeft, setCreditsLeft] = useState(0);
 
   const { images, setImages, pipeline, setPipeline } = usePipelineRun((state) => ({
     images: state.images,
@@ -66,7 +68,11 @@ const Page = ({
 
   async function apiRunPipeline() {
     setIsStarted(true);
-    const response = await runPipeline(pipeline.id, images);
+    const response = await runPipeline(pipeline.id, images).catch((error) => {
+      console.log(error.response.data);
+      setIsStarted(false);
+      return;
+    });
     setImages([]);
 
     addJob({
@@ -101,23 +107,33 @@ const Page = ({
       <div className="grid lg:grid-cols-2 gap-2">
         <div className="flex flex-col gap-2">
           <ImageDropzone
-            onDrop={(files) => {
+            onDrop={async (files) => {
               // Remove duplicates
               const allImages = [...images, ...files];
               const uniqueImages = allImages.filter(
                 (image, index) => allImages.findIndex((img) => img.name === image.name) === index
               );
               setImages(uniqueImages);
+
+              const resp = await getCredits();
+              setCreditsLeft(resp.credits);
             }}
           />
           {images.length > 0 && (
             <div className="bg-gray-50 p-4 h-full flex flex-col gap-2 items-center justify-center rounded-lg">
-              <Button size="lg" onClick={() => apiRunPipeline()} disabled={images.length > 0 && isStarted}>
+              <Button
+                size="lg"
+                onClick={() => apiRunPipeline()}
+                disabled={(images.length > 0 && isStarted) || creditsLeft < images.length}
+              >
                 Run Pipeline
               </Button>
               <p className="text-gray-500">
-                {/* TODO: Add real approx. time here */}
-                Will process {images.length} images. The process will take approximately 5 minutes.
+                {creditsLeft >= images.length
+                  ? `Will process ${images.length} images. This process will cost you ${images.length} credits.`
+                  : `You don't have enough credits to process ${images.length} images. You need ${
+                      images.length - creditsLeft
+                    } more credits.`}
               </p>
             </div>
           )}

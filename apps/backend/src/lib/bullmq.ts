@@ -118,6 +118,9 @@ worker.on('completed', async (job, result) => {
         // Milliseconds
         increment: (updatedJob.finishedAt as Date).getTime() - updatedJob.createdAt.getTime(),
       },
+      credits: {
+        decrement: result.processedFiles.length,
+      },
     },
   });
 

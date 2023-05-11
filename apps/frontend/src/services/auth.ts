@@ -144,3 +144,15 @@ export async function getUsage() {
 
   return response['data'];
 }
+
+export async function getCredits() {
+  const response = await doAuthenticatedRequest(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/account/credits`, {
+    method: 'GET',
+  });
+
+  if (response['error']) {
+    throw new Error(response['error']);
+  }
+
+  return response['data'];
+}

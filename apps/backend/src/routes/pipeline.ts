@@ -207,6 +207,33 @@ router.post('/:id/run', authMiddleware, upload.array('images', 10), async (req, 
   const errors = handleErrors(req, res);
   if (errors) return errors;
 
+  const files = req.files as Express.Multer.File[];
+  const userId = req.user.id;
+
+  const account = await db().account.findUnique({
+    where: {
+      id: userId,
+    },
+  });
+
+  if (!account) {
+    return res.json({
+      error: 'No account',
+    });
+  }
+
+  if (!account.credits) {
+    return res.json({
+      error: 'No credits',
+    });
+  }
+
+  if (account.credits < files.length) {
+    return res.json({
+      error: 'Not enough credits',
+    });
+  }
+
   const pipeline = await db().pipeline.findUnique({
     where: {
       id: Number(req.params.id),
@@ -222,9 +249,6 @@ router.post('/:id/run', authMiddleware, upload.array('images', 10), async (req, 
       )
     );
   }
-
-  const files = req.files as Express.Multer.File[];
-  const userId = req.user.id;
 
   const imageGuids = [];
   for (const file of files) {

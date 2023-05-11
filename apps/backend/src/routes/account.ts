@@ -122,9 +122,10 @@ router.get('/usage', authMiddleware, async (req, res) => {
       pipelines: {
         select: {
           id: true,
-          processedImageCount: true,
-          runCount: true,
           name: true,
+          runCount: true,
+          lastRun: true,
+          processedImageCount: true,
         },
       },
     },
@@ -139,11 +140,33 @@ router.get('/usage', authMiddleware, async (req, res) => {
   return res.json({
     message: 'User found',
     data: {
+      credits: user.credits,
       totalImagesProcessed: user.totalImagesProcessed,
       totalProcessDuration: user.totalProcessDuration,
       monthlyImagesProcessed: user.monthlyImagesProcessed,
       monthlyProcessDuration: user.monthlyProcessDuration,
       pipelines: user.pipelines,
+    },
+  });
+});
+
+router.get('/credits', authMiddleware, async (req, res) => {
+  const user = await db().account.findUnique({
+    where: {
+      id: req.user.id,
+    },
+  });
+
+  if (!user) {
+    return res.json({
+      error: "User doesn't exits",
+    });
+  }
+
+  return res.json({
+    message: 'User found',
+    data: {
+      credits: user.credits,
     },
   });
 });
