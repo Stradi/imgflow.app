@@ -10,6 +10,8 @@ declare global {
       REDIS_USERNAME: string;
       REDIS_PASSWORD: string;
       LEMONSQUEEZY_API_KEY: string;
+      LEMONSQUEEZY_STORE_ID: string;
+      LEMONSQUEEZY_WEBHOOK_SECRET: string;
     }
   }
 }

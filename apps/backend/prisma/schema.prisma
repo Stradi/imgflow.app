@@ -20,8 +20,31 @@ model Account {
   monthlyImagesProcessed Int @default(0)
   monthlyProcessDuration Int @default(0)
 
-  pipelines Pipeline[]
-  jobs      Job[]
+  jobs         Job[]
+  pipelines    Pipeline[]
+  subscription Subscription?
+}
+
+model Subscription {
+  id Int @id @default(autoincrement())
+
+  customerId String
+  orderId    String
+  productId  String
+  variantId  String
+
+  status           String
+  cardBrand        String
+  cardLastFour     String
+  billingAnchor    String
+  updatePaymentUrl String
+
+  createdAt DateTime
+  endsAt    DateTime?
+  renewsAt  DateTime
+
+  user   Account @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId Int     @unique
 }
 
 model Pipeline {

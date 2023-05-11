@@ -5,6 +5,7 @@ import { db } from '../lib/db';
 import authMiddleware from '../middlewares/auth';
 import {
   PRODUCT_TO_ID,
+  SUBSCRIPTION_VARIANT_TO_CREDITS,
   SUBSCRIPTION_VARIANT_TO_DESCRIPTION,
   SUBSCRIPTION_VARIANT_TO_ID,
   SUBSCRIPTION_VARIANT_TO_READABLE,
@@ -184,8 +185,10 @@ router.post('/checkout', authMiddleware, async (req, res) => {
     !product ||
     !variant ||
     !Object.keys(PRODUCT_TO_ID).includes(product) || // Invalid Product (not "subscription")
-    !Object.keys(SUBSCRIPTION_VARIANT_TO_ID).includes(variant) // Invalid Variant
+    !Object.keys(SUBSCRIPTION_VARIANT_TO_ID).includes(variant) || // Invalid Variant
+    !Object.keys(SUBSCRIPTION_VARIANT_TO_CREDITS).includes(variant)
   ) {
+    console.log(req.body);
     return res.json({
       error: 'Invalid body',
     });
@@ -193,6 +196,7 @@ router.post('/checkout', authMiddleware, async (req, res) => {
 
   const productId = PRODUCT_TO_ID[req.body.product];
   const variantId = SUBSCRIPTION_VARIANT_TO_ID[req.body.variant];
+  const creditCount = SUBSCRIPTION_VARIANT_TO_CREDITS[req.body.variant];
 
   const user = await db().account.findUnique({
     where: {
@@ -221,6 +225,7 @@ router.post('/checkout', authMiddleware, async (req, res) => {
             email: user.email,
             custom: {
               userId: user.id.toString(),
+              creditCount: creditCount.toString(),
             },
           },
           product_options: {

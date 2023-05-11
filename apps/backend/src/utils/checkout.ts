@@ -33,3 +33,12 @@ export const SUBSCRIPTION_VARIANT_TO_DESCRIPTION: Record<string, string> = {
   'bussiness-50000':
     'This plan includes <b>50,000</b> credits per month. By subscribing this plan, you are saving <b>50%</b> compared to the Basic Plan.',
 };
+
+export const SUBSCRIPTION_VARIANT_TO_CREDITS: Record<string, number> = {
+  'basic-500': 500,
+  'scale-1000': 1000,
+  'scale-2500': 2500,
+  'scale-5000': 5000,
+  'scale-10000': 10000,
+  'bussiness-50000': 50000,
+};
