@@ -171,4 +171,68 @@ router.get('/credits', authMiddleware, async (req, res) => {
   });
 });
 
+router.post('/checkout', authMiddleware, async (req, res) => {
+  if (!req.body || !req.body.amount) {
+    return res.json({
+      error: 'Invalid body',
+    });
+  }
+
+  const user = await db().account.findUnique({
+    where: {
+      id: req.user.id,
+    },
+  });
+
+  if (!user) {
+    return res.json({
+      error: "User doesn't exits",
+    });
+  }
+
+  const response = await fetch('https://api.lemonsqueezy.com/v1/checkouts', {
+    method: 'POST',
+    headers: {
+      Accept: 'application/vnd.api+json',
+      'Content-Type': 'application/vnd.api+json',
+      Authorization: `Bearer ${process.env.LEMONSQUEEZY_API_KEY}`,
+    },
+    body: JSON.stringify({
+      data: {
+        type: 'checkouts',
+        attributes: {
+          checkout_data: {
+            email: user.email,
+          },
+        },
+        relationships: {
+          store: {
+            data: {
+              type: 'stores',
+              id: '',
+            },
+          },
+          variant: {
+            data: {
+              type: 'variants',
+              id: '',
+            },
+          },
+        },
+      },
+    }),
+  });
+
+  if (!response.ok) {
+    return res.json({
+      error: 'Something went wrong',
+    });
+  }
+
+  const jsonResponse = await response.json();
+  return res.json({
+    url: jsonResponse.data.attributes.url,
+  });
+});
+
 export default router;

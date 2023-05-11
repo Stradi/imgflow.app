@@ -9,6 +9,7 @@ declare global {
       REDIS_PORT: string;
       REDIS_USERNAME: string;
       REDIS_PASSWORD: string;
+      LEMONSQUEEZY_API_KEY: string;
     }
   }
 }
