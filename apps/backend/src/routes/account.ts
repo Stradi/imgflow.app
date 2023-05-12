@@ -309,6 +309,174 @@ router.get('/subscription', authMiddleware, async (req, res) => {
       planName: SUBSCRIPTION_VARIANT_TO_READABLE[subscriptionName],
       planDescription: SUBSCRIPTION_VARIANT_TO_DESCRIPTION[subscriptionName],
       creditCount: SUBSCRIPTION_VARIANT_TO_CREDITS[subscriptionName],
+      variant: subscriptionName,
+    },
+  });
+});
+
+router.patch('/subscription', authMiddleware, async (req, res) => {
+  const { variant, fromVariant } = req.body;
+  if (
+    !req.body ||
+    !variant ||
+    !Object.keys(SUBSCRIPTION_VARIANT_TO_ID).includes(variant) ||
+    !Object.keys(SUBSCRIPTION_VARIANT_TO_CREDITS).includes(variant) ||
+    !fromVariant ||
+    !Object.keys(SUBSCRIPTION_VARIANT_TO_ID).includes(fromVariant) ||
+    !Object.keys(SUBSCRIPTION_VARIANT_TO_CREDITS).includes(fromVariant)
+  ) {
+    return res.json({
+      error: 'Invalid body',
+    });
+  }
+
+  const variantId = SUBSCRIPTION_VARIANT_TO_ID[variant];
+  const creditCount = SUBSCRIPTION_VARIANT_TO_CREDITS[variant];
+  const fromCreditCount = SUBSCRIPTION_VARIANT_TO_CREDITS[fromVariant];
+  const creditDifference = creditCount - fromCreditCount;
+
+  const user = await db().account.findUnique({
+    where: {
+      id: req.user.id,
+    },
+  });
+
+  if (!user) {
+    return res.json({
+      error: "User doesn't exists",
+    });
+  }
+
+  const subscription = await db().subscription.findUnique({
+    where: {
+      userId: user.id,
+    },
+  });
+
+  if (!subscription) {
+    return res.json({
+      error: "User isn't subscribed to any plan",
+    });
+  }
+
+  const response = await fetch(`https://api.lemonsqueezy.com/v1/subscriptions/${subscription.subscriptionId}`, {
+    method: 'PATCH',
+    headers: {
+      Accept: 'application/vnd.api+json',
+      'Content-Type': 'application/vnd.api+json',
+      Authorization: `Bearer ${process.env.LEMONSQUEEZY_API_KEY}`,
+    },
+    body: JSON.stringify({
+      data: {
+        type: 'subscriptions',
+        id: subscription.subscriptionId,
+        attributes: {
+          product_id: PRODUCT_TO_ID['subscription'],
+          variant_id: variantId,
+        },
+      },
+    }),
+  });
+
+  if (!response.ok) {
+    console.error(JSON.stringify(await response.json()));
+    return res.json({
+      error: 'Something went wrong',
+    });
+  }
+
+  const jsonResponse = await response.json();
+
+  await db().subscription.update({
+    where: {
+      id: subscription.id,
+    },
+    data: {
+      customerId: jsonResponse.data.attributes.customer_id.toString(),
+      orderId: jsonResponse.data.attributes.order_id.toString(),
+      productId: jsonResponse.data.attributes.product_id.toString(),
+      variantId: jsonResponse.data.attributes.variant_id.toString(),
+      subscriptionId: jsonResponse.data.id.toString(),
+
+      status: jsonResponse.data.attributes.status,
+      cardBrand: jsonResponse.data.attributes.card_brand,
+      cardLastFour: jsonResponse.data.attributes.card_last_four,
+      billingAnchor: jsonResponse.data.attributes.billing_anchor.toString(),
+      updatePaymentUrl: jsonResponse.data.attributes.urls.update_payment_method,
+
+      endsAt: new Date(jsonResponse.data.attributes.ends_at),
+      renewsAt: new Date(jsonResponse.data.attributes.renews_at),
+    },
+  });
+
+  await db().account.update({
+    where: {
+      id: user.id,
+    },
+    data: {
+      credits: {
+        increment: creditDifference,
+      },
+    },
+  });
+
+  return res.json({
+    data: {
+      success: true,
+    },
+  });
+});
+
+router.delete('/subscription', authMiddleware, async (req, res) => {
+  const user = await db().account.findUnique({
+    where: {
+      id: req.user.id,
+    },
+  });
+
+  if (!user) {
+    return res.json({
+      error: "User doesn't exists",
+    });
+  }
+
+  const subscription = await db().subscription.findUnique({
+    where: {
+      userId: user.id,
+    },
+  });
+
+  if (!subscription) {
+    return res.json({
+      error: "User isn't subscribed to any plan",
+    });
+  }
+
+  const response = await fetch(`https://api.lemonsqueezy.com/v1/subscriptions/${subscription.subscriptionId}`, {
+    method: 'DELETE',
+    headers: {
+      Accept: 'application/vnd.api+json',
+      'Content-Type': 'application/vnd.api+json',
+      Authorization: `Bearer ${process.env.LEMONSQUEEZY_API_KEY}`,
+    },
+  });
+
+  if (!response.ok) {
+    console.error(JSON.stringify(await response.json()));
+    return res.json({
+      error: 'Something went wrong',
+    });
+  }
+
+  await db().subscription.delete({
+    where: {
+      id: subscription.id,
+    },
+  });
+
+  return res.json({
+    data: {
+      success: true,
     },
   });
 });

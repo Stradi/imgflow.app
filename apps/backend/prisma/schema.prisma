@@ -28,10 +28,11 @@ model Account {
 model Subscription {
   id Int @id @default(autoincrement())
 
-  customerId String
-  orderId    String
-  productId  String
-  variantId  String
+  subscriptionId String
+  customerId     String
+  orderId        String
+  productId      String
+  variantId      String
 
   status           String
   cardBrand        String

@@ -43,6 +43,7 @@ router.post('/lemonsqueezy', async (req: Request, res) => {
         orderId: req.body.data.attributes.order_id.toString(),
         productId: req.body.data.attributes.product_id.toString(),
         variantId: req.body.data.attributes.variant_id.toString(),
+        subscriptionId: req.body.data.id.toString(),
 
         status: req.body.data.attributes.status,
         cardBrand: req.body.data.attributes.card_brand,

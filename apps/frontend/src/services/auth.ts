@@ -156,3 +156,35 @@ export async function getCredits() {
 
   return response['data'];
 }
+
+export async function unsubscribe() {
+  const response = await doAuthenticatedRequest(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/account/subscription`, {
+    method: 'DELETE',
+  });
+
+  if (response['error']) {
+    throw new Error(response['error']);
+  }
+
+  return response['data'];
+}
+
+export async function changeSubscriptionPlan(oldPlan: string, newPlan: string) {
+  const response = await doAuthenticatedRequest(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/account/subscription`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+    },
+    body: JSON.stringify({
+      variant: newPlan,
+      fromVariant: oldPlan,
+    }),
+  });
+
+  if (response['error']) {
+    throw new Error(response['error']);
+  }
+
+  return response['data'];
+}
