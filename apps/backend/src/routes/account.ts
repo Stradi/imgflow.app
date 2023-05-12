@@ -265,4 +265,52 @@ router.post('/checkout', authMiddleware, async (req, res) => {
   });
 });
 
+router.get('/subscription', authMiddleware, async (req, res) => {
+  const user = await db().account.findUnique({
+    where: {
+      id: req.user.id,
+    },
+  });
+
+  if (!user) {
+    return res.json({
+      error: "User doesn't exits",
+    });
+  }
+
+  const subscription = await db().subscription.findFirst({
+    where: {
+      userId: user.id,
+    },
+  });
+
+  if (!subscription) {
+    return res.json({
+      data: null,
+    });
+  }
+
+  const subscriptionName = Object.keys(SUBSCRIPTION_VARIANT_TO_ID).find(
+    (key) => SUBSCRIPTION_VARIANT_TO_ID[key] === subscription.variantId
+  );
+  if (!subscriptionName) {
+    return res.json({
+      data: null,
+    });
+  }
+
+  return res.json({
+    data: {
+      status: subscription.status,
+      billingAnchor: subscription.billingAnchor,
+      createdAt: subscription.createdAt,
+      endsAt: subscription.endsAt,
+      renewsAt: subscription.renewsAt,
+      planName: SUBSCRIPTION_VARIANT_TO_READABLE[subscriptionName],
+      planDescription: SUBSCRIPTION_VARIANT_TO_DESCRIPTION[subscriptionName],
+      creditCount: SUBSCRIPTION_VARIANT_TO_CREDITS[subscriptionName],
+    },
+  });
+});
+
 export default router;

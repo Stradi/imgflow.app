@@ -1,27 +1,34 @@
-import { toRelativeDate } from '@/utils/date';
+'use client';
+
+import { doAuthenticatedRequest } from '@/services/auth';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 import { Button } from '../ui/Button';
 
-export type TSubscriptionInfoProps = {
-  subscription?: {
-    plan: string;
-    renewsAt: Date;
-  };
-};
+export default function SubscriptionInfo() {
+  const [info, setInfo] = useState<any>({});
 
-export default function SubscriptionInfo({ subscription }: TSubscriptionInfoProps) {
+  useEffect(() => {
+    async function fetchSubscriptionInfo() {
+      const response = await doAuthenticatedRequest(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/account/subscription`, {
+        method: 'GET',
+      });
+
+      setInfo(response.data);
+      console.log(response.data);
+    }
+
+    fetchSubscriptionInfo();
+  }, []);
+
   return (
     <div className="w-full bg-gray-50 p-4 rounded-lg flex flex-col md:flex-row justify-between gap-2 md:items-center">
       <p className="text-lg md:text-xl">
-        {!subscription
-          ? "You don't have an active subscription."
-          : `You have an active ${subscription.plan} subscription. It will renew ${toRelativeDate(
-              subscription.renewsAt
-            )}.`}
+        {!info ? "You don't have an active subscription." : `You have an active ${info.planName} subscription.`}
       </p>
       <Link href="/dashboard/subscription" passHref>
         <Button variant="outline" className="w-full md:w-auto">
-          Manage Subscription
+          {!info ? 'Subscribe' : 'Manage'}
         </Button>
       </Link>
     </div>

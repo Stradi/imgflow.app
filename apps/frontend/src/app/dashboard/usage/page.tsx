@@ -38,12 +38,7 @@ const Page = () => {
     <div className="px-2 py-4 max-w-5xl mx-auto space-y-4">
       <h1 className="text-2xl font-medium">Usage</h1>
       <CreditCount count={usage.credits} />
-      <SubscriptionInfo
-        subscription={{
-          plan: 'Lite Plan',
-          renewsAt: new Date(new Date().setDate(new Date().getDate() + 7)),
-        }}
-      />
+      <SubscriptionInfo />
       <div className="grid gap-2 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
         <UsageCard
           title="Pipelines"
