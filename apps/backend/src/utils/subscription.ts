@@ -1,9 +1,13 @@
-import { VARIANT_ID_TO_SUBSCRIPTION } from './checkout';
+import { SUBSCRIPTION_VARIANT_TO_ID, VARIANT_ID_TO_SUBSCRIPTION } from './checkout';
 
 export function getPipelineLimitForSubscription(variantId: string) {
-  const subscriptionName = VARIANT_ID_TO_SUBSCRIPTION[variantId];
+  let subscriptionName = VARIANT_ID_TO_SUBSCRIPTION[variantId];
   if (!subscriptionName) {
-    return 0;
+    if (SUBSCRIPTION_VARIANT_TO_ID[variantId]) {
+      subscriptionName = variantId;
+    } else {
+      return 1;
+    }
   }
 
   switch (subscriptionName) {
@@ -17,7 +21,7 @@ export function getPipelineLimitForSubscription(variantId: string) {
     case 'business-50000':
       return 100;
     default:
-      return 0;
+      return 1;
   }
 }
 
@@ -43,9 +47,13 @@ export function prettyBytes(bytes: number, siUnits = true, decimalPlaces = 1) {
 }
 
 export function getPipelineFilesizeLimitForSubscription(variantId: string) {
-  const subscriptionName = VARIANT_ID_TO_SUBSCRIPTION[variantId];
+  let subscriptionName = VARIANT_ID_TO_SUBSCRIPTION[variantId];
   if (!subscriptionName) {
-    return 5_000_000; // bytes == 5 Mb
+    if (SUBSCRIPTION_VARIANT_TO_ID[variantId]) {
+      subscriptionName = variantId;
+    } else {
+      return 5_000_000; // bytes == 5 Mb
+    }
   }
 
   switch (subscriptionName) {
@@ -64,9 +72,13 @@ export function getPipelineFilesizeLimitForSubscription(variantId: string) {
 }
 
 export function getConcurrentJobLimitForSubscription(variantId: string) {
-  const subscriptionName = VARIANT_ID_TO_SUBSCRIPTION[variantId];
+  let subscriptionName = VARIANT_ID_TO_SUBSCRIPTION[variantId];
   if (!subscriptionName) {
-    return 1;
+    if (SUBSCRIPTION_VARIANT_TO_ID[variantId]) {
+      subscriptionName = variantId;
+    } else {
+      return 1;
+    }
   }
 
   switch (subscriptionName) {
@@ -85,9 +97,13 @@ export function getConcurrentJobLimitForSubscription(variantId: string) {
 }
 
 export function getJobPriorityForSubscription(variantId: string) {
-  const subscriptionName = VARIANT_ID_TO_SUBSCRIPTION[variantId];
+  let subscriptionName = VARIANT_ID_TO_SUBSCRIPTION[variantId];
   if (!subscriptionName) {
-    return 5;
+    if (SUBSCRIPTION_VARIANT_TO_ID[variantId]) {
+      subscriptionName = variantId;
+    } else {
+      return 5;
+    }
   }
 
   switch (subscriptionName) {

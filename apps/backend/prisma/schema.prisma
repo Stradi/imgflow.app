@@ -53,6 +53,8 @@ model Pipeline {
   name     String
   dataJson String
 
+  createdAt DateTime @default(now())
+
   runCount            Int       @default(0)
   lastRun             DateTime?
   processedImageCount Int       @default(0)

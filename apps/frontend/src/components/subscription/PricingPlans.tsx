@@ -47,8 +47,10 @@ export default function PricingPlans({ currentPlan }: TPricingPlansProps) {
   const [scalePlanCredits, setScalePlanCredits] = useState('1,000');
 
   useEffect(() => {
-    if (currentPlan !== null) {
-      setScalePlanCredits(SCALE_PLAN_VARIANT_TO_CREDITS[currentPlan]);
+    if (currentPlan) {
+      if (currentPlan?.includes('scale')) {
+        setScalePlanCredits(SCALE_PLAN_VARIANT_TO_CREDITS[currentPlan]);
+      }
     } else {
       setScalePlanCredits('1,000');
     }
@@ -343,10 +345,10 @@ function PlanHeading({
           </AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>Unsubscribe</AlertDialogTitle>
+              <AlertDialogTitle>Are you sure you want to unsubscribe?</AlertDialogTitle>
               <AlertDialogDescription>
-                Are you sure you want to unsubscribe? After subscribing your credits will remain. But you will not get
-                any more monthly credits.
+                After unsubscribing your credits will remain, but you will not get any more monthly credits. You will
+                also lose all of your pipelines except the latest one. This action will take effect immediately.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
@@ -363,10 +365,10 @@ function PlanHeading({
           </AlertDialogTrigger>
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>Change Plan</AlertDialogTitle>
+              <AlertDialogTitle>Are you sure you want to change your plan?</AlertDialogTitle>
               <AlertDialogDescription>
-                Are you sure you want to change your plan? After changing your plan, you will be prorated for the new
-                plan and your credits will be adjusted.
+                After changing your plan, you will be prorated for the new plan and your credits will be adjusted.
+                Downgrading your plan will not refund any money. This action will take effect immediately.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>

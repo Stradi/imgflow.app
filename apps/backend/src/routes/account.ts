@@ -10,6 +10,7 @@ import {
   SUBSCRIPTION_VARIANT_TO_ID,
   SUBSCRIPTION_VARIANT_TO_READABLE,
 } from '../utils/checkout';
+import { getPipelineLimitForSubscription } from '../utils/subscription';
 
 const router = express.Router();
 
@@ -420,6 +421,34 @@ router.patch('/subscription', authMiddleware, async (req, res) => {
     },
   });
 
+  // If user's new plan has more pipelines limit than the old one, do nothing
+  // variant >= fromVariant ? doNothing : deleteNAmountOfPipelines
+  const pipelineCountDifference =
+    getPipelineLimitForSubscription(variant) - getPipelineLimitForSubscription(fromVariant);
+  console.log(variant, fromVariant, pipelineCountDifference);
+  if (pipelineCountDifference < 0) {
+    // Delete N amount of pipelines where N is the difference between the new and old plan pipeline limit
+    const pipelines = await db().pipeline.findMany({
+      where: {
+        userId: user.id,
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+
+    const pipelineIdsToDelete = pipelines
+      .slice(getPipelineLimitForSubscription(variant))
+      .map((pipeline) => pipeline.id);
+    await db().pipeline.deleteMany({
+      where: {
+        id: {
+          in: pipelineIdsToDelete,
+        },
+      },
+    });
+  }
+
   return res.json({
     data: {
       success: true,
@@ -473,6 +502,26 @@ router.delete('/subscription', authMiddleware, async (req, res) => {
       id: subscription.id,
     },
   });
+
+  // Delete all the pipelines except the last one
+  const pipelines = await db().pipeline.findMany({
+    where: {
+      userId: user.id,
+    },
+    orderBy: {
+      createdAt: 'desc',
+    },
+  });
+
+  if (pipelines.length > 1) {
+    await db().pipeline.deleteMany({
+      where: {
+        id: {
+          in: pipelines.slice(1).map((pipeline) => pipeline.id),
+        },
+      },
+    });
+  }
 
   return res.json({
     data: {
