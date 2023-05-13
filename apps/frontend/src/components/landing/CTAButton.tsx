@@ -1,8 +1,10 @@
 import { cn } from '@/utils/tw';
+import Link from 'next/link';
 
 export default function CTAButton() {
   return (
-    <button
+    <Link
+      href="/register"
       className={cn(
         'mx-auto px-8 py-4 rounded-[32px] bg-gradient-to-r from-[#B1FFDA] to-[#BBFFA3] font-medium text-lg',
         'transition-[border-radius,transform,box-shadow] duration-200',
@@ -13,6 +15,6 @@ export default function CTAButton() {
       )}
     >
       Get Started
-    </button>
+    </Link>
   );
 }
