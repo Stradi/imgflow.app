@@ -10,7 +10,11 @@ import {
   SUBSCRIPTION_VARIANT_TO_ID,
   SUBSCRIPTION_VARIANT_TO_READABLE,
 } from '../utils/checkout';
-import { getPipelineLimitForSubscription } from '../utils/subscription';
+import {
+  getConcurrentJobLimitForSubscription,
+  getCreditCountForSubscription,
+  getPipelineLimitForSubscription,
+} from '../utils/subscription';
 
 const router = express.Router();
 
@@ -145,15 +149,31 @@ router.get('/usage', authMiddleware, async (req, res) => {
     });
   }
 
+  const jobs = await db().job.findMany({
+    where: {
+      userId: req.user.id,
+      status: {
+        in: ['active', 'waiting'],
+      },
+    },
+  });
+
   return res.json({
     message: 'User found',
     data: {
-      credits: user.credits,
-      totalImagesProcessed: user.totalImagesProcessed,
-      totalProcessDuration: user.totalProcessDuration,
-      monthlyImagesProcessed: user.monthlyImagesProcessed,
-      monthlyProcessDuration: user.monthlyProcessDuration,
       pipelines: user.pipelines,
+      pipeline: {
+        current: user.pipelines.length,
+        limit: getPipelineLimitForSubscription(req.user.subscription.variantId),
+      },
+      jobs: {
+        current: jobs.length,
+        limit: getConcurrentJobLimitForSubscription(req.user.subscription.variantId),
+      },
+      credits: {
+        current: user.credits,
+        limit: getCreditCountForSubscription(req.user.subscription.variantId),
+      },
     },
   });
 });

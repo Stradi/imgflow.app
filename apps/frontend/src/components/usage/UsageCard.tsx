@@ -19,6 +19,8 @@ const RATIO_TO_COLOR_MAP: Record<number, string> = {
 };
 
 export default function UsageCard({ title, usage, description, onClick }: TUsageCardProps) {
+  const isUnlimited = usage.max === -1;
+
   return (
     <div
       onClick={onClick}
@@ -30,28 +32,33 @@ export default function UsageCard({ title, usage, description, onClick }: TUsage
       <div className="flex items-center justify-between">
         <h3 className="text-lg font-medium">{title}</h3>
         <p className="text-sm font-medium text-gray-700">
-          {usage.current.toFixed(0)}/{usage.max.toFixed(0)}
+          {usage.current.toFixed(0)}
+          {!isUnlimited && `/${usage.max.toFixed(0)}`}
         </p>
       </div>
       <div>
         <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-          <div
-            className={cn(
-              'h-full',
-              usage.current / usage.max > 0.5 ? 'rounded-r-full' : 'rounded-full',
-              usage.current / usage.max < 0.5 ? 'rounded-l-full' : 'rounded-full',
-              usage.current / usage.max === 1 ? 'rounded-full' : 'rounded-none',
-              Object.entries(RATIO_TO_COLOR_MAP).reduce((acc, [ratio, color]) => {
-                if (usage.current / usage.max >= Number(ratio)) {
-                  return color;
-                }
-                return acc;
-              }, '')
-            )}
-            style={{
-              width: `${(usage.current / usage.max) * 100}%`,
-            }}
-          ></div>
+          {!isUnlimited ? (
+            <div
+              className={cn(
+                'h-full',
+                usage.current / usage.max > 0.5 ? 'rounded-r-full' : 'rounded-full',
+                usage.current / usage.max < 0.5 ? 'rounded-l-full' : 'rounded-full',
+                usage.current / usage.max === 1 ? 'rounded-full' : 'rounded-none',
+                Object.entries(RATIO_TO_COLOR_MAP).reduce((acc, [ratio, color]) => {
+                  if (usage.current / usage.max >= Number(ratio)) {
+                    return color;
+                  }
+                  return acc;
+                }, '')
+              )}
+              style={{
+                width: `${(usage.current / usage.max) * 100}%`,
+              }}
+            ></div>
+          ) : (
+            <div className="h-full rounded-full bg-green-400"></div>
+          )}
         </div>
       </div>
       {description && <p className="text-sm text-gray-500">{description}</p>}

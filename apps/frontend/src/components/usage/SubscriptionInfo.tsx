@@ -15,7 +15,6 @@ export default function SubscriptionInfo() {
       });
 
       setInfo(response.data);
-      console.log(response.data);
     }
 
     fetchSubscriptionInfo();
@@ -26,9 +25,9 @@ export default function SubscriptionInfo() {
       <p className="text-lg md:text-xl">
         {!info ? "You don't have an active subscription." : `You have an active ${info.planName} subscription.`}
       </p>
-      <Link href="/dashboard/subscription" passHref>
+      <Link href="/dashboard/settings" passHref>
         <Button variant="outline" className="w-full md:w-auto">
-          {!info ? 'Subscribe' : 'Manage'}
+          Manage Subscription
         </Button>
       </Link>
     </div>

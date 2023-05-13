@@ -37,31 +37,31 @@ const Page = () => {
   return (
     <div className="px-2 py-4 max-w-5xl mx-auto space-y-4">
       <h1 className="text-2xl font-medium">Usage</h1>
-      <CreditCount count={usage.credits} />
+      <CreditCount count={usage.credits.current} />
       <SubscriptionInfo />
       <div className="grid gap-2 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
         <UsageCard
           title="Pipelines"
           description="How many active pipelines you have in your account."
           usage={{
-            current: usage.pipelines.length,
-            max: 5,
+            current: usage.pipeline.current,
+            max: usage.pipeline.limit,
           }}
         />
         <UsageCard
-          title="Run Count"
-          description="How many times you've run your pipelines this month."
+          title="Concurrent Jobs"
+          description="How many concurrent jobs you can run at the same time."
           usage={{
-            current: usage.pipelines.reduce((acc: number, pipeline: any) => acc + pipeline.runCount, 0),
-            max: 100,
+            current: usage.jobs.current,
+            max: usage.jobs.limit,
           }}
         />
         <UsageCard
-          title="Run Time"
-          description="How many seconds you've run your pipelines this month."
+          title="Credit Count"
+          description="How many credits you have in your account."
           usage={{
-            current: usage.monthlyProcessDuration * 0.001,
-            max: 100,
+            current: usage.credits.current,
+            max: -1,
           }}
         />
       </div>

@@ -1,5 +1,33 @@
 import { SUBSCRIPTION_VARIANT_TO_ID, VARIANT_ID_TO_SUBSCRIPTION } from './checkout';
 
+export function getCreditCountForSubscription(variantId: string) {
+  let subscriptionName = VARIANT_ID_TO_SUBSCRIPTION[variantId];
+  if (!subscriptionName) {
+    if (SUBSCRIPTION_VARIANT_TO_ID[variantId]) {
+      subscriptionName = variantId;
+    } else {
+      return -1;
+    }
+  }
+
+  switch (subscriptionName) {
+    case 'basic-500':
+      return 500;
+    case 'scale-1000':
+      return 1000;
+    case 'scale-2500':
+      return 2500;
+    case 'scale-5000':
+      return 5000;
+    case 'scale-10000':
+      return 10000;
+    case 'business-50000':
+      return 50000;
+    default:
+      return -1;
+  }
+}
+
 export function getPipelineLimitForSubscription(variantId: string) {
   let subscriptionName = VARIANT_ID_TO_SUBSCRIPTION[variantId];
   if (!subscriptionName) {
