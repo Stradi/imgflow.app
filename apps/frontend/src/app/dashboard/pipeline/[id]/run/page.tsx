@@ -14,6 +14,7 @@ import { relativeTimeBetweenTwoDates, toRelativeDate } from '@/utils/date';
 import { EditIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
+import { Toaster, toast } from 'react-hot-toast';
 
 const Page = ({
   params: { id: pipelineId },
@@ -69,10 +70,11 @@ const Page = ({
   async function apiRunPipeline() {
     setIsStarted(true);
     const response = await runPipeline(pipeline.id, images).catch((error) => {
-      console.log(error.response.data);
+      toast.error(error.message);
       setIsStarted(false);
-      return;
     });
+
+    if (!response) return;
     setImages([]);
 
     addJob({
@@ -96,6 +98,7 @@ const Page = ({
 
   return (
     <div className="p-4 flex flex-col gap-4 max-w-5xl mx-auto">
+      <Toaster />
       <div className="flex justify-between">
         <h1 className="text-2xl font-medium">Run &apos;{(pipeline && pipeline.name && pipeline.name) || ''}&apos;</h1>
         <Link href={`/dashboard/pipeline/${pipelineId}/edit`} passHref>

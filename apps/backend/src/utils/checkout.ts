@@ -11,6 +11,15 @@ export const SUBSCRIPTION_VARIANT_TO_ID: Record<string, string> = {
   'business-50000': '76490',
 };
 
+export const VARIANT_ID_TO_SUBSCRIPTION: Record<string, string> = {
+  '76468': 'basic-500',
+  '76483': 'scale-1000',
+  '76487': 'scale-2500',
+  '76488': 'scale-5000',
+  '76489': 'scale-10000',
+  '76490': 'business-50000',
+};
+
 export const SUBSCRIPTION_VARIANT_TO_READABLE: Record<string, string> = {
   'basic-500': 'Basic Plan (500 Credits)',
   'scale-1000': 'Scale Plan (1,000 Credits)',

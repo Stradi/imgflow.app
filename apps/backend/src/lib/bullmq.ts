@@ -35,10 +35,12 @@ export async function addJobToQueue(data: {
     uuid: string;
   }[];
   jobId: string;
+  priority: number;
 }) {
   const queue = getJobQueue();
   const job = await queue.add('pipeline', data, {
     jobId: data.jobId,
+    priority: data.priority,
   });
   return job;
 }

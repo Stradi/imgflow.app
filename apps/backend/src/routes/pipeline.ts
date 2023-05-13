@@ -4,13 +4,40 @@ import { addJobToQueue } from '../lib/bullmq';
 import { db } from '../lib/db';
 import { s3, uploadImageOriginal } from '../lib/s3';
 import authMiddleware from '../middlewares/auth';
-import { ApiError } from '../utils/apiError';
+import {
+  getConcurrentJobLimitForSubscription,
+  getJobPriorityForSubscription,
+  getPipelineFilesizeLimitForSubscription,
+  getPipelineLimitForSubscription,
+  prettyBytes,
+} from '../utils/subscription';
 
 const router = express.Router();
 
 // TODO: 404 stuff etc.
 
 router.post('/', authMiddleware, async (req, res) => {
+  const allPipelines = await db().pipeline.findMany({
+    where: {
+      userId: req.user.id,
+    },
+  });
+
+  if (!req.user.subscription && allPipelines.length === 1) {
+    return res.json({
+      error: 'Free plan only allows 1 pipeline',
+    });
+  }
+
+  if (req.user.subscription) {
+    const limit = getPipelineLimitForSubscription(req.user.subscription.variantId);
+    if (allPipelines.length >= limit) {
+      return res.json({
+        error: `Your plan only allows ${limit} pipelines.`,
+      });
+    }
+  }
+
   const { name, dataJson } = req.body;
 
   if (!name || !dataJson) {
@@ -149,66 +176,57 @@ const upload = multer({
 
 function handleErrors(req: express.Request, res: express.Response) {
   if (!req.body) {
-    return res.json(
-      ApiError.badRequest(
-        'No body was provided',
-        'Client did not provide a body in the request.',
-        'Re-send the request with a body in the request. The body should be in the form of an object with the key "images" and the value being the file.'
-      )
-    );
+    return res.json({
+      error: 'Invalid body',
+    });
   }
 
   if (!req.files || req.files.length === 0) {
-    return res.json(
-      ApiError.badRequest(
-        'No files were provided',
-        'Client did not provide any files in the request body.',
-        'Re-send the request with files in the request body. The files should be in the form of an array of objects with the key "images" and the value being the file.'
-      )
-    );
+    return res.json({
+      error: 'No files provided',
+    });
   }
 
   const files = req.files as Express.Multer.File[];
 
-  if (files.length > 10) {
-    return res.json(
-      ApiError.badRequest(
-        'Too many files',
-        'Client provided more than 10 files in the request body.',
-        'Re-send the request with less than 10 files in the request body.'
-      )
-    );
-  }
-
   if (files.filter((file) => !file.mimetype.includes('image/')).length > 0) {
-    return res.json(
-      ApiError.badRequest(
-        'Invalid file type',
-        'Client provided files that were not images.',
-        'Re-send the request. While sending the request, make sure that the all files are images.'
-      )
-    );
-  }
-
-  if (files.filter((file) => file.size > 100000000).length > 0) {
-    return res.json(
-      ApiError.badRequest(
-        'File too large',
-        'Client provided files that were larger than 100MB.',
-        'Re-send the request. While sending the request, make sure that the files are not larger than 100MB.'
-      )
-    );
+    return res.json({
+      error: 'Only images are allowed',
+    });
   }
 
   return false;
 }
 
-router.post('/:id/run', authMiddleware, upload.array('images', 10), async (req, res) => {
+router.post('/:id/run', authMiddleware, upload.array('images'), async (req, res) => {
   const errors = handleErrors(req, res);
   if (errors) return errors;
 
   const files = req.files as Express.Multer.File[];
   const userId = req.user.id;
+
+  const filesizeLimit = getPipelineFilesizeLimitForSubscription(req.user.subscription?.variantId);
+  if (files.filter((f) => f.size > filesizeLimit).length > 0) {
+    return res.json({
+      error: `File size limit exceeded. Your plan only allows ${prettyBytes(filesizeLimit)} per file.`,
+    });
+  }
+
+  const concurrentJobLimit = getConcurrentJobLimitForSubscription(req.user.subscription?.variantId);
+  const runningJobs = await db().job.count({
+    where: {
+      userId,
+      status: {
+        in: ['active', 'waiting'],
+      },
+    },
+  });
+
+  if (runningJobs >= concurrentJobLimit) {
+    return res.json({
+      error: `Concurrent job limit exceeded. Your plan only allows ${concurrentJobLimit} concurrent jobs.`,
+    });
+  }
 
   const account = await db().account.findUnique({
     where: {
@@ -241,13 +259,9 @@ router.post('/:id/run', authMiddleware, upload.array('images', 10), async (req, 
   });
 
   if (!pipeline) {
-    return res.json(
-      ApiError.notFound(
-        'Pipeline not found',
-        'The pipeline with the given id was not found.',
-        'Make sure that the id is correct and try again.'
-      )
-    );
+    return res.json({
+      error: 'Invalid pipeline',
+    });
   }
 
   const imageGuids = [];
@@ -271,6 +285,7 @@ router.post('/:id/run', authMiddleware, upload.array('images', 10), async (req, 
     pipelineId: pipeline.id,
     userId,
     jobId: dbJob.id,
+    priority: getJobPriorityForSubscription(req.user.subscription?.variantId),
   });
 
   res.json({

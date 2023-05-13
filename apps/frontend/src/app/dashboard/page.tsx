@@ -11,6 +11,7 @@ import { createNewPipeline, deletePipeline, getAllPipelines } from '@/services/p
 import { toRelativeDate } from '@/utils/date';
 import TEMPLATE_TO_PIPELINE from '@/utils/templateToPipeline';
 import { useEffect, useState } from 'react';
+import { Toaster, toast } from 'react-hot-toast';
 
 const Page = () => {
   const [_, forceUpdate] = useState(0);
@@ -36,14 +37,10 @@ const Page = () => {
 
   return (
     <div className="py-4 px-2 space-y-4 max-w-5xl mx-auto">
+      <Toaster />
       <div className="space-y-4">
         <CreditCount count={usage.credits} />
-        <SubscriptionInfo
-          subscription={{
-            plan: 'Lite Plan',
-            renewsAt: new Date(new Date().setDate(new Date().getDate() + 7)),
-          }}
-        />
+        <SubscriptionInfo />
       </div>
       <div>
         <h1 className="text-2xl font-medium">My Pipelines</h1>
@@ -59,6 +56,7 @@ const Page = () => {
                 const dataJson = JSON.stringify(TEMPLATE_TO_PIPELINE[template as keyof typeof TEMPLATE_TO_PIPELINE]);
                 await createNewPipeline(pipelineName, dataJson).catch((err) => {
                   console.error(err);
+                  toast.error(err.message);
                   setIsModalOpen(false);
                 });
 
