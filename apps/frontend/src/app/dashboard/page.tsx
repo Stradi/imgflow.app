@@ -7,6 +7,7 @@ import { Dialog, DialogTrigger } from '@/components/ui/Dialog';
 import { createNewPipeline, deletePipeline, getAllPipelines } from '@/services/pipeline';
 import { toRelativeDate } from '@/utils/date';
 import TEMPLATE_TO_PIPELINE from '@/utils/templateToPipeline';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Toaster, toast } from 'react-hot-toast';
 
@@ -15,6 +16,8 @@ const Page = () => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [pipelines, setPipelines] = useState([]);
+
+  const router = useRouter();
 
   useEffect(() => {
     async function fetchPipelines() {
@@ -40,14 +43,18 @@ const Page = () => {
             <CreatePipelineModalContent
               onCreate={async (pipelineName, template) => {
                 const dataJson = JSON.stringify(TEMPLATE_TO_PIPELINE[template as keyof typeof TEMPLATE_TO_PIPELINE]);
-                await createNewPipeline(pipelineName, dataJson).catch((err) => {
-                  console.error(err);
-                  toast.error(err.message);
-                  setIsModalOpen(false);
-                });
-
-                setIsModalOpen(false);
-                forceUpdate((x) => x + 1);
+                createNewPipeline(pipelineName, dataJson)
+                  .then((response) => {
+                    router.push(`/dashboard/pipeline/${response.data.id}/edit`);
+                  })
+                  .catch((err) => {
+                    console.error(err);
+                    toast.error(err.message);
+                    setIsModalOpen(false);
+                  })
+                  .finally(() => {
+                    setIsModalOpen(false);
+                  });
               }}
             />
           </Dialog>
@@ -82,13 +89,18 @@ const Page = () => {
             <CreatePipelineModalContent
               onCreate={async (pipelineName, template) => {
                 const dataJson = JSON.stringify(TEMPLATE_TO_PIPELINE[template as keyof typeof TEMPLATE_TO_PIPELINE]);
-                await createNewPipeline(pipelineName, dataJson).catch((err) => {
-                  console.error(err);
-                  setIsModalOpen(false);
-                });
-
-                setIsModalOpen(false);
-                forceUpdate((x) => x + 1);
+                createNewPipeline(pipelineName, dataJson)
+                  .then((response) => {
+                    router.push(`/dashboard/pipeline/${response.data.id}/edit`);
+                  })
+                  .catch((err) => {
+                    console.error(err);
+                    toast.error(err.message);
+                    setIsModalOpen(false);
+                  })
+                  .finally(() => {
+                    setIsModalOpen(false);
+                  });
               }}
             />
           </Dialog>
