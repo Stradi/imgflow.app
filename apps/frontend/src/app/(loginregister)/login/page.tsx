@@ -1,23 +1,23 @@
 'use client';
 
-import withAuth from '@/components/WithAuth';
 import { Button, buttonVariants } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Label } from '@/components/ui/Label';
 import { LoginErrors, login } from '@/services/auth';
+import useEasterEggStore from '@/stores/EasterEggStore';
 import { TErrorTypes, getErrorMessage } from '@/utils/errorMessages';
 import { motion } from 'framer-motion';
 import { Loader2Icon } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 
-// TODO: Add a switch to toggle between sarcastic and normal errors messages.
 const Page = () => {
   const [isLoading, setIsLoading] = useState(false);
 
-  const router = useRouter();
+  const { sarcasticMode } = useEasterEggStore((state) => ({
+    sarcasticMode: state.sarcasticMode,
+  }));
 
   const {
     register,
@@ -74,7 +74,7 @@ const Page = () => {
             <Input id="email" type="email" disabled={isLoading} {...register('email', { required: true })} />
             {errors.email && (
               <span className="text-red-500 text-xs font-medium">
-                {getErrorMessage('email', errors.email.type as TErrorTypes)}
+                {getErrorMessage('email', errors.email.type as TErrorTypes, sarcasticMode)}
               </span>
             )}
           </div>
@@ -88,12 +88,14 @@ const Page = () => {
             />
             {errors.password && (
               <span className="text-red-500 text-xs font-medium">
-                {getErrorMessage('password', errors.password.type as TErrorTypes)}
+                {getErrorMessage('password', errors.password.type as TErrorTypes, sarcasticMode)}
               </span>
             )}
           </div>
           {errors.custom && (
-            <span className="text-red-500 text-xs font-medium">{getErrorMessage('custom', 'default')}</span>
+            <span className="text-red-500 text-xs font-medium">
+              {getErrorMessage('custom', 'default', sarcasticMode)}
+            </span>
           )}
           <Button type="submit" disabled={isLoading}>
             {isLoading && <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />}
@@ -111,4 +113,4 @@ const Page = () => {
   );
 };
 
-export default withAuth(Page, 'auth');
+export default Page;

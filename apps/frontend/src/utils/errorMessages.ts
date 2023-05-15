@@ -1,4 +1,4 @@
-export const EmptyEmailMessages = [
+export const SarcasticEmptyEmailMessages = [
   'How are you going to login without an email?',
   "No email, no entry. Sorry, I don't make the rules.",
   'Looks like you forgot to enter your email. Mind trying again?',
@@ -9,7 +9,14 @@ export const EmptyEmailMessages = [
   "This is awkward...it's like meeting someone for the first time and not asking for their phone number.",
 ];
 
-export const EmailNotFoundMessages = [
+export const NormalEmptyEmailMessages = ['Please enter your email address.'];
+
+export const EmptyEmailMessages = {
+  sarcastic: SarcasticEmptyEmailMessages,
+  normal: NormalEmptyEmailMessages,
+};
+
+export const SarcasticEmailNotFoundMessages = [
   "Hmm, are you sure that email exists? Because we can't seem to find it in our database.",
   "Sorry, we don't have a record of that email. Maybe try a different one?",
   "It's like trying to find a needle in a haystack. Except in this case, we can't find your email in our haystack.",
@@ -23,7 +30,16 @@ export const EmailNotFoundMessages = [
   "Sorry, we can't let you in with that email. It's like trying to use a fake ID at a nightclub.",
 ];
 
-export const EmailAlreadyExistsMessages = [
+export const NormalEmailNotFoundMessages = [
+  'Email not found. If you have not registered, please click the link below to register.',
+];
+
+export const EmailNotFoundMessages = {
+  sarcastic: SarcasticEmailNotFoundMessages,
+  normal: NormalEmailNotFoundMessages,
+};
+
+export const SarcasticEmailAlreadyExistsMessages = [
   'It looks like that email has already been claimed by someone else. Maybe try inventing a time machine and registering before them next time?',
   "We hate to break it to you, but that email already exists in our system. Maybe try using a different email address, like your cat's email or something.",
   "Sorry, that email address has already been taken. It's like trying to steal someone else's identity, but less fun.",
@@ -36,7 +52,16 @@ export const EmailAlreadyExistsMessages = [
   "Looks like that email address has already been taken. Maybe try using your childhood imaginary friend's email instead?",
 ];
 
-export const EmptyPasswordMessages = [
+export const NormalEmailAlreadyExistsMessages = [
+  'Email already exists. If you are already registered, please click the link below to login.',
+];
+
+export const EmailAlreadyExistsMessages = {
+  sarcastic: SarcasticEmailAlreadyExistsMessages,
+  normal: NormalEmailAlreadyExistsMessages,
+};
+
+export const SarcasticEmptyPasswordMessages = [
   'Do you expect me to guess your password?',
   'Are you trying to sneak in without a password? Nice try!',
   'Password missing, please insert coffee to continue.',
@@ -47,7 +72,14 @@ export const EmptyPasswordMessages = [
   "A password is like a key to a secret club. You need one to get in, and we don't see yours anywhere.",
 ];
 
-export const PasswordMinLengthMessages = [
+export const NormalEmptyPasswordMessages = ['Please enter your password.'];
+
+export const EmptyPasswordMessages = {
+  sarcastic: SarcasticEmptyPasswordMessages,
+  normal: NormalEmptyPasswordMessages,
+};
+
+export const SarcasticPasswordMinLengthMessages = [
   'Are you sure this is your password? It should be minimum 8 characters long, just saying...',
   "Short and sweet passwords aren't always the best. This one needs to be at least 8 characters long.",
   'Your password is too short. Try adding some numbers and a unicorn emoji to make it stronger.',
@@ -59,7 +91,14 @@ export const PasswordMinLengthMessages = [
   'Your password is like a small fish in a big pond. It needs to grow bigger to survive.',
 ];
 
-export const WrongPasswordMessages = [
+export const NormalPasswordMinLengthMessages = ['Password must be at least 8 characters long.'];
+
+export const PasswordMinLengthMessages = {
+  sarcastic: SarcasticPasswordMinLengthMessages,
+  normal: NormalPasswordMinLengthMessages,
+};
+
+export const SarcasticWrongPasswordMessages = [
   'Password incorrect. Did someone steal your keyboard and type the wrong password?',
   "We know it's tough to remember passwords, but that one is definitely not right.",
   "Wrong password. You know what they say, 'if at first you don't succeed, try, try again...with the correct password.",
@@ -72,7 +111,14 @@ export const WrongPasswordMessages = [
   "Wrong password. It's like trying to open a safe with a banana instead of the combination.",
 ];
 
-export const UnknownErrorMessages = [
+export const NormalWrongPasswordMessages = ['Password incorrect. Please try again.'];
+
+export const WrongPasswordMessages = {
+  sarcastic: SarcasticWrongPasswordMessages,
+  normal: NormalWrongPasswordMessages,
+};
+
+export const SarcasticUnknownErrorMessages = [
   "Looks like we hit a snag. Don't worry, we'll get the duct tape and WD-40 out and fix it in no time.",
   "Sorry, something went wrong with our backend. We're working on it, but it might take a while. Maybe go make a cup of tea?",
   "Invalid backend error. It's like trying to send a fax in 2023. It's just not going to work.",
@@ -84,6 +130,13 @@ export const UnknownErrorMessages = [
   "Invalid backend error. It's like trying to make a smoothie with a toaster. It's not going to end well.",
   "Looks like our backend is playing hooky today. Maybe it's at the movies or taking a nap. We'll give it a stern talking to when it gets back.",
 ];
+
+export const NormalUnknownErrorMessages = ['Something went wrong. Please try again.'];
+
+export const UnknownErrorMessages = {
+  sarcastic: SarcasticUnknownErrorMessages,
+  normal: NormalUnknownErrorMessages,
+};
 
 export type TErrorFields = 'email' | 'password' | 'custom';
 export type TErrorTypes = 'required' | 'minLength' | 'invalid' | 'notFound' | 'alreadyExists' | 'default';
@@ -103,14 +156,23 @@ export const ErrorToMessageMap = {
   },
 };
 
-export function getErrorMessage(field: TErrorFields, errorType: TErrorTypes) {
-  let arrToSelect = UnknownErrorMessages;
+export function getErrorMessage(field: TErrorFields, errorType: TErrorTypes, sarcMode = false) {
+  let arrToSelect = sarcMode ? UnknownErrorMessages.sarcastic : UnknownErrorMessages.normal;
+
   if (field === 'custom') {
     return arrToSelect[Math.floor(Math.random() * arrToSelect.length)];
   }
 
   // @ts-ignore
   arrToSelect = ErrorToMessageMap[field][errorType] || ErrorToMessageMap[field]['default'];
+  if (sarcMode) {
+    // @ts-ignore
+    arrToSelect = arrToSelect.sarcastic;
+  } else {
+    // @ts-ignore
+    arrToSelect = arrToSelect.normal;
+  }
+
   const randomIndex = Math.floor(Math.random() * arrToSelect.length);
   return arrToSelect[randomIndex];
 }
