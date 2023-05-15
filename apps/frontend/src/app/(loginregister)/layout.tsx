@@ -17,10 +17,10 @@ const Layout = ({ children }: TLayoutProps) => {
 
   return (
     <div>
-      <div className="fixed top-4 w-full grid grid-cols-2 gap-2 z-10">
+      <div className="fixed top-4 w-full md:grid md:grid-cols-2 z-10">
         <div></div>
         <div className="flex justify-between">
-          <ul className="w-fit">
+          <ul className="w-fit ml-4">
             <Link href="/">
               <li className="group relative px-4 py-2 rounded-full text-sm font-medium hover:bg-gray-100 transition duration-100">
                 <span className="absolute opacity-0 rotate-[30deg] translate-x-2 group-hover:translate-x-0 group-hover:opacity-100 group-hover:rotate-0 transition-[transform,opacity] duration-100">
