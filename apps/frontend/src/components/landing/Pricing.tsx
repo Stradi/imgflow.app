@@ -5,7 +5,7 @@ export default function Pricing() {
   return (
     <div id="pricing" className="bg-gradient-to-br from-[#0C2400] to-black rounded-[64px] text-white/75">
       <div className="flex flex-col p-8 gap-2">
-        <p className="text-4xl font-bold text-white pl-4">Pricing</p>
+        <p className="text-4xl font-medium text-white text-center">Pricing</p>
         <SinglePlan
           title="Basic"
           price={30}

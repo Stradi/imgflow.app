@@ -8,6 +8,12 @@ module.exports = {
   darkMode: ['class'],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['GeneralSans-Variable', 'sans-serif'],
+      },
+      animation: {
+        'spin-slow': 'spin 10s linear infinite',
+      },
       colors: {
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',

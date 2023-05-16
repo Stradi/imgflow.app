@@ -164,15 +164,15 @@ router.get('/usage', authMiddleware, async (req, res) => {
       pipelines: user.pipelines,
       pipeline: {
         current: user.pipelines.length,
-        limit: getPipelineLimitForSubscription(req.user.subscription.variantId),
+        limit: getPipelineLimitForSubscription(req.user.subscription ? req.user.subscription.variantId : 'free'),
       },
       jobs: {
         current: jobs.length,
-        limit: getConcurrentJobLimitForSubscription(req.user.subscription.variantId),
+        limit: getConcurrentJobLimitForSubscription(req.user.subscription ? req.user.subscription.variantId : 'free'),
       },
       credits: {
         current: user.credits,
-        limit: getCreditCountForSubscription(req.user.subscription.variantId),
+        limit: getCreditCountForSubscription(req.user.subscription ? req.user.subscription.variantId : 'free'),
       },
     },
   });

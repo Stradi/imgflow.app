@@ -2,6 +2,7 @@
 
 import CTAButton from '@/components/landing/CTAButton';
 import Footer from '@/components/landing/Footer';
+import HowItWorks from '@/components/landing/HowItWorks';
 import { Logoipsum } from '@/components/landing/Logoipsum';
 import NavigationBar from '@/components/landing/NavigationBar';
 import Pricing from '@/components/landing/Pricing';
@@ -12,7 +13,7 @@ const Home = () => {
     <>
       <NavigationBar />
       <div className="max-w-5xl mx-auto px-2 space-y-16">
-        <div className="bg-gradient-to-br from-[#0C2400] to-black rounded-[64px]">
+        <div className="bg-gradient-to-br from-[#0C2400] to-black rounded-[64px] hover:rounded-[32px] transition-[border-radius] duration-200">
           <div className="flex flex-col py-16 gap-8 w-3/4 mx-auto">
             <h1 className="text-6xl font-bold text-transparent leading-snug text-center bg-clip-text bg-gradient-to-b from-[#7AFF87] to-[#50A759]">
               Stop Wasting Time on Image Processing
@@ -91,7 +92,7 @@ const Home = () => {
             </div>
           </div>
         </div>
-
+        <HowItWorks />
         <Pricing />
         <Footer />
       </div>
