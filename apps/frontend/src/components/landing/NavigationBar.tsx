@@ -7,12 +7,12 @@ export default function NavigationBar() {
     <nav className="mt-2 mb-8 max-w-5xl px-2 mx-auto flex justify-between items-center">
       <Logo />
       <ul className="flex gap-2 items-center text-sm font-medium">
-        <Link href="/#pricing">
+        <Link href="/#pricing" className="hidden md:block">
           <li className="hover:bg-gray-50 hover:text-black text-gray-500 px-4 py-3 rounded-full transition duration-100">
             Pricing
           </li>
         </Link>
-        <Link href="/#features">
+        <Link href="/#features" className="hidden md:block">
           <li className="hover:bg-gray-50 hover:text-black text-gray-500 px-4 py-3 rounded-full transition duration-100">
             Features
           </li>

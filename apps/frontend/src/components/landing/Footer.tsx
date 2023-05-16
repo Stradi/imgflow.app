@@ -3,12 +3,12 @@ import Link from 'next/link';
 export default function Footer() {
   return (
     <footer
-      className="text-sm rounded-t-[64px] p-12 grid grid-cols-6 text-white/50"
+      className="text-sm rounded-t-[32px] md:rounded-t-[64px] hover:rounded-t-[16px] md:hover:rounded-t-[32px] p-6 md:p-12 grid md:grid-cols-6 text-white/50 space-y-4 md:space-y-0"
       style={{
-        background: 'radial-gradient(circle at 15%, #071500 0%, #000000 100%)',
+        background: 'radial-gradient(circle at 15% 0%, #071500 0%, #000000 100%)',
       }}
     >
-      <div className="col-span-3">
+      <div className="md:col-span-3">
         <p className="font-medium text-white/75">ImgFlow</p>
         <p>
           ImgFlow is a powerful image processing platform that allows users to effortlessly optimize, transform, and

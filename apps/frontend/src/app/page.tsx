@@ -3,7 +3,6 @@
 import CTAButton from '@/components/landing/CTAButton';
 import Footer from '@/components/landing/Footer';
 import HowItWorks from '@/components/landing/HowItWorks';
-import { Logoipsum } from '@/components/landing/Logoipsum';
 import NavigationBar from '@/components/landing/NavigationBar';
 import Pricing from '@/components/landing/Pricing';
 import Image from 'next/image';
@@ -13,19 +12,19 @@ const Home = () => {
     <>
       <NavigationBar />
       <div className="max-w-5xl mx-auto px-2 space-y-16">
-        <div className="bg-gradient-to-br from-[#0C2400] to-black rounded-[64px] hover:rounded-[32px] transition-[border-radius] duration-200">
+        <div className="bg-gradient-to-br from-[#0C2400] to-black rounded-[32px] md:rounded-[64px] hover:rounded-[16px] md:hover:rounded-[32px] transition-[border-radius] duration-200">
           <div className="flex flex-col py-16 gap-8 w-3/4 mx-auto">
-            <h1 className="text-6xl font-bold text-transparent leading-snug text-center bg-clip-text bg-gradient-to-b from-[#7AFF87] to-[#50A759]">
+            <h1 className="text-3xl md:text-6xl font-bold text-transparent leading-snug text-center bg-clip-text bg-gradient-to-b from-[#7AFF87] to-[#50A759]">
               Stop Wasting Time on Image Processing
             </h1>
-            <p className="text-white/75 text-center text-2xl w-3/4 mx-auto">
+            <p className="text-white/75 text-center text-lg md:text-2xl md:w-3/4 mx-auto">
               Streamline your image processing workflow with ImgFlow&apos;s node-based drag and drop editor.
             </p>
             <CTAButton />
           </div>
         </div>
 
-        <div className="space-y-4">
+        {/* <div className="space-y-4">
           <p className="text-gray-400 font-medium text-lg text-center">Trusted by amazing teams around the world</p>
           <div className="border-2 border-gray-200 rounded-[64px] px-16 py-8">
             <div className="flex flex-row gap-8 justify-between">
@@ -36,14 +35,11 @@ const Home = () => {
               <Logoipsum />
             </div>
           </div>
-        </div>
-
-        {/* Place video here */}
-        {/* <div className="aspect-video w-full bg-gray-200 rounded-[64px]"></div> */}
+        </div> */}
 
         <div id="features">
-          <div className="grid grid-cols-3 gap-4">
-            <div className="col-span-2 relative h-[512px] overflow-hidden rounded-[64px] hover:rounded-[32px] transition-[border-radius,transform] duration-200 border-2 border-gray-300">
+          <div className="md:grid md:grid-cols-3 md:gap-4 md:space-y-0 space-y-4">
+            <div className="col-span-2 relative h-[512px] overflow-hidden rounded-[32px] md:rounded-[64px] hover:rounded-[16px] md:hover:rounded-[32px] transition-[border-radius,transform] duration-200 border-2 border-gray-300">
               <Image
                 src="/assets/drag-and-drop.png"
                 width={1333}
@@ -59,7 +55,7 @@ const Home = () => {
                 </p>
               </div>
             </div>
-            <div className="relative h-[512px] overflow-hidden rounded-[64px] hover:rounded-[32px] transition-[border-radius,transform] duration-200 border-2 border-gray-300">
+            <div className="relative h-[512px] overflow-hidden rounded-[32px] md:rounded-[64px] hover:rounded-[16px] md:hover:rounded-[32px] transition-[border-radius,transform] duration-200 border-2 border-gray-300">
               <Image
                 src="/assets/modern-formats.png"
                 width={650}
@@ -73,7 +69,7 @@ const Home = () => {
                 <p className="text-xl">Output to modern formats such as WebP and AVIF.</p>
               </div>
             </div>
-            <div className="col-span-3 relative h-[512px] overflow-hidden rounded-[64px] hover:rounded-[32px] transition-[border-radius,transform] duration-200 border-2 border-gray-300">
+            <div className="col-span-3 relative h-[512px] overflow-hidden rounded-[32px] md:rounded-[64px] hover:rounded-[16px] md:hover:rounded-[32px] transition-[border-radius,transform] duration-200 border-2 border-gray-300">
               <Image
                 src="/assets/optimize-and-transform-images.png"
                 width={2016}
