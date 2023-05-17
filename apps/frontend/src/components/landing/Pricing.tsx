@@ -61,8 +61,8 @@ function SinglePlan({ title, price, features }: TSinglePlanProps) {
     <div className="group scale-[0.975] p-4 md:p-8 bg-white/10 rounded-[24px] md:rounded-[48px] backdrop-blur-md hover:rounded-[12px] md:hover:rounded-[24px] hover:scale-100 transition-[border-radius,background-color,transform] duration-200 hover:bg-white/[0.15]">
       <header className="flex md:flex-row space-y-2 mb-4 md:mb-0 md:space-y-0 flex-col md:justify-between items-center group-hover:text-white transition-[color] duration-200">
         <p className="text-3xl font-medium">{title}</p>
-        <div className="flex-col md:flex-row gap-8 items-center">
-          <div className="flex flex-col text-center">
+        <div className="flex items-center md:flex-row md:gap-4 flex-col gap-2">
+          <div>
             <p className="text-4xl font-bold">${price}</p>
             <p className="text-sm font-medium">per month</p>
           </div>

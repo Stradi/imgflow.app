@@ -14,7 +14,7 @@ const Home = () => {
       <div className="max-w-5xl mx-auto px-2 space-y-16">
         <div className="bg-gradient-to-br from-[#0C2400] to-black rounded-[32px] md:rounded-[64px] hover:rounded-[16px] md:hover:rounded-[32px] transition-[border-radius] duration-200">
           <div className="flex flex-col py-16 gap-8 w-3/4 mx-auto">
-            <h1 className="text-3xl md:text-6xl font-bold text-transparent leading-snug text-center bg-clip-text bg-gradient-to-b from-[#7AFF87] to-[#50A759]">
+            <h1 className="text-3xl md:text-6xl font-bold text-transparent md:leading-snug text-center bg-clip-text bg-gradient-to-b from-[#7AFF87] to-[#50A759]">
               Stop Wasting Time on Image Processing
             </h1>
             <p className="text-white/75 text-center text-lg md:text-2xl md:w-3/4 mx-auto">

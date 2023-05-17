@@ -17,6 +17,11 @@ export default function NavigationBar() {
             Features
           </li>
         </Link>
+        <Link href="/#how-it-works" className="hidden md:block">
+          <li className="hover:bg-gray-50 hover:text-black text-gray-500 px-4 py-3 rounded-full transition duration-100">
+            How It Works
+          </li>
+        </Link>
         <Link href="/login" passHref>
           <Button variant="outline" className="rounded-full">
             Login

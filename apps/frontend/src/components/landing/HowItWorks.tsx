@@ -15,7 +15,7 @@ export default function HowItWorks() {
   const [currentStep, setCurrentStep] = useState(0);
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8" id="how-it-works">
       <div>
         <p className="text-4xl font-medium text-center">How It Works?</p>
         <p className="text-xl font-medium text-center text-gray-600">in just four steps</p>
