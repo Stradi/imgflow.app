@@ -3,6 +3,9 @@ services:
   backend-api:
     build: ./apps/backend
     restart: always
+    command: sh -c "npx prisma generate && npm run start"
+    volumes:
+      - backend-api:/home/node/app/prisma
     depends_on:
       - backend-redis
     networks:
@@ -20,3 +23,6 @@ networks:
   shared:
     name: shared
     external: true
+
+volumes:
+  backend-api:

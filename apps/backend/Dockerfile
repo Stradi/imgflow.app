@@ -6,7 +6,7 @@ WORKDIR /home/node/app
 
 COPY --chown=node:node package*.json ./
 COPY --chown=node:node . .
-RUN npm install && npm run build && npx prisma db push
+RUN npm install && npm run build
 
 EXPOSE 3001
 CMD [ "npm", "run", "start" ]
