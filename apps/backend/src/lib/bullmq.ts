@@ -3,7 +3,7 @@ import { db } from './db';
 import { TPipeline, runPipeline } from './pipeline/runner';
 import { downloadObject, s3 } from './s3';
 
-if (!process.env.REDIS_HOST || !process.env.REDIS_PORT || !process.env.REDIS_USERNAME || !process.env.REDIS_PASSWORD) {
+if (!process.env.REDIS_HOST || !process.env.REDIS_PORT) {
   throw new Error('Missing environment variables for Redis client.');
 }
 

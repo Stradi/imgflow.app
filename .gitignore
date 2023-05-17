@@ -5,3 +5,4 @@
 **/.env.local
 **/*.db
 **/*.db-journal
+data

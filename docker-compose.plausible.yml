@@ -19,8 +19,8 @@ services:
     restart: always
     volumes:
       - ./data/plausible/events-db-data:/var/lib/clickhouse
-      - ./data/plausible/clickhouse-config.xml:/etc/clickhouse-server/config.d/logging.xml:ro
-      - ./data/plausible/clickhouse-user-config.xml:/etc/clickhouse-server/users.d/logging.xml:ro
+      - ./configs/plausible/clickhouse-config.xml:/etc/clickhouse-server/config.d/logging.xml:ro
+      - ./configs/plausible/clickhouse-user-config.xml:/etc/clickhouse-server/users.d/logging.xml:ro
     ulimits:
       nofile:
         soft: 262144
@@ -36,7 +36,7 @@ services:
       - plausible_db
       - plausible_events_db
     env_file:
-      - ./data/plausible/plausible-conf.env
+      - ./configs/plausible/plausible-conf.env
     networks:
       - shared
 
