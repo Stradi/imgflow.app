@@ -1,0 +1,15 @@
+version: '3.9'
+services:
+  uptime-kuma:
+    image: louislam/uptime-kuma:1
+    restart: always
+    volumes:
+      - ./data/uptime-kuma:/app/data
+    networks:
+      - shared
+
+# `shared` network should be created externally (in `docker-compose.nginx.yml`)
+networks:
+  shared:
+    name: shared
+    external: true

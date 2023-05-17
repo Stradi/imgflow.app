@@ -1,0 +1,22 @@
+version: '3.9'
+services:
+  backend-api:
+    build: ./apps/backend
+    restart: always
+    depends_on:
+      - backend-redis
+    networks:
+      - shared
+  backend-redis:
+    image: redis:7.0.11-alpine
+    restart: always
+    volumes:
+      - ./data/backend/redis:/data
+    networks:
+      - shared
+
+# `shared` network should be created externally (in `docker-compose.nginx.yml`)
+networks:
+  shared:
+    name: shared
+    external: true
