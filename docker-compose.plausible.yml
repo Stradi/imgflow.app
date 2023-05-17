@@ -9,7 +9,7 @@ services:
     image: postgres:14-alpine
     restart: always
     volumes:
-      - ./data/plausible/db-data:/var/lib/postgresql/data
+      - plausible-db-data:/var/lib/postgresql/data
     environment:
       - POSTGRES_PASSWORD=postgres
     networks:
@@ -18,7 +18,7 @@ services:
     image: clickhouse/clickhouse-server:22.6-alpine
     restart: always
     volumes:
-      - ./data/plausible/events-db-data:/var/lib/clickhouse
+      - plausible-events-data:/var/lib/clickhouse
       - ./configs/plausible/clickhouse-config.xml:/etc/clickhouse-server/config.d/logging.xml:ro
       - ./configs/plausible/clickhouse-user-config.xml:/etc/clickhouse-server/users.d/logging.xml:ro
     ulimits:
@@ -40,9 +40,12 @@ services:
     networks:
       - shared
 
-# TODO: Use Docker Volumes intead of bind mounts
 # `shared` network should be created externally (in `docker-compose.nginx.yml`)
 networks:
   shared:
     name: shared
     external: true
+
+volumes:
+  plausible-db-data:
+  plausible-events-data:

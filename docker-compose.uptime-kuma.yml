@@ -4,7 +4,7 @@ services:
     image: louislam/uptime-kuma:1
     restart: always
     volumes:
-      - ./data/uptime-kuma:/app/data
+      - uptime-kuma:/app/data
     networks:
       - shared
 
@@ -13,3 +13,6 @@ networks:
   shared:
     name: shared
     external: true
+
+volumes:
+  uptime-kuma:
