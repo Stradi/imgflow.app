@@ -10,6 +10,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <head>
         <link rel="icon" href="/assets/favicon.ico" />
+        <script defer data-domain="imgflow.app" src="https://analytics.imgflow.app/js/script.js"></script>
       </head>
       <body>
         <main>{children}</main>
