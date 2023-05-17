@@ -1,0 +1,48 @@
+version: '3.9'
+services:
+  mail:
+    image: bytemark/smtp
+    restart: always
+    networks:
+      - shared
+  plausible_db:
+    image: postgres:14-alpine
+    restart: always
+    volumes:
+      - ./data/plausible/db-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=postgres
+    networks:
+      - shared
+  plausible_events_db:
+    image: clickhouse/clickhouse-server:22.6-alpine
+    restart: always
+    volumes:
+      - ./data/plausible/events-db-data:/var/lib/clickhouse
+      - ./data/plausible/clickhouse-config.xml:/etc/clickhouse-server/config.d/logging.xml:ro
+      - ./data/plausible/clickhouse-user-config.xml:/etc/clickhouse-server/users.d/logging.xml:ro
+    ulimits:
+      nofile:
+        soft: 262144
+        hard: 262144
+    networks:
+      - shared
+  plausible:
+    image: plausible/analytics:v1.5
+    restart: always
+    command: sh -c "sleep 10 && /entrypoint.sh db createdb && /entrypoint.sh db migrate && /entrypoint.sh run"
+    depends_on:
+      - mail
+      - plausible_db
+      - plausible_events_db
+    env_file:
+      - ./data/plausible/plausible-conf.env
+    networks:
+      - shared
+
+# TODO: Use Docker Volumes intead of bind mounts
+# `shared` network should be created externally (in `docker-compose.nginx.yml`)
+networks:
+  shared:
+    name: shared
+    external: true
