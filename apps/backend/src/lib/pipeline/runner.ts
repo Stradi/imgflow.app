@@ -69,6 +69,13 @@ export async function runPipeline(
   };
 }
 
+export function getEstimatedCredits(fileCount: any, pipeline: TPipeline) {
+  const { graph, nodes } = buildGraph(sanitizePipelineData(pipeline));
+  const validPaths = getValidPaths(graph, nodes);
+
+  return fileCount * validPaths.length;
+}
+
 async function runFlow(flow: TNode[], image: sharp.Sharp, key: string) {
   let finalImg = await image.toBuffer();
 

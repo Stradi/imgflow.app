@@ -2,6 +2,7 @@ import express from 'express';
 import multer from 'multer';
 import { addJobToQueue } from '../lib/bullmq';
 import { db } from '../lib/db';
+import { getEstimatedCredits } from '../lib/pipeline/runner';
 import { s3, uploadImageOriginal } from '../lib/s3';
 import authMiddleware from '../middlewares/auth';
 import {
@@ -246,12 +247,6 @@ router.post('/:id/run', authMiddleware, upload.array('images'), async (req, res)
     });
   }
 
-  if (account.credits < files.length) {
-    return res.json({
-      error: 'Not enough credits',
-    });
-  }
-
   const pipeline = await db().pipeline.findUnique({
     where: {
       id: Number(req.params.id),
@@ -261,6 +256,19 @@ router.post('/:id/run', authMiddleware, upload.array('images'), async (req, res)
   if (!pipeline) {
     return res.json({
       error: 'Invalid pipeline',
+    });
+  }
+
+  const estimatedCreditUsage = getEstimatedCredits(files, JSON.parse(pipeline.dataJson));
+  if (estimatedCreditUsage <= 0) {
+    return res.json({
+      error: 'Pipeline is not valid',
+    });
+  }
+
+  if (account.credits < estimatedCreditUsage) {
+    return res.json({
+      error: 'Not enough credits',
     });
   }
 
