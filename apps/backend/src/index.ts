@@ -3,6 +3,8 @@ dotenv.config();
 
 import cors from 'cors';
 import express, { Application, NextFunction, Request, Response } from 'express';
+import cron from 'node-cron';
+import { updateAccountCredits } from './cron/subscription';
 import { getJobQueue } from './lib/bullmq';
 import router from './routes';
 
@@ -11,6 +13,11 @@ const port = 3001;
 
 // We are doing this to initialize the queue.
 getJobQueue();
+
+// Every day at 00:00, update the credits for all accounts that have a subscription that renewed today.
+cron.schedule('0 0 * * *', async function () {
+  await updateAccountCredits();
+});
 
 app.use(cors());
 

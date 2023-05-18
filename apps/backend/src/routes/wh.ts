@@ -5,7 +5,14 @@ const router = express.Router();
 
 // This route listens all the webhooks from LemonSqueezy
 router.post('/lemonsqueezy', async (req: Request, res) => {
-  if (!req.body) {
+  if (
+    !req.body ||
+    !req.body.meta ||
+    !req.body.meta.event_name ||
+    !req.body.meta.custom_data ||
+    !req.body.meta.custom_data.userId ||
+    !req.body.meta.custom_data.creditCount
+  ) {
     return res.status(400).json("Well, I don't know if I can trust you...");
   }
 
@@ -56,6 +63,58 @@ router.post('/lemonsqueezy', async (req: Request, res) => {
         renewsAt: new Date(req.body.data.attributes.renews_at),
       },
     });
+  } else if (eventName === 'subscription_updated') {
+    const subscription = await db().subscription.findFirst({
+      where: {
+        subscriptionId: req.body.id.toString(),
+      },
+    });
+
+    if (!subscription) {
+      return res.status(400).json({ message: 'Subscription not found' });
+    }
+
+    await db().subscription.update({
+      where: {
+        id: subscription.id,
+      },
+      data: {
+        status: req.body.attributes.status,
+        cardBrand: req.body.attributes.card_brand,
+        cardLastFour: req.body.attributes.card_last_four,
+        billingAnchor: req.body.attributes.billing_anchor.toString(),
+        updatePaymentUrl: req.body.attributes.urls.update_payment_method,
+
+        createdAt: new Date(req.body.attributes.created_at),
+        endsAt: new Date(req.body.attributes.ends_at),
+        renewsAt: new Date(req.body.attributes.renews_at),
+      },
+    });
+
+    if (req.body.data.attributes.status === 'expired') {
+      // subscription is expired. customer can't use the app anymore.
+      await db().subscription.delete({
+        where: {
+          id: subscription.id,
+        },
+      });
+
+      const pipelines = await db().pipeline.findMany({
+        where: {
+          userId: subscription.userId,
+        },
+      });
+
+      if (pipelines.length > 1) {
+        await db().pipeline.deleteMany({
+          where: {
+            id: {
+              in: pipelines.slice(1).map((pipeline) => pipeline.id),
+            },
+          },
+        });
+      }
+    }
   }
 
   return res.status(200).json({ message: 'Well' });
