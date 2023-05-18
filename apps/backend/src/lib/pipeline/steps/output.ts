@@ -3,7 +3,7 @@ import sharp from 'sharp';
 export type TOutputOptions = {
   name: 'Output';
   args: {
-    format: 'webp' | 'png' | 'jpeg' | 'avif';
+    format: 'webp' | 'png' | 'jpeg' | 'avif' | 'tiff';
     quality: number;
   };
 };

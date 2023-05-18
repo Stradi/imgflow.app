@@ -11,6 +11,9 @@ export default function ImageDropzone({ onDrop }: TImageDropzoneProps) {
       'image/png': ['.png'],
       'image/jpeg': ['.jpeg', '.jpg'],
       'image/webp': ['.webp'],
+      'image/tiff': ['.tiff', '.tif'],
+      'image/svg+xml': ['.svg'],
+      'image/avif': ['.avif'],
     },
     onDrop(acceptedFiles) {
       onDrop?.(acceptedFiles);
@@ -50,7 +53,8 @@ export default function ImageDropzone({ onDrop }: TImageDropzoneProps) {
               'md:group-focus:translate-y-1/3 md:group-focus:opacity-100'
             )}
           >
-            You can upload <code>.png</code>, <code>.jpeg</code>, <code>.jpg</code> and <code>.webp</code> files.
+            You can upload <code>.png</code>, <code>.jpg</code>, <code>.webp</code>, <code>.gif</code>,{' '}
+            <code>.avif</code>, <code>.tiff</code> and <code>.svg</code> files.
           </p>
         </div>
       </div>

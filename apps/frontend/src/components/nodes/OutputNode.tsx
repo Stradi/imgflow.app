@@ -83,7 +83,7 @@ export default function OutputNode(props: any) {
             })
           }
           defaultValue={getNodeData(props.id).format}
-          options={['webp', 'jpg', 'png']}
+          options={['webp', 'jpg', 'png', 'avif', 'tiff']}
         />
         <NumberInput
           label="Quality"
