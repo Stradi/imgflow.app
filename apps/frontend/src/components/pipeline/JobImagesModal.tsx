@@ -70,7 +70,7 @@ export default function JobImagesModal({ job }: TJobImagesModalProps) {
 
   return (
     <Dialog>
-      <DialogTrigger>
+      <DialogTrigger asChild>
         <Button>View Images</Button>
       </DialogTrigger>
       <DialogContent className="h-full max-h-full md:h-auto md:max-h-[85%] overflow-y-auto">
