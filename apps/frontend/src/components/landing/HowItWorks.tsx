@@ -1,8 +1,6 @@
 'use client';
 
-import { cn } from '@/utils/tw';
-import { AnimatePresence, motion } from 'framer-motion';
-import { useState } from 'react';
+import { ChevronsRightIcon } from 'lucide-react';
 
 const STEP_TO_VIDEO_URL: Record<number, string> = {
   0: '/assets/create-a-account.mp4',
@@ -12,95 +10,71 @@ const STEP_TO_VIDEO_URL: Record<number, string> = {
 };
 
 export default function HowItWorks() {
-  const [currentStep, setCurrentStep] = useState(0);
-
   return (
-    <div className="space-y-8" id="how-it-works">
+    <div className="space-y-8 pt-8" id="how-it-works">
       <div>
         <p className="text-4xl font-medium text-center">How It Works?</p>
-        <p className="text-xl font-medium text-center text-gray-600">in just four steps</p>
+        <p className="text-xl font-medium text-center text-gray-600">in just three steps</p>
       </div>
-      <div className="md:grid md:grid-cols-12 md:gap-2">
-        <div className="flex flex-row md:flex-col justify-evenly items-center md:w-full mx-auto w-3/4">
-          <StepNumber
-            number={1}
-            isActive={currentStep === 0}
-            description="Create account"
-            onClick={() => setCurrentStep(0)}
-          />
-          <StepNumber
-            number={2}
-            isActive={currentStep === 1}
-            description="Create a pipeline"
-            onClick={() => setCurrentStep(1)}
-          />
-          <StepNumber
-            number={3}
-            isActive={currentStep === 2}
-            description="Edit the pipeline"
-            onClick={() => setCurrentStep(2)}
-          />
-          <StepNumber
-            number={4}
-            isActive={currentStep === 3}
-            description="Run the pipeline"
-            onClick={() => setCurrentStep(3)}
-          />
-        </div>
-        <div className="col-span-11 rounded-[32px] overflow-hidden border-2 border-gray-300">
-          <div className="bg-gray-200 aspect-video w-full">
-            <video
-              src={STEP_TO_VIDEO_URL[currentStep]}
-              autoPlay
-              muted
-              onEnded={() => {
-                setCurrentStep((currentStep + 1) % 4);
-              }}
-            />
-          </div>
-        </div>
+      <div className="space-y-8">
+        <StepNumber title="1. Create a Pipeline" videoSrc="/assets/create-a-pipeline.mp4">
+          <p>Simple enough. Create a pipeline with a name. Optionally you can select a template to start with.</p>
+          <p>After creating, you will be redirected to a page where you can edit your pipeline.</p>
+        </StepNumber>
+        <StepNumber title="2. Edit the Pipeline" videoSrc="/assets/edit-the-pipeline.mp4">
+          <p>You can add, edit or remove steps (nodes) from your pipeline. Connect the nodes to create a flow.</p>
+          <p>
+            Some nodes have settings that you can configure. When you are done, click on the save button at the top to
+            save your changes.
+          </p>
+        </StepNumber>
+        <StepNumber title="3. Run the Pipeline" videoSrc="/assets/run-the-pipeline.mp4">
+          <p>
+            To run the pipeline, save your work and choose either the &quot;Run This Pipeline&quot; button or go to the
+            dashboard and click the &quot;Run&quot; button for the desired pipeline.
+          </p>
+          <p>
+            Then, drag and drop the files into the dropzone and click the &quot;Run Pipeline&quot; button. Once the job
+            for the images is created, wait for it to finish, and then click the &quot;View Images&quot; button to
+            download your files.
+          </p>
+        </StepNumber>
       </div>
     </div>
   );
 }
 
 type TStepNumberProps = {
-  number: number;
-  isActive: boolean;
-  description: string;
-  onClick?: () => void;
+  title: string;
+  videoSrc: string;
+  children?: React.ReactNode;
 };
-function StepNumber({ number, isActive, description, onClick }: TStepNumberProps) {
+function StepNumber({ title, videoSrc, children }: TStepNumberProps) {
   return (
-    <div
-      tabIndex={0}
-      className={cn(
-        'relative flex items-center justify-center rounded-full w-full aspect-square cursor-pointer',
-        'scale-90 focus:scale-100',
-        'focus:outline-none focus:ring-4 focus:ring-offset-4 focus:ring-green-400/20',
-        'transition-[transform] duration-200'
-      )}
-      onClick={onClick}
-    >
-      <div
-        className={cn(
-          'absolute w-full h-full inset-0 border-4 border-dashed border-gray-200 rounded-full',
-          isActive && 'animate-spin-slow border-green-400'
-        )}
-      />
-      <span className="text-lg md:text-3xl font-bold">{number}</span>
-      <AnimatePresence>
-        {isActive && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.8 }}
-            className="hidden md:block absolute z-10 right-24 shadow-sm w-max bg-white rounded-full p-4 border border-gray-300"
-          >
-            {description}
-          </motion.div>
-        )}
-      </AnimatePresence>
+    <div className="md:grid md:grid-cols-6 gap-4 items-center space-y-4 md:space-y-0 group">
+      <div className="col-span-2 space-y-4">
+        <div className="relative text-2xl font-bold text-gray-800">
+          <div className="opacity-0 absolute inset-0 group-hover:opacity-100 top-1/2 -translate-y-1/2 -translate-x-6 group-hover:translate-x-0 transition-[transform,opacity] duration-200">
+            <ChevronsRightIcon className="w-5 h-5 text-gray-400" />
+          </div>
+          <p className="group-hover:translate-x-6 transition-[transform,color] duration-200 text-gray-600 group-hover:text-gray-800">
+            {title}
+          </p>
+        </div>
+        <div className="font-medium text-gray-500 group-hover:text-gray-600 space-y-2 transition-[color] duration-200">
+          {children}
+        </div>
+      </div>
+      <div className="col-span-4 flex justify-center">
+        <video
+          className="w-full aspect-video border-2 border-gray-200 rounded-[32px] md:rounded-[64px] group-hover:shadow-lg group-hover:rounded-[32px] transition-[border-radius,shadow] duration-200"
+          src={videoSrc}
+          autoPlay
+          loop
+          muted
+          playsInline
+        />
+      </div>
     </div>
   );
 }
