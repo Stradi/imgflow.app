@@ -47,7 +47,8 @@ export default function JobImagesModal({ job }: TJobImagesModalProps) {
       for (const file of filesGroupedByOutputsName[folder]) {
         const extension = file.storageKey.split('.').pop();
 
-        const fileBlob = await fetch(`${process.env.NEXT_PUBLIC_CDN_URL}/${file.storageKey}`).then((r) => r.blob());
+        const response = await fetch(`${process.env.NEXT_PUBLIC_CDN_URL}/${file.storageKey}`);
+        const fileBlob = await response.blob();
         folderZip.file(`${idx}.${extension}`, fileBlob);
         idx++;
       }
