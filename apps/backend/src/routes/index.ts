@@ -11,4 +11,10 @@ router.use('/api/v1/pipeline', authMiddleware, pipelineRouter);
 router.use('/api/v1/job', authMiddleware, jobRouter);
 router.use('/api/v1/wh', whRouter); // Webhook
 
+router.get('/api/v1/health', (req, res) => {
+  res.json({
+    message: 'OK',
+  });
+});
+
 export default router;
