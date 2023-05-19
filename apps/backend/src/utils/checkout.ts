@@ -1,23 +1,23 @@
 export const PRODUCT_TO_ID: Record<string, string> = {
-  subscription: '74511',
+  subscription: '76641',
 };
 
 export const SUBSCRIPTION_VARIANT_TO_ID: Record<string, string> = {
-  'basic-500': '76468',
-  'scale-1000': '76483',
-  'scale-2500': '76487',
-  'scale-5000': '76488',
-  'scale-10000': '76489',
-  'business-50000': '76490',
+  'basic-500': '79142',
+  'scale-1000': '79143',
+  'scale-2500': '79144',
+  'scale-5000': '79145',
+  'scale-10000': '79146',
+  'business-50000': '79147',
 };
 
 export const VARIANT_ID_TO_SUBSCRIPTION: Record<string, string> = {
-  '76468': 'basic-500',
-  '76483': 'scale-1000',
-  '76487': 'scale-2500',
-  '76488': 'scale-5000',
-  '76489': 'scale-10000',
-  '76490': 'business-50000',
+  '79142': 'basic-500',
+  '79143': 'scale-1000',
+  '79144': 'scale-2500',
+  '79145': 'scale-5000',
+  '79146': 'scale-10000',
+  '79147': 'business-50000',
 };
 
 export const SUBSCRIPTION_VARIANT_TO_READABLE: Record<string, string> = {
