@@ -1,39 +1,11 @@
 'use client';
 
 import { cn } from '@/utils/tw';
-import { useState } from 'react';
 import CTAButton from './CTAButton';
 
 export default function HeroSection() {
-  const [gradient, setGradient] = useState({
-    position: '15% 15%',
-    fromColor: '#0d3b05',
-    toColor: '#041a00',
-  });
-
   return (
-    <div
-      className="select-none group rounded-[32px] md:rounded-[64px] hover:rounded-[16px] md:hover:rounded-[32px] transition-[border-radius] duration-200"
-      style={{
-        background: `radial-gradient(500px at ${gradient.position}, ${gradient.fromColor} 10%, ${gradient.toColor} 100%)`,
-      }}
-      onMouseMove={(e) => {
-        e.preventDefault();
-
-        const { x: leftEdge, y: topEdge, width, height } = e.currentTarget.getBoundingClientRect();
-        const x = e.clientX - leftEdge;
-        const y = e.clientY - topEdge;
-
-        const xPercent = (x / width) * 100;
-        const yPercent = (y / height) * 100;
-
-        setGradient({
-          position: `${xPercent}% ${yPercent}%`,
-          fromColor: '#0d3b05',
-          toColor: '#041a00',
-        });
-      }}
-    >
+    <div className="group rounded-[32px] md:rounded-[64px] bg-gradient-to-br from-[#0d3b05] to-[#041a00]">
       <div className="flex flex-col py-16 gap-8 w-3/4 mx-auto">
         <h1
           className={cn(

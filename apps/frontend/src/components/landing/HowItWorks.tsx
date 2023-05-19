@@ -1,7 +1,5 @@
 'use client';
 
-import { ChevronsRightIcon } from 'lucide-react';
-
 const STEP_TO_VIDEO_URL: Record<number, string> = {
   0: '/assets/create-a-account.mp4',
   1: '/assets/create-a-pipeline.mp4',
@@ -54,12 +52,7 @@ function StepNumber({ title, videoSrc, children }: TStepNumberProps) {
     <div className="md:grid md:grid-cols-6 gap-4 items-center space-y-4 md:space-y-0 group">
       <div className="col-span-2 space-y-4">
         <div className="relative text-2xl font-bold text-gray-800">
-          <div className="opacity-0 absolute inset-0 group-hover:opacity-100 top-1/2 -translate-y-1/2 -translate-x-6 group-hover:translate-x-0 transition-[transform,opacity] duration-200">
-            <ChevronsRightIcon className="w-5 h-5 text-gray-400" />
-          </div>
-          <p className="group-hover:translate-x-6 transition-[transform,color] duration-200 text-gray-600 group-hover:text-gray-800">
-            {title}
-          </p>
+          <p className="transition-[color] duration-200 text-gray-600 group-hover:text-gray-800">{title}</p>
         </div>
         <div className="font-medium text-gray-500 group-hover:text-gray-600 space-y-2 transition-[color] duration-200">
           {children}
@@ -67,7 +60,7 @@ function StepNumber({ title, videoSrc, children }: TStepNumberProps) {
       </div>
       <div className="col-span-4 flex justify-center">
         <video
-          className="w-full aspect-video border-2 border-gray-200 rounded-[32px] md:rounded-[64px] group-hover:shadow-lg group-hover:rounded-[32px] transition-[border-radius,shadow] duration-200"
+          className="w-full aspect-video border-2 border-gray-100 rounded-[32px]"
           src={videoSrc}
           autoPlay
           loop

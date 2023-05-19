@@ -17,7 +17,6 @@ export default function Pricing() {
             '2 Pipelines',
             'Max. 50 Mb file uploads',
             '5 Concurrent conversions',
-            'Low priority',
             'Email support',
           ]}
         />
@@ -29,7 +28,6 @@ export default function Pricing() {
             '25 Pipelines',
             'Max. 500 Mb file uploads',
             '25 Concurrent conversions',
-            'Medium priority',
             'Email support',
           ]}
         />
@@ -41,7 +39,6 @@ export default function Pricing() {
             '100 Pipelines',
             'Max. 1 Gb file uploads',
             '100 Concurrent conversions',
-            'High priority',
             'Email support',
           ]}
         />
@@ -58,7 +55,7 @@ type TSinglePlanProps = {
 
 function SinglePlan({ title, price, features }: TSinglePlanProps) {
   return (
-    <div className="group scale-[0.975] p-4 md:p-8 bg-white/10 rounded-[24px] md:rounded-[48px] backdrop-blur-md hover:rounded-[12px] md:hover:rounded-[24px] hover:scale-100 transition-[border-radius,background-color,transform] duration-200 hover:bg-white/[0.15]">
+    <div className="group p-4 md:p-8 bg-white/10 rounded-[16px] md:rounded-[32px] backdrop-blur-md">
       <header className="flex md:flex-row space-y-2 mb-4 md:mb-0 md:space-y-0 flex-col md:justify-between items-center group-hover:text-white transition-[color] duration-200">
         <p className="text-3xl font-medium">{title}</p>
         <div className="flex items-center md:flex-row md:gap-4 flex-col gap-2">
