@@ -1,5 +1,6 @@
 'use client';
 
+import Faq from '@/components/landing/Faq';
 import Footer from '@/components/landing/Footer';
 import HeroSection from '@/components/landing/HeroSection';
 import HowItWorks from '@/components/landing/HowItWorks';
@@ -63,6 +64,7 @@ const Home = () => {
         </div>
         <HowItWorks />
         <Pricing />
+        <Faq />
         <Footer />
       </div>
     </>

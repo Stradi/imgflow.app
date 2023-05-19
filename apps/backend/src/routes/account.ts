@@ -43,6 +43,7 @@ router.post('/create-account', async (req, res) => {
     data: {
       email: email,
       password: hashedPassword,
+      credits: 25,
     },
   });
 

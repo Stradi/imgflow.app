@@ -14,7 +14,7 @@ export default function CTAButton() {
         'active:scale-95 focus:outline-none focus:ring-2 focus:ring-[#B1FFDA] focus:ring-offset-2 ring-offset-black/75'
       )}
     >
-      Get Started
+      Get Started for Free
     </Link>
   );
 }
