@@ -38,3 +38,15 @@ export async function getJobFiles(id: string) {
 
   return response;
 }
+
+export async function deleteJobFiles(id: string) {
+  const response = await doAuthenticatedRequest(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/job/${id}/files`, {
+    method: 'DELETE',
+  });
+
+  if (response['error']) {
+    throw new Error(response['error']);
+  }
+
+  return response;
+}

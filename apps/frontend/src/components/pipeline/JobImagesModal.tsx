@@ -1,4 +1,4 @@
-import { getJobFiles } from '@/services/job';
+import { deleteJobFiles, getJobFiles } from '@/services/job';
 import { TJob } from '@/stores/JobStore';
 import JSZip from 'jszip';
 import { ChevronsDownUpIcon } from 'lucide-react';
@@ -68,6 +68,15 @@ export default function JobImagesModal({ job }: TJobImagesModalProps) {
     setPreparingZip(false);
   }
 
+  async function deleteFiles() {
+    setIsLoading(true);
+    const response = await deleteJobFiles(job.id).catch((e) => {
+      console.log(e);
+    });
+    setFiles([]);
+    setIsLoading(false);
+  }
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -92,9 +101,20 @@ export default function JobImagesModal({ job }: TJobImagesModalProps) {
               ))}
             </div>
           )}
+          {files.length === 0 && (
+            <div className="text-center">
+              <p>You&apos;ve probably deleted the generated files.</p>
+            </div>
+          )}
           <div className="flex justify-between">
-            <Button onClick={() => createZip()} disabled={preparingZip}>
+            <Button onClick={() => createZip()} disabled={preparingZip || isLoading || files.length === 0}>
               Download All as Zip
+            </Button>
+            <Button
+              onClick={async () => await deleteFiles()}
+              disabled={preparingZip || isLoading || files.length === 0}
+            >
+              Delete Files
             </Button>
           </div>
         </div>
