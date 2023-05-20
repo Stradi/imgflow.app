@@ -13,7 +13,25 @@ const Home = () => {
     <>
       <NavigationBar />
       <div className="max-w-5xl mx-auto px-2 space-y-16">
-        <HeroSection />
+        <div className="flex flex-col gap-2">
+          <a
+            href="https://www.producthunt.com/posts/imgflow?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-imgflow"
+            target="_blank"
+          >
+            <img
+              src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=395358&theme=light"
+              alt="ImgFlow - Simplify&#0032;Image&#0032;Processing | Product Hunt"
+              style={{
+                width: '250px',
+                height: '54px',
+              }}
+              width="250"
+              height="54"
+              className="mx-auto"
+            />
+          </a>
+          <HeroSection />
+        </div>
         <div id="features">
           <div className="md:grid md:grid-cols-3 md:gap-4 md:space-y-0 space-y-4">
             <div className="col-span-2 relative h-[512px] overflow-hidden rounded-[32px] md:rounded-[64px] border-2 border-gray-100">
